@@ -3,16 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor", "YoutubeExtractor\YoutubeExtractor.csproj", "{ECDC127F-8DEF-4F99-8300-72C13597339D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "TestApplication\TestApplication.csproj", "{B894B26A-A518-4366-B31C-D90489A0F138}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{ECDC127F-8DEF-4F99-8300-72C13597339D}.Release|x86.ActiveCfg = Release|Any CPU
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Debug|x86.ActiveCfg = Debug|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Debug|x86.Build.0 = Debug|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Release|Any CPU.ActiveCfg = Release|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Release|Mixed Platforms.Build.0 = Release|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Release|x86.ActiveCfg = Release|x86
+		{B894B26A-A518-4366-B31C-D90489A0F138}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
