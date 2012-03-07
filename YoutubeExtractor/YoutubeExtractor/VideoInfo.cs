@@ -1,6 +1,6 @@
 ﻿namespace YoutubeExtractor
 {
-    public class DownloadInfo
+    public class VideoInfo
     {
         private int formatCode;
 
@@ -50,7 +50,7 @@
             }
         }
 
-        public DownloadInfo(string downloadUrl, int formatCode)
+        public VideoInfo(string downloadUrl, int formatCode)
         {
             this.DownloadUrl = downloadUrl;
             this.FormatCode = formatCode;

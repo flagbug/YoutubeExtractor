@@ -13,7 +13,7 @@ namespace YoutubeExtractor
 {
     internal static class DownloadUrlResolver
     {
-        public static IEnumerable<DownloadInfo> GetDownloadUrls(string videoUrl)
+        public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
             const string startConfig = "yt.playerConfig = ";
 
@@ -45,7 +45,7 @@ namespace YoutubeExtractor
                 {
                     var urlList = new List<string>(Regex.Split(availableFormats, argument));
 
-                    var downLoadInfos = new List<DownloadInfo>();
+                    var downLoadInfos = new List<VideoInfo>();
 
                     // Format the URL
                     var urls = urlList
@@ -60,14 +60,14 @@ namespace YoutubeExtractor
                         // for this version, only get the download URL
                         byte formatCode = Byte.Parse(queryString["itag"]);
                         // Currently based on youtube specifications (later we'll depend on the MIME type returned from the web request)
-                        downLoadInfos.Add(new DownloadInfo(url.ToString(), formatCode));
+                        downLoadInfos.Add(new VideoInfo(url.ToString(), formatCode));
                     }
 
                     return downLoadInfos;
                 }
             }
 
-            return Enumerable.Empty<DownloadInfo>();
+            return Enumerable.Empty<VideoInfo>();
         }
     }
 }
