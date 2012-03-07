@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
 {
-    internal static class DownloadUrlResolver
+    public static class DownloadUrlResolver
     {
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
