@@ -48,6 +48,7 @@
     <Compile Include="BitHelper.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="DownloadUrlResolver.cs" />
+    <Compile Include="FlvFile.cs" />
     <Compile Include="IAudioExtractor.cs" />
     <Compile Include="LittleEndianBitConverter.cs" />
     <Compile Include="Mp3AudioExtractor.cs" />
