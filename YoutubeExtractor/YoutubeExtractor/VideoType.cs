@@ -1,6 +1,6 @@
 ﻿namespace YoutubeExtractor
 {
-    public enum YouTubeVideoType
+    public enum VideoType
     {
         Mobile,
         Flash,

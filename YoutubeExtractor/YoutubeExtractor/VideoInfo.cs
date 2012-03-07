@@ -6,7 +6,7 @@
 
         public string DownloadUrl { get; private set; }
 
-        public YouTubeVideoType VideoType { get; private set; }
+        public VideoType VideoType { get; private set; }
 
         public int FormatCode
         {
@@ -21,7 +21,7 @@
                     case 35:
                     case 5:
                     case 6:
-                        this.VideoType = YouTubeVideoType.Flash;
+                        this.VideoType = VideoType.Flash;
                         break;
 
                     case 18:
@@ -30,21 +30,21 @@
                     case 38:
                     case 82:
                     case 84:
-                        this.VideoType = YouTubeVideoType.Mp4;
+                        this.VideoType = VideoType.Mp4;
                         break;
 
                     case 13:
                     case 17:
-                        this.VideoType = YouTubeVideoType.Mobile;
+                        this.VideoType = VideoType.Mobile;
                         break;
 
                     case 43:
                     case 45:
-                        this.VideoType = YouTubeVideoType.WebM;
+                        this.VideoType = VideoType.WebM;
                         break;
 
                     default:
-                        this.VideoType = YouTubeVideoType.Unknown;
+                        this.VideoType = VideoType.Unknown;
                         break;
                 }
             }
