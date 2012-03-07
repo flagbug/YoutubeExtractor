@@ -21,6 +21,8 @@ namespace YoutubeExtractor
             client.DownloadProgressChanged +=
                 (sender, args) => this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage));
 
+            this.OnDownloadStarted(EventArgs.Empty);
+
             client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
 
             handle.WaitOne();
