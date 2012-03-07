@@ -15,11 +15,12 @@ namespace YoutubeExtractor
         private readonly long fileLength;
         IAudioExtractor audioWriter;
         private readonly List<string> warnings;
-        private OverwriteDelegate setoutput;
+        private readonly OverwriteDelegate setoutput;
 
-        public FlvFile(string path)
+        public FlvFile(string path, OverwriteDelegate setoutput)
         {
             this.inputPath = path;
+            this.setoutput = setoutput;
             this.OutputDirectory = Path.GetDirectoryName(path);
             this.warnings = new List<string>();
             this.fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 65536);
@@ -79,6 +80,7 @@ namespace YoutubeExtractor
             if (audioWriter != null)
             {
                 audioWriter.Finish();
+
                 if (disposing && (audioWriter.Path != null))
                 {
                     try
@@ -87,37 +89,37 @@ namespace YoutubeExtractor
                     }
                     catch { }
                 }
+
                 audioWriter = null;
             }
         }
 
         private bool ReadTag()
         {
-            uint tagType, dataSize, timeStamp, streamID, mediaInfo;
-            byte[] data;
-
             if ((fileLength - fileOffset) < 11)
                 return false;
 
             // Read tag header
-            tagType = ReadUInt8();
-            dataSize = ReadUInt24();
-            timeStamp = ReadUInt24();
+            uint tagType = ReadUInt8();
+            uint dataSize = ReadUInt24();
+            uint timeStamp = ReadUInt24();
             timeStamp |= ReadUInt8() << 24;
-            streamID = ReadUInt24();
+            ReadUInt24();
 
             // Read tag data
             if (dataSize == 0)
                 return true;
+
             if ((fileLength - fileOffset) < dataSize)
                 return false;
 
-            mediaInfo = ReadUInt8();
+            uint mediaInfo = ReadUInt8();
             dataSize -= 1;
-            data = ReadBytes((int)dataSize);
+            byte[] data = ReadBytes((int)dataSize);
 
             if (tagType == 0x8)
-            {  // Audio
+            {
+                // Audio
                 if (audioWriter == null)
                 {
                     audioWriter = GetAudioWriter(mediaInfo);
@@ -129,8 +131,11 @@ namespace YoutubeExtractor
 
                 audioWriter.WriteChunk(data, timeStamp);
             }
+
             else if ((tagType == 0x9) && ((mediaInfo >> 4) != 5))
-            { /* Video*/ }
+            {
+                // Video
+            }
 
             return true;
         }
@@ -138,64 +143,50 @@ namespace YoutubeExtractor
         private IAudioExtractor GetAudioWriter(uint mediaInfo)
         {
             uint format = mediaInfo >> 4;
-            uint rate = (mediaInfo >> 2) & 0x3;
-            uint bits = (mediaInfo >> 1) & 0x1;
-            uint chans = mediaInfo & 0x1;
             string path;
 
-            if ((format == 2) || (format == 14))
-            { // MP3
-                path = outputPathBase + ".mp3";
-                if (!CanWriteTo(ref path))
-                    return null;
-
-                return new Mp3AudioExtractor(path);
-            }
-            /*		else if ((format == 0) || (format == 3))
-            { // PCM (WAVE format)
-                int sampleRate = 0;
-                switch (rate)
-                {
-                    case 0: sampleRate = 5512; break;
-                    case 1: sampleRate = 11025; break;
-                    case 2: sampleRate = 22050; break;
-                    case 3: sampleRate = 44100; break;
-                }
-                path = _outputPathBase + ".wav";
-                if (!CanWriteTo(ref path)) return new DummyAudioWriter();
-                if (format == 0)
-                {
-                    _warnings.Add("PCM byte order unspecified, assuming little endian.");
-                }
-                return new WAVWriter(path, (bits == 1) ? 16 : 8,
-                    (chans == 1) ? 2 : 1, sampleRate);
-            }
-    */		else if (format == 10)
-            { // AAC
-                path = outputPathBase + ".aac";
-                if (!CanWriteTo(ref path)) return null;
-                return new AacAudioExtractor(path);
-            }
-            /*		else if (format == 11)
-        { // Speex
-            path = _outputPathBase + ".spx";
-            if (!CanWriteTo(ref path)) return new DummyAudioWriter();
-            return new SpeexWriter(path, (int)(_fileLength & 0xFFFFFFFF));
-        }
-*/		else
+            switch (format)
             {
-                string typeStr;
+                case 14:
+                case 2:
+                    path = outputPathBase + ".mp3";
+                    if (!CanWriteTo(ref path))
+                        return null;
 
-                if (format == 1)
-                    typeStr = "ADPCM";
-                else if ((format == 4) || (format == 5) || (format == 6))
-                    typeStr = "Nellymoser";
-                else
-                    typeStr = "format=" + format.ToString();
+                    return new Mp3AudioExtractor(path);
 
-                warnings.Add("Unable to extract audio (" + typeStr + " is unsupported).");
+                case 10:
+                    path = outputPathBase + ".aac";
+                    if (!CanWriteTo(ref path))
+                        return null;
 
-                return null;
+                    return new AacAudioExtractor(path);
+
+                default:
+                    {
+                        string typeStr;
+
+                        switch (format)
+                        {
+                            case 1:
+                                typeStr = "ADPCM";
+                                break;
+
+                            case 6:
+                            case 5:
+                            case 4:
+                                typeStr = "Nellymoser";
+                                break;
+
+                            default:
+                                typeStr = "format=" + format;
+                                break;
+                        }
+
+                        warnings.Add("Unable to extract audio (" + typeStr + " is unsupported).");
+
+                        return null;
+                    }
             }
         }
 
@@ -218,7 +209,7 @@ namespace YoutubeExtractor
 
         private uint ReadUInt24()
         {
-            byte[] x = new byte[4];
+            var x = new byte[4];
             fileStream.Read(x, 1, 3);
             fileOffset += 3;
             return BigEndianBitConverter.ToUInt32(x, 0);
@@ -226,7 +217,7 @@ namespace YoutubeExtractor
 
         private uint ReadUInt32()
         {
-            byte[] x = new byte[4];
+            var x = new byte[4];
             fileStream.Read(x, 0, 4);
             fileOffset += 4;
             return BigEndianBitConverter.ToUInt32(x, 0);
@@ -234,7 +225,7 @@ namespace YoutubeExtractor
 
         private byte[] ReadBytes(int length)
         {
-            byte[] buff = new byte[length];
+            var buff = new byte[length];
             fileStream.Read(buff, 0, length);
             fileOffset += length;
             return buff;
