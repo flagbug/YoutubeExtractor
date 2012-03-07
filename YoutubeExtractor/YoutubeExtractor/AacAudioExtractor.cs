@@ -15,7 +15,7 @@ namespace YoutubeExtractor
         public AacAudioExtractor(string path)
         {
             this.Path = path;
-            fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 65536);
+            fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 64 * 1024);
         }
 
         public void WriteChunk(byte[] chunk, uint timeStamp)

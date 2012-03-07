@@ -30,7 +30,7 @@ namespace YoutubeExtractor
         public Mp3AudioExtractor(string path)
         {
             this.Path = path;
-            this.fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 65536);
+            this.fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 64 * 1024);
             this.warnings = new List<string>();
             this.chunkBuffer = new List<byte[]>();
             this.frameOffsets = new List<uint>();
