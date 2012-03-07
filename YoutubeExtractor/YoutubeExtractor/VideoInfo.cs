@@ -37,26 +37,57 @@
             }
         }
 
-        public AudioType AudioType
+        public VideoFormat VideoFormat
         {
             get
             {
                 switch (this.FormatCode)
                 {
+                    case 43:
+                        return VideoFormat.WebM360;
+
+                    case 44:
+                        return VideoFormat.WebM480;
+
+                    case 45:
+                        return VideoFormat.WebM720;
+
+                    case 38:
+                        return VideoFormat.HighDefinition4K;
+
+                    case 37:
+                        return VideoFormat.HighDefinition1080;
+
+                    case 22:
+                        return VideoFormat.HighDefinition720;
+
+                    case 82:
+                        return VideoFormat.Standard360_3D;
+
+                    case 84:
+                        return VideoFormat.HighDefinition720_3D;
+
                     case 35:
-                        return AudioType.AacHighQuality;
+                        return VideoFormat.FlashAacHighQuality;
 
                     case 34:
-                        return AudioType.AacLowQuality;
+                        return VideoFormat.FlashAacLowQuality;
+
+                    case 18:
+                        return VideoFormat.Standard360;
 
                     case 6:
-                        return AudioType.Mp3HighQuality;
+                        return VideoFormat.FlashMp3HighQuality;
 
                     case 5:
-                        return AudioType.Mp3LowQuality;
+                        return VideoFormat.FlashMp3LowQuality;
+
+                    case 13:
+                    case 17:
+                        return VideoFormat.Mobile;
                 }
 
-                return AudioType.Unkown;
+                return VideoFormat.Unkown;
             }
         }
 
