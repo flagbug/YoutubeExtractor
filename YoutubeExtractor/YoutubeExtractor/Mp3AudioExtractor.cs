@@ -22,11 +22,16 @@ namespace YoutubeExtractor
 
         public string Path { get; private set; }
 
-        public Mp3AudioExtractor(string path, List<string> warnings)
+        public IEnumerable<string> Warnings
+        {
+            get { return this.warnings; }
+        }
+
+        public Mp3AudioExtractor(string path)
         {
             this.Path = path;
             this.fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 65536);
-            this.warnings = warnings;
+            this.warnings = new List<string>();
             this.chunkBuffer = new List<byte[]>();
             this.frameOffsets = new List<uint>();
             this.delayWrite = true;
