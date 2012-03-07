@@ -51,7 +51,6 @@
     <Compile Include="DownloadUrlResolver.cs" />
     <Compile Include="FlvFile.cs" />
     <Compile Include="IAudioExtractor.cs" />
-    <Compile Include="LittleEndianBitConverter.cs" />
     <Compile Include="Mp3AudioExtractor.cs" />
     <Compile Include="ProgressEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
