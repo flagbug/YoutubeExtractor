@@ -47,18 +47,20 @@ namespace YoutubeExtractor
 
                     var downLoadInfos = new List<DownloadInfo>();
 
-                    foreach (string entry in urlList)
-                    {
-                        if (!String.IsNullOrEmpty(entry.Trim()))
-                        {
-                            var url = new Uri(Uri.UnescapeDataString(entry.Substring(0, entry.IndexOf(endOfQueryString, StringComparison.Ordinal))));
-                            NameValueCollection queryString = HttpUtility.ParseQueryString(url.Query);
+                    // Format the URL
+                    var urls = urlList
+                        .Where(entry => !String.IsNullOrEmpty(entry.Trim()))
+                        .Select(entry => entry.Substring(0, entry.IndexOf(endOfQueryString, StringComparison.Ordinal)))
+                        .Select(entry => new Uri(Uri.UnescapeDataString(entry)));
 
-                            // for this version, only get the download URL
-                            byte formatCode = Byte.Parse(queryString["itag"]);
-                            // Currently based on youtube specifications (later we'll depend on the MIME type returned from the web request)
-                            downLoadInfos.Add(new DownloadInfo(url.ToString(), formatCode));
-                        }
+                    foreach (Uri url in urls)
+                    {
+                        NameValueCollection queryString = HttpUtility.ParseQueryString(url.Query);
+
+                        // for this version, only get the download URL
+                        byte formatCode = Byte.Parse(queryString["itag"]);
+                        // Currently based on youtube specifications (later we'll depend on the MIME type returned from the web request)
+                        downLoadInfos.Add(new DownloadInfo(url.ToString(), formatCode));
                     }
 
                     return downLoadInfos;
