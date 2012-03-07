@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,6 +45,8 @@ namespace YoutubeExtractor
                 {
                     var urlList = new List<string>(Regex.Split(availableFormats, argument));
 
+                    var downLoadInfos = new List<DownloadInfo>();
+
                     foreach (string entry in urlList)
                     {
                         if (!String.IsNullOrEmpty(entry.Trim()))
@@ -54,11 +57,15 @@ namespace YoutubeExtractor
                             // for this version, only get the download URL
                             byte formatCode = Byte.Parse(queryString["itag"]);
                             // Currently based on youtube specifications (later we'll depend on the MIME type returned from the web request)
-                            yield return new DownloadInfo(url.ToString(), formatCode);
+                            downLoadInfos.Add(new DownloadInfo(url.ToString(), formatCode));
                         }
                     }
+
+                    return downLoadInfos;
                 }
             }
+
+            return Enumerable.Empty<DownloadInfo>();
         }
     }
 }
