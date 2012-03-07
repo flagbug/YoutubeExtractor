@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace YoutubeExtractor
@@ -9,39 +8,30 @@ namespace YoutubeExtractor
     public class FlvFile : IDisposable
     {
         private readonly string inputPath;
-        private string outputPathBase;
         private FileStream fileStream;
         private long fileOffset;
         private readonly long fileLength;
         IAudioExtractor audioWriter;
-        private readonly List<string> warnings;
-        private readonly OverwriteDelegate setoutput;
+        private readonly string outputPath;
 
-        public FlvFile(string path, OverwriteDelegate setoutput)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FlvFile"/> class.
+        /// </summary>
+        /// <param name="inputPath">The path of the input.</param>
+        /// <param name="outputPath">The path of the output without extension.</param>
+        public FlvFile(string inputPath, string outputPath)
         {
-            this.inputPath = path;
-            this.setoutput = setoutput;
-            this.OutputDirectory = Path.GetDirectoryName(path);
-            this.warnings = new List<string>();
-            this.fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 65536);
+            this.inputPath = inputPath;
+            this.outputPath = outputPath;
+            this.fileStream = new FileStream(this.inputPath, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024);
             this.fileOffset = 0;
             this.fileLength = fileStream.Length;
-        }
-
-        public string OutputDirectory { get; set; }
-
-        public IEnumerable<string> Warnings
-        {
-            get { return warnings; }
         }
 
         public bool ExtractedAudio { get; private set; }
 
         public void ExtractStreams()
         {
-            this.outputPathBase = Path.Combine(OutputDirectory, Path.GetFileNameWithoutExtension(inputPath));
-            //this.setoutput = outputDeleg;
-
             this.Seek(0);
 
             if (this.ReadUInt32() != 0x464C5601)
@@ -143,56 +133,40 @@ namespace YoutubeExtractor
         private IAudioExtractor GetAudioWriter(uint mediaInfo)
         {
             uint format = mediaInfo >> 4;
-            string path;
+            string path = this.outputPath;
 
             switch (format)
             {
                 case 14:
                 case 2:
-                    path = outputPathBase + ".mp3";
-                    if (!CanWriteTo(ref path))
-                        return null;
-
+                    path += ".mp3";
                     return new Mp3AudioExtractor(path);
 
                 case 10:
-                    path = outputPathBase + ".aac";
-                    if (!CanWriteTo(ref path))
-                        return null;
-
+                    path += ".aac";
                     return new AacAudioExtractor(path);
+            }
+
+            string typeStr;
+
+            switch (format)
+            {
+                case 1:
+                    typeStr = "ADPCM";
+                    break;
+
+                case 6:
+                case 5:
+                case 4:
+                    typeStr = "Nellymoser";
+                    break;
 
                 default:
-                    {
-                        string typeStr;
-
-                        switch (format)
-                        {
-                            case 1:
-                                typeStr = "ADPCM";
-                                break;
-
-                            case 6:
-                            case 5:
-                            case 4:
-                                typeStr = "Nellymoser";
-                                break;
-
-                            default:
-                                typeStr = "format=" + format;
-                                break;
-                        }
-
-                        warnings.Add("Unable to extract audio (" + typeStr + " is unsupported).");
-
-                        return null;
-                    }
+                    typeStr = "format=" + format;
+                    break;
             }
-        }
 
-        private bool CanWriteTo(ref string path)
-        {
-            return setoutput(ref path);
+            throw new InvalidOperationException("Unable to extract audio (" + typeStr + " is unsupported).");
         }
 
         private void Seek(long offset)
@@ -233,7 +207,7 @@ namespace YoutubeExtractor
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -241,12 +215,13 @@ namespace YoutubeExtractor
         {
             if (disposing)
             {
-                if (fileStream != null)
+                if (this.fileStream != null)
                 {
-                    fileStream.Close();
-                    fileStream = null;
+                    this.fileStream.Close();
+                    this.fileStream = null;
                 }
-                CloseOutput(true);
+
+                this.CloseOutput(true);
             }
         }
     }
