@@ -3,9 +3,7 @@ using System.IO;
 
 namespace YoutubeExtractor
 {
-    public delegate bool OverwriteDelegate(ref string destPath);
-
-    public class FlvFile : IDisposable
+    internal class FlvFile : IDisposable
     {
         private readonly string inputPath;
         private FileStream fileStream;

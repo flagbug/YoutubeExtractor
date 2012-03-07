@@ -1,6 +1,6 @@
 ﻿namespace YoutubeExtractor
 {
-    public interface IAudioExtractor
+    internal interface IAudioExtractor
     {
         void WriteChunk(byte[] chunk, uint timeStamp);
 

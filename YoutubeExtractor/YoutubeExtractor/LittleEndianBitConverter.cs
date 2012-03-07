@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace YoutubeExtractor
+﻿namespace YoutubeExtractor
 {
-    public static class LitleEndianBitConverter
+    internal static class LitleEndianBitConverter
     {
         public static byte[] GetBytes(ulong value)
         {
