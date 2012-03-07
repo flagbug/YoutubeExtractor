@@ -31,8 +31,8 @@ namespace YoutubeExtractor
             if (playerConfigIndex > -1)
             {
                 string signature = pageSource.Substring(playerConfigIndex);
-                int endOfJsonIndex = signature.IndexOf(");", StringComparison.Ordinal);
-                signature = signature.Substring(startConfig.Length, endOfJsonIndex - 17).Trim();
+                int endOfJsonIndex = signature.TrimEnd(' ').IndexOf("yt.setConfig", StringComparison.Ordinal);
+                signature = signature.Substring(startConfig.Length, endOfJsonIndex - 26);
 
                 JObject playerConfig = JObject.Parse(signature);
                 JObject playerArgs = JObject.Parse(playerConfig["args"].ToString());
