@@ -109,7 +109,7 @@ namespace YoutubeExtractor
 
             if (tagType == 0x8)
             {
-                // Audio
+                // If we have no audio writer, create one
                 if (audioWriter == null)
                 {
                     audioWriter = GetAudioWriter(mediaInfo);
@@ -120,11 +120,6 @@ namespace YoutubeExtractor
                     throw new InvalidOperationException();
 
                 audioWriter.WriteChunk(data, timeStamp);
-            }
-
-            else if ((tagType == 0x9) && ((mediaInfo >> 4) != 5))
-            {
-                // Video
             }
 
             return true;
