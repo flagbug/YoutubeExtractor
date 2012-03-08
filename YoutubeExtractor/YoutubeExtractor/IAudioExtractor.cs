@@ -1,10 +1,10 @@
-﻿namespace YoutubeExtractor
+﻿using System;
+
+namespace YoutubeExtractor
 {
-    internal interface IAudioExtractor
+    internal interface IAudioExtractor : IDisposable
     {
         void WriteChunk(byte[] chunk, uint timeStamp);
-
-        void Finish();
 
         string Path { get; }
     }

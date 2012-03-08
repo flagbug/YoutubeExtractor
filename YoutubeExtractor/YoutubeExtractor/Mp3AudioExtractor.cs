@@ -53,7 +53,7 @@ namespace YoutubeExtractor
             }
         }
 
-        public void Finish()
+        public void Dispose()
         {
             this.Flush();
 
@@ -63,7 +63,7 @@ namespace YoutubeExtractor
                 this.WriteVbrHeader(false);
             }
 
-            this.fileStream.Close();
+            this.fileStream.Dispose();
         }
 
         private void Flush()

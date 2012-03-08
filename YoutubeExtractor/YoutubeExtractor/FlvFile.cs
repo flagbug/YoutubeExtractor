@@ -76,8 +76,6 @@ namespace YoutubeExtractor
         {
             if (audioWriter != null)
             {
-                audioWriter.Finish();
-
                 if (disposing && (audioWriter.Path != null))
                 {
                     try
@@ -87,6 +85,7 @@ namespace YoutubeExtractor
                     catch { }
                 }
 
+                audioWriter.Dispose();
                 audioWriter = null;
             }
         }

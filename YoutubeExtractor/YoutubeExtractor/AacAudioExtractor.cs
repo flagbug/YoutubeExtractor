@@ -45,7 +45,8 @@ namespace YoutubeExtractor
             }
 
             else
-            { // Audio data
+            {
+                // Audio data
                 int dataSize = chunk.Length - 1;
                 ulong bits = 0;
 
@@ -72,9 +73,9 @@ namespace YoutubeExtractor
             }
         }
 
-        public void Finish()
+        public void Dispose()
         {
-            fileStream.Close();
+            this.fileStream.Dispose();
         }
     }
 }
