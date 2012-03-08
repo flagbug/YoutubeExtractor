@@ -26,6 +26,7 @@ YoutubeExtractor will be available on NuGet soon!
 ## Example code
 
 **Extracting the audio track**
+
 ```c#
 // Our test youtube link
 const string link = "insert youtube link here";
