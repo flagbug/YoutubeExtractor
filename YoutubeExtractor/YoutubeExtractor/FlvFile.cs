@@ -47,6 +47,9 @@ namespace YoutubeExtractor
 
             this.ReadUInt32();
 
+            // Store the progress is a temporary variable, so that we can check if it changed
+            int tempProgress = 0;
+
             while (fileOffset < fileLength)
             {
                 if (!ReadTag())
@@ -61,10 +64,11 @@ namespace YoutubeExtractor
 
                 this.ReadUInt32();
 
-                if (this.ConversionProgressChanged != null)
-                {
-                    int progress = (int)((this.fileOffset * 1.0 / this.fileLength) * 100);
+                int progress = (int)((this.fileOffset * 1.0 / this.fileLength) * 100);
 
+                if (this.ConversionProgressChanged != null && progress != tempProgress)
+                {
+                    tempProgress = progress;
                     this.ConversionProgressChanged(this, new ProgressEventArgs(progress));
                 }
             }
