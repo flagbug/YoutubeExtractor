@@ -12,6 +12,8 @@ namespace YoutubeExtractor
         IAudioExtractor audioWriter;
         private readonly string outputPath;
 
+        public event EventHandler<ProgressEventArgs> ConversionProgressChanged;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FlvFile"/> class.
         /// </summary>
@@ -58,6 +60,13 @@ namespace YoutubeExtractor
                 }
 
                 this.ReadUInt32();
+
+                if (this.ConversionProgressChanged != null)
+                {
+                    int progress = (int)((this.fileOffset * 1.0 / this.fileLength) * 100);
+
+                    this.ConversionProgressChanged(this, new ProgressEventArgs(progress));
+                }
             }
 
             this.CloseOutput(false);

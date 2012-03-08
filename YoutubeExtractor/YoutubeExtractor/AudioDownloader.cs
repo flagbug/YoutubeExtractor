@@ -14,18 +14,31 @@ namespace YoutubeExtractor
         {
             string tempPath = Path.GetTempFileName();
 
-            var videoDownloader = new VideoDownloader(this.Video, tempPath);
+            this.DownloadVideo(tempPath);
+
+            this.ExtractAudio(tempPath);
+
+            this.OnDownloadFinished(EventArgs.Empty);
+        }
+
+        private void DownloadVideo(string path)
+        {
+            var videoDownloader = new VideoDownloader(this.Video, path);
 
             videoDownloader.ProgressChanged +=
                 (sender, args) => this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage / 2));
 
             videoDownloader.Execute();
+        }
 
-            var flvFile = new FlvFile(tempPath, this.SavePath);
+        private void ExtractAudio(string path)
+        {
+            var flvFile = new FlvFile(path, this.SavePath);
+
+            flvFile.ConversionProgressChanged +=
+                (sender, args) => this.OnProgressChanged(new ProgressEventArgs(50 + args.ProgressPercentage / 2));
 
             flvFile.ExtractStreams();
-
-            this.OnDownloadFinished(EventArgs.Empty);
         }
     }
 }
