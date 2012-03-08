@@ -114,6 +114,29 @@
             }
         }
 
+        public string VideoExtension
+        {
+            get
+            {
+                switch (this.VideoType)
+                {
+                    case VideoType.Mp4:
+                        return ".mp4";
+
+                    case VideoType.Mobile:
+                        return ".3gp";
+
+                    case VideoType.Flash:
+                        return ".flv";
+
+                    case VideoType.WebM:
+                        return ".webm";
+                }
+
+                return null;
+            }
+        }
+
         public int FormatCode { get; private set; }
 
         public VideoInfo(string downloadUrl, int formatCode)
