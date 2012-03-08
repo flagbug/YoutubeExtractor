@@ -26,40 +26,40 @@ YoutubeExtractor will be available on NuGet soon!
 ## Example code
 
 **Extracting the audio track**
+```c#
+// Our test youtube link
+const string link = "insert youtube link here";
+	
+// Get the available video formats
+IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 
-	// Our test youtube link
-	const string link = "insert youtube link here";
-		
-	// Get the available video formats
-	IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
-	
-	/*
-	 * We want the first flash (only flash audio extraction is currently supported)
-	 * video with the highest audio quality.
-	 * See the VideoFormat enum for more info about the quality.
-	 */
-	VideoInfo video = videoInfos
-	    .Where(info => info.CanExtractAudio)
-	    .First(info =>
-	           info.VideoFormat == VideoFormat.FlashAacHighQuality ||
-	           info.VideoFormat == VideoFormat.FlashAacLowQuality ||
-	           info.VideoFormat == VideoFormat.FlashMp3HighQuality ||
-	           info.VideoFormat == VideoFormat.FlashMp3LowQuality);
-	
-	/*
-	 * Create the audio downloader.
-	 * The first argument is the video tpo extract the audio.
-	 * The second argument is the path to save the audio file.
-	 * Automatic video title infering will be supported later.
-	 * */
-	var audioDownloader = new AudioDownloader(video, "D:/Downloads/test" + video.AudioExtension);
-	
-	// Register the ProgressChanged event and print the current progress
-	audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
-	
-	/*
-	 * Execute the video downloader.
-	 * For GUI applications note that this method runs synchronously
-	 */
-	audioDownloader.Execute();
+/*
+ * We want the first flash (only flash audio extraction is currently supported)
+ * video with the highest audio quality.
+ * See the VideoFormat enum for more info about the quality.
+ */
+VideoInfo video = videoInfos
+    .Where(info => info.CanExtractAudio)
+    .First(info =>
+           info.VideoFormat == VideoFormat.FlashAacHighQuality ||
+           info.VideoFormat == VideoFormat.FlashAacLowQuality ||
+           info.VideoFormat == VideoFormat.FlashMp3HighQuality ||
+           info.VideoFormat == VideoFormat.FlashMp3LowQuality);
 
+/*
+ * Create the audio downloader.
+ * The first argument is the video tpo extract the audio.
+ * The second argument is the path to save the audio file.
+ * Automatic video title infering will be supported later.
+ * */
+var audioDownloader = new AudioDownloader(video, "D:/Downloads/test" + video.AudioExtension);
+
+// Register the ProgressChanged event and print the current progress
+audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+
+/*
+ * Execute the video downloader.
+ * For GUI applications note that this method runs synchronously
+ */
+audioDownloader.Execute();
+```
