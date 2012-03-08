@@ -13,8 +13,8 @@ namespace TestApplication
             const string link = "http://www.youtube.com/watch?v=6bMmhKz6KXg";
 
             /*
-             * Get the available video formats
-             * We'll work with them in the video and audio download examples
+             * Get the available video formats.
+             * We'll work with them in the video and audio download examples.
              */
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 
@@ -50,7 +50,7 @@ namespace TestApplication
 
             /*
              * Execute the audio downloader.
-             * For GUI applications note that this method runs synchronously
+             * For GUI applications note, that this method runs synchronously.
              */
             audioDownloader.Execute();
         }
@@ -77,7 +77,7 @@ namespace TestApplication
 
             /*
              * Execute the video downloader.
-             * For GUI applications note that this method runs synchronously
+             * For GUI applications note, that this method runs synchronously.
              */
             videoDownloader.Execute();
         }
