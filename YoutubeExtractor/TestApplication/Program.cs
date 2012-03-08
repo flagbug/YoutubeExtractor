@@ -20,11 +20,13 @@ namespace TestApplication
              * video with the highest audio quality.
              * See the VideoFormat enum for more info about the quality.
              */
-            VideoInfo video = videoInfos.First(info =>
-                info.VideoFormat == VideoFormat.FlashAacHighQuality ||
-                info.VideoFormat == VideoFormat.FlashAacLowQuality ||
-                info.VideoFormat == VideoFormat.FlashMp3HighQuality ||
-                info.VideoFormat == VideoFormat.FlashMp3LowQuality);
+            VideoInfo video = videoInfos
+                .Where(info => info.CanExtractAudio)
+                .First(info =>
+                       info.VideoFormat == VideoFormat.FlashAacHighQuality ||
+                       info.VideoFormat == VideoFormat.FlashAacLowQuality ||
+                       info.VideoFormat == VideoFormat.FlashMp3HighQuality ||
+                       info.VideoFormat == VideoFormat.FlashMp3LowQuality);
 
             /*
              * Create the audio downloader.
@@ -32,7 +34,7 @@ namespace TestApplication
              * The second argument is the path to save the audio file.
              * Automatic video title infering will be supported later.
              * */
-            var audioDownloader = new AudioDownloader(video, "D:/Downloads/test");
+            var audioDownloader = new AudioDownloader(video, "D:/Downloads/test" + video.AudioExtension);
 
             // Register the ProgressChanged event and print the current progress
             audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);

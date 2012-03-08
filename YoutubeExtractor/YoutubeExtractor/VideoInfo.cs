@@ -96,6 +96,24 @@
             get { return this.VideoType == VideoType.Flash; }
         }
 
+        public string AudioExtension
+        {
+            get
+            {
+                if (this.VideoFormat == VideoFormat.FlashAacHighQuality || this.VideoFormat == VideoFormat.FlashAacLowQuality)
+                {
+                    return ".aac";
+                }
+
+                if (this.VideoFormat == VideoFormat.FlashMp3HighQuality || this.VideoFormat == VideoFormat.FlashMp3LowQuality)
+                {
+                    return ".mp3";
+                }
+
+                return null;
+            }
+        }
+
         public int FormatCode { get; private set; }
 
         public VideoInfo(string downloadUrl, int formatCode)

@@ -134,18 +134,15 @@ namespace YoutubeExtractor
         private IAudioExtractor GetAudioWriter(uint mediaInfo)
         {
             uint format = mediaInfo >> 4;
-            string path = this.outputPath;
 
             switch (format)
             {
                 case 14:
                 case 2:
-                    path += ".mp3";
-                    return new Mp3AudioExtractor(path);
+                    return new Mp3AudioExtractor(this.outputPath);
 
                 case 10:
-                    path += ".aac";
-                    return new AacAudioExtractor(path);
+                    return new AacAudioExtractor(this.outputPath);
             }
 
             string typeStr;
