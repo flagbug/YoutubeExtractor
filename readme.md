@@ -13,3 +13,8 @@ I, flagbug, just extracted the code out of this project, cleaned it up and packa
 ## License
 
 YouTubeExtractor is licenced under the [GNU General Public License version 2 (GPLv2)](http://opensource.org/licenses/gpl-2.0)
+
+## Dependencies
+
+- .NET Framework 3.5
+- [JSON.NET](http://json.codeplex.com/)
