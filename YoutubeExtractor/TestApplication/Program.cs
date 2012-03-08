@@ -32,16 +32,16 @@ namespace TestApplication
              * The second argument is the path to save the audio file.
              * Automatic video title infering will be supported later.
              * */
-            var videoDownloader = new AudioDownloader(video, "D:/Downloads/test");
+            var audioDownloader = new AudioDownloader(video, "D:/Downloads/test");
 
             // Register the ProgressChanged event and print the current progress
-            videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+            audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
 
             /*
              * Execute the video downloader.
              * For GUI applications note that this method runs synchronously
              */
-            videoDownloader.Execute();
+            audioDownloader.Execute();
         }
     }
 }
