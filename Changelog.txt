@@ -1,0 +1,7 @@
+----------------------------------- v0.1.0 -----------------------------------
+
+- Added more documentation (especially method XML-comments)
+- Added the "Title" property in the Videoinfo class, that returns the title 
+  of the video.
+- The DownloadUrlResolver.GetDownloadUrls method is less strict with the 
+  videoUrl argument and also accepts short-URLs (youtu.be)
