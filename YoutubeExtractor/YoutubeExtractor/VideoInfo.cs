@@ -8,6 +8,11 @@
         public string DownloadUrl { get; private set; }
 
         /// <summary>
+        /// Gets the video title.
+        /// </summary>
+        public string Title { get; private set; }
+
+        /// <summary>
         /// Gets the type of the video.
         /// </summary>
         /// <value>
@@ -170,10 +175,12 @@
         /// Initializes a new instance of the <see cref="VideoInfo"/> class.
         /// </summary>
         /// <param name="downloadUrl">The download URL.</param>
+        /// <param name="title">The video title.</param>
         /// <param name="formatCode">The format code.</param>
-        internal VideoInfo(string downloadUrl, int formatCode)
+        internal VideoInfo(string downloadUrl, string title, int formatCode)
         {
             this.DownloadUrl = downloadUrl;
+            this.Title = title;
             this.FormatCode = formatCode;
         }
     }

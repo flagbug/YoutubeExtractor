@@ -34,6 +34,8 @@ namespace YoutubeExtractor
                 pageSource = new StreamReader(resp.GetResponseStream(), Encoding.UTF8).ReadToEnd();
             }
 
+            string videoTitle = GetVideoTitle(pageSource);
+
             int playerConfigIndex = pageSource.IndexOf(startConfig, StringComparison.Ordinal);
 
             if (playerConfigIndex > -1)
@@ -68,7 +70,7 @@ namespace YoutubeExtractor
                         // for this version, only get the download URL
                         byte formatCode = Byte.Parse(queryString["itag"]);
                         // Currently based on youtube specifications (later we'll depend on the MIME type returned from the web request)
-                        downLoadInfos.Add(new VideoInfo(url.ToString(), formatCode));
+                        downLoadInfos.Add(new VideoInfo(url.ToString(), videoTitle, formatCode));
                     }
 
                     return downLoadInfos;
@@ -76,6 +78,35 @@ namespace YoutubeExtractor
             }
 
             return Enumerable.Empty<VideoInfo>();
+        }
+
+        private static string GetVideoTitle(string pageSource)
+        {
+            string videoTitle = null;
+
+            try
+            {
+                const string videoTitlePattern = @"\<meta name=""title"" content=""(?<title>.*)""\>";
+                var videoTitleRegex = new Regex(videoTitlePattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                Match videoTitleMatch = videoTitleRegex.Match(pageSource);
+
+                if (videoTitleMatch.Success)
+                {
+                    videoTitle = videoTitleMatch.Groups["title"].Value;
+                    videoTitle = HttpUtility.HtmlDecode(videoTitle);
+
+                    // Remove the invalid characters in file names
+                    // In Windows they are: \ / : * ? " < > |
+                    videoTitle = Regex.Replace(videoTitle, @"[:\*\?""\<\>\|]", String.Empty);
+                    videoTitle = videoTitle.Replace("\\", "-").Replace("/", "-").Trim();
+                }
+            }
+            catch (Exception)
+            {
+                videoTitle = null;
+            }
+
+            return videoTitle;
         }
     }
 }
