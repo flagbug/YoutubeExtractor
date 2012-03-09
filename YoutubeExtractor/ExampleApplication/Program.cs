@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using YoutubeExtractor;
 
-namespace TestApplication
+namespace ExampleApplication
 {
     internal class Program
     {
