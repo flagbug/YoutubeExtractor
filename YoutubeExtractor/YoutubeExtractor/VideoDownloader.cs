@@ -4,12 +4,23 @@ using System.Threading;
 
 namespace YoutubeExtractor
 {
+    /// <summary>
+    /// Provides a method to download a video from YouTube.
+    /// </summary>
     public class VideoDownloader : Downloader
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoDownloader"/> class.
+        /// </summary>
+        /// <param name="video">The video to download.</param>
+        /// <param name="savePath">The path to save the video.</param>
         public VideoDownloader(VideoInfo video, string savePath)
             : base(video, savePath)
         { }
 
+        /// <summary>
+        /// Starts the video download.
+        /// </summary>
         public override void Execute()
         {
             // We need a handle to keep the method synchronously

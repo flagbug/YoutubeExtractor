@@ -2,8 +2,17 @@
 {
     public class VideoInfo
     {
+        /// <summary>
+        /// Gets the download URL.
+        /// </summary>
         public string DownloadUrl { get; private set; }
 
+        /// <summary>
+        /// Gets the type of the video.
+        /// </summary>
+        /// <value>
+        /// The type of the video.
+        /// </value>
         public VideoType VideoType
         {
             get
@@ -37,6 +46,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the video format.
+        /// </summary>
         public VideoFormat VideoFormat
         {
             get
@@ -91,11 +103,20 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if the audio of this video can be extracted by YoutubeExtractor; otherwise, <c>false</c>.
+        /// </value>
         public bool CanExtractAudio
         {
             get { return this.VideoType == VideoType.Flash; }
         }
 
+        /// <summary>
+        /// Gets the audio extension.
+        /// </summary>
         public string AudioExtension
         {
             get
@@ -114,6 +135,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the video extension.
+        /// </summary>
         public string VideoExtension
         {
             get
@@ -137,9 +161,17 @@
             }
         }
 
+        /// <summary>
+        /// Gets the format code.
+        /// </summary>
         public int FormatCode { get; private set; }
 
-        public VideoInfo(string downloadUrl, int formatCode)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoInfo"/> class.
+        /// </summary>
+        /// <param name="downloadUrl">The download URL.</param>
+        /// <param name="formatCode">The format code.</param>
+        internal VideoInfo(string downloadUrl, int formatCode)
         {
             this.DownloadUrl = downloadUrl;
             this.FormatCode = formatCode;

@@ -11,8 +11,16 @@ using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
 {
+    /// <summary>
+    /// Provides a method to get the download link of a YouTube video.
+    /// </summary>
     public static class DownloadUrlResolver
     {
+        /// <summary>
+        /// Gets a list of <see cref="VideoInfo"/>s for the specified URL.
+        /// </summary>
+        /// <param name="videoUrl">The URL of the YouTube video.</param>
+        /// <returns>A list of <see cref="VideoInfo"/>s that can be used to download the video.</returns>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
             const string startConfig = "yt.playerConfig = ";

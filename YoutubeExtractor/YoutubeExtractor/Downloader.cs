@@ -4,22 +4,45 @@ namespace YoutubeExtractor
 {
     public abstract class Downloader
     {
+        /// <summary>
+        /// Occurs when the download is starts.
+        /// </summary>
         public event EventHandler DownloadStarted;
 
+        /// <summary>
+        /// Occurs when the progress has changed.
+        /// </summary>
         public event EventHandler<ProgressEventArgs> ProgressChanged;
 
+        /// <summary>
+        /// Occurs when the download finished.
+        /// </summary>
         public event EventHandler DownloadFinished;
 
+        /// <summary>
+        /// Gets the video to download/convert.
+        /// </summary>
         public VideoInfo Video { get; private set; }
 
+        /// <summary>
+        /// Gets the path to save the video/audio.
+        /// </summary>
         public string SavePath { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Downloader"/> class.
+        /// </summary>
+        /// <param name="video">The video to download/convert.</param>
+        /// <param name="savePath">The path to save the video/audio.</param>
         protected Downloader(VideoInfo video, string savePath)
         {
             this.Video = video;
             this.SavePath = savePath;
         }
 
+        /// <summary>
+        /// Starts the work of the <see cref="Downloader"/>.
+        /// </summary>
         public abstract void Execute();
 
         protected void OnDownloadStarted(EventArgs e)
