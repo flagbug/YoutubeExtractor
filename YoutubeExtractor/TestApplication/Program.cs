@@ -42,7 +42,6 @@ namespace TestApplication
              * Create the audio downloader.
              * The first argument is the video where the audio should be extracted from.
              * The second argument is the path to save the audio file.
-             * Automatic video title infering will be supported later.
              */
             var audioDownloader = new AudioDownloader(video, Path.Combine("D:/Downloads", video.Title + video.AudioExtension));
 
@@ -69,7 +68,6 @@ namespace TestApplication
              * Create the video downloader.
              * The first argument is the video to download.
              * The second argument is the path to save the video file.
-             * Automatic video title infering will be supported later.
              */
             var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + video.VideoExtension));
 
