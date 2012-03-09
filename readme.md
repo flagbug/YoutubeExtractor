@@ -21,7 +21,11 @@ YouTubeExtractor is licenced under the [GNU General Public License version 2 (GP
 
 ## NuGet
 
-YoutubeExtractor is available on [NuGet!](http://nuget.org/packages/YoutubeExtractor)
+YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtractor)!
+
+## Projects that use this library
+
+- [Espera](http://github.com/flagbug/Espera)
 
 ## Example code
 
