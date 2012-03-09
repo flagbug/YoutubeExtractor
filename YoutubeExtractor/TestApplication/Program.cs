@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using YoutubeExtractor;
 
@@ -43,7 +44,7 @@ namespace TestApplication
              * The second argument is the path to save the audio file.
              * Automatic video title infering will be supported later.
              */
-            var audioDownloader = new AudioDownloader(video, "D:/Downloads/test" + video.AudioExtension);
+            var audioDownloader = new AudioDownloader(video, Path.Combine("D:/Downloads", video.Title + video.AudioExtension));
 
             // Register the ProgressChanged event and print the current progress
             audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
@@ -70,7 +71,7 @@ namespace TestApplication
              * The second argument is the path to save the video file.
              * Automatic video title infering will be supported later.
              */
-            var videoDownloader = new VideoDownloader(video, "D:/Downloads/test" + video.VideoExtension);
+            var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + video.VideoExtension));
 
             // Register the ProgressChanged event and print the current progress
             videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
