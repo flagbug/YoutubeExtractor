@@ -9,7 +9,7 @@ namespace YoutubeExtractor
         private FileStream fileStream;
         private long fileOffset;
         private readonly long fileLength;
-        IAudioExtractor audioWriter;
+        IAudioExtractor audioExtractor;
         private readonly string outputPath;
 
         public event EventHandler<ProgressEventArgs> ConversionProgressChanged;
@@ -74,19 +74,19 @@ namespace YoutubeExtractor
 
         private void CloseOutput(bool disposing)
         {
-            if (this.audioWriter != null)
+            if (this.audioExtractor != null)
             {
-                if (disposing && (this.audioWriter.Path != null))
+                if (disposing && (this.audioExtractor.Path != null))
                 {
                     try
                     {
-                        File.Delete(this.audioWriter.Path);
+                        File.Delete(this.audioExtractor.Path);
                     }
                     catch { }
                 }
 
-                this.audioWriter.Dispose();
-                this.audioWriter = null;
+                this.audioExtractor.Dispose();
+                this.audioExtractor = null;
             }
         }
 
@@ -116,18 +116,18 @@ namespace YoutubeExtractor
             if (tagType == 0x8)
             {
                 // If we have no audio writer, create one
-                if (this.audioWriter == null)
+                if (this.audioExtractor == null)
                 {
-                    this.audioWriter = this.GetAudioWriter(mediaInfo);
-                    this.ExtractedAudio = this.audioWriter != null;
+                    this.audioExtractor = this.GetAudioWriter(mediaInfo);
+                    this.ExtractedAudio = this.audioExtractor != null;
                 }
 
-                if (this.audioWriter == null)
+                if (this.audioExtractor == null)
                 {
                     throw new InvalidOperationException();
                 }
 
-                this.audioWriter.WriteChunk(data, timeStamp);
+                this.audioExtractor.WriteChunk(data, timeStamp);
             }
 
             return true;
