@@ -23,6 +23,8 @@ namespace YoutubeExtractor
         /// <returns>A list of <see cref="VideoInfo"/>s that can be used to download the video.</returns>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
+            videoUrl = NormalizeYoutubeUrl(videoUrl);
+
             const string startConfig = "yt.playerConfig = ";
 
             string pageSource;
@@ -107,6 +109,38 @@ namespace YoutubeExtractor
             }
 
             return videoTitle;
+        }
+
+        private static string NormalizeYoutubeUrl(string url)
+        {
+            url = url.Trim();
+
+            if (url.StartsWith("https://"))
+            {
+                url = "http://" + url.Substring(8);
+            }
+
+            else if (!url.StartsWith("http://"))
+            {
+                url = "http://" + url;
+            }
+
+            url = url.Replace("youtu.be/", "youtube.com/watch?v=");
+            url = url.Replace("www.youtube.com", "youtube.com");
+
+            if (url.StartsWith("http://youtube.com/v/"))
+            {
+                url = url.Replace("youtube.com/v/", "youtube.com/watch?v=");
+            }
+            else if (url.StartsWith("http://youtube.com/watch#"))
+            {
+                url = url.Replace("youtube.com/watch#", "youtube.com/watch?");
+            }
+
+            if (!url.StartsWith("http://youtube.com/watch"))
+            {
+                throw new InvalidOperationException("URL is not a valid youtube URL!");
+            }
         }
     }
 }
