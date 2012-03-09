@@ -20,7 +20,7 @@ namespace YoutubeExtractor
         int channelMode;
         uint firstFrameHeader;
 
-        public string Path { get; private set; }
+        public string VideoPath { get; private set; }
 
         public IEnumerable<string> Warnings
         {
@@ -29,7 +29,7 @@ namespace YoutubeExtractor
 
         public Mp3AudioExtractor(string path)
         {
-            this.Path = path;
+            this.VideoPath = path;
             this.fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 64 * 1024);
             this.warnings = new List<string>();
             this.chunkBuffer = new List<byte[]>();

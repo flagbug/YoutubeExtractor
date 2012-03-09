@@ -6,6 +6,6 @@ namespace YoutubeExtractor
     {
         void WriteChunk(byte[] chunk, uint timeStamp);
 
-        string Path { get; }
+        string VideoPath { get; }
     }
 }

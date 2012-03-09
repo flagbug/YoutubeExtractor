@@ -76,11 +76,11 @@ namespace YoutubeExtractor
         {
             if (this.audioExtractor != null)
             {
-                if (disposing && (this.audioExtractor.Path != null))
+                if (disposing && (this.audioExtractor.VideoPath != null))
                 {
                     try
                     {
-                        File.Delete(this.audioExtractor.Path);
+                        File.Delete(this.audioExtractor.VideoPath);
                     }
                     catch { }
                 }

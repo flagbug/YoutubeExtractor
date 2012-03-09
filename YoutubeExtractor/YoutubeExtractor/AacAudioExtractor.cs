@@ -10,11 +10,11 @@ namespace YoutubeExtractor
         int sampleRateIndex;
         int channelConfig;
 
-        public string Path { get; private set; }
+        public string VideoPath { get; private set; }
 
         public AacAudioExtractor(string path)
         {
-            this.Path = path;
+            this.VideoPath = path;
             fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 64 * 1024);
         }
 
