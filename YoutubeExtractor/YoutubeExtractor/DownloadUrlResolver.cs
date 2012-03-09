@@ -141,6 +141,8 @@ namespace YoutubeExtractor
             {
                 throw new InvalidOperationException("URL is not a valid youtube URL!");
             }
+
+            return url;
         }
     }
 }
