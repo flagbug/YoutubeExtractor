@@ -72,24 +72,6 @@ namespace YoutubeExtractor
             this.CloseOutput(false);
         }
 
-        private void CloseOutput(bool disposing)
-        {
-            if (this.audioExtractor != null)
-            {
-                if (disposing && (this.audioExtractor.VideoPath != null))
-                {
-                    try
-                    {
-                        File.Delete(this.audioExtractor.VideoPath);
-                    }
-                    catch { }
-                }
-
-                this.audioExtractor.Dispose();
-                this.audioExtractor = null;
-            }
-        }
-
         private bool ReadTag()
         {
             if (this.fileLength - this.fileOffset < 11)
@@ -228,6 +210,24 @@ namespace YoutubeExtractor
                 }
 
                 this.CloseOutput(true);
+            }
+        }
+
+        private void CloseOutput(bool disposing)
+        {
+            if (this.audioExtractor != null)
+            {
+                if (disposing && (this.audioExtractor.VideoPath != null))
+                {
+                    try
+                    {
+                        File.Delete(this.audioExtractor.VideoPath);
+                    }
+                    catch { }
+                }
+
+                this.audioExtractor.Dispose();
+                this.audioExtractor = null;
             }
         }
     }
