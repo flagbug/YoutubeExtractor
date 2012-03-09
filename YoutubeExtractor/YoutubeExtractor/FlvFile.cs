@@ -54,7 +54,7 @@ namespace YoutubeExtractor
                     break;
                 }
 
-                if ((fileLength - fileOffset) < 4)
+                if (fileLength - fileOffset < 4)
                 {
                     break;
                 }
@@ -74,58 +74,60 @@ namespace YoutubeExtractor
 
         private void CloseOutput(bool disposing)
         {
-            if (audioWriter != null)
+            if (this.audioWriter != null)
             {
-                if (disposing && (audioWriter.Path != null))
+                if (disposing && (this.audioWriter.Path != null))
                 {
                     try
                     {
-                        File.Delete(audioWriter.Path);
+                        File.Delete(this.audioWriter.Path);
                     }
                     catch { }
                 }
 
-                audioWriter.Dispose();
-                audioWriter = null;
+                this.audioWriter.Dispose();
+                this.audioWriter = null;
             }
         }
 
         private bool ReadTag()
         {
-            if ((fileLength - fileOffset) < 11)
+            if (this.fileLength - this.fileOffset < 11)
                 return false;
 
             // Read tag header
             uint tagType = ReadUInt8();
             uint dataSize = ReadUInt24();
             uint timeStamp = ReadUInt24();
-            timeStamp |= ReadUInt8() << 24;
-            ReadUInt24();
+            timeStamp |= this.ReadUInt8() << 24;
+            this.ReadUInt24();
 
             // Read tag data
             if (dataSize == 0)
                 return true;
 
-            if ((fileLength - fileOffset) < dataSize)
+            if (this.fileLength - this.fileOffset < dataSize)
                 return false;
 
-            uint mediaInfo = ReadUInt8();
+            uint mediaInfo = this.ReadUInt8();
             dataSize -= 1;
-            byte[] data = ReadBytes((int)dataSize);
+            byte[] data = this.ReadBytes((int)dataSize);
 
             if (tagType == 0x8)
             {
                 // If we have no audio writer, create one
-                if (audioWriter == null)
+                if (this.audioWriter == null)
                 {
-                    audioWriter = GetAudioWriter(mediaInfo);
-                    ExtractedAudio = audioWriter != null;
+                    this.audioWriter = this.GetAudioWriter(mediaInfo);
+                    this.ExtractedAudio = this.audioWriter != null;
                 }
 
-                if (audioWriter == null)
+                if (this.audioWriter == null)
+                {
                     throw new InvalidOperationException();
+                }
 
-                audioWriter.WriteChunk(data, timeStamp);
+                this.audioWriter.WriteChunk(data, timeStamp);
             }
 
             return true;
@@ -169,37 +171,43 @@ namespace YoutubeExtractor
 
         private void Seek(long offset)
         {
-            fileStream.Seek(offset, SeekOrigin.Begin);
-            fileOffset = offset;
+            this.fileStream.Seek(offset, SeekOrigin.Begin);
+            this.fileOffset = offset;
         }
 
         private uint ReadUInt8()
         {
-            fileOffset += 1;
-            return (uint)fileStream.ReadByte();
+            this.fileOffset += 1;
+            return (uint)this.fileStream.ReadByte();
         }
 
         private uint ReadUInt24()
         {
             var x = new byte[4];
-            fileStream.Read(x, 1, 3);
-            fileOffset += 3;
+
+            this.fileStream.Read(x, 1, 3);
+            this.fileOffset += 3;
+
             return BigEndianBitConverter.ToUInt32(x, 0);
         }
 
         private uint ReadUInt32()
         {
             var x = new byte[4];
-            fileStream.Read(x, 0, 4);
-            fileOffset += 4;
+
+            this.fileStream.Read(x, 0, 4);
+            this.fileOffset += 4;
+
             return BigEndianBitConverter.ToUInt32(x, 0);
         }
 
         private byte[] ReadBytes(int length)
         {
             var buff = new byte[length];
-            fileStream.Read(buff, 0, length);
-            fileOffset += length;
+
+            this.fileStream.Read(buff, 0, length);
+            this.fileOffset += length;
+
             return buff;
         }
 
