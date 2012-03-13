@@ -95,7 +95,7 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 	 * The second argument is the path to save the audio file.
 	 * Automatic video title infering will be supported later.
 	 */
-	var audioDownloader = new AudioDownloader(video, "D:/Downloads/test" + video.AudioExtension);
+	var audioDownloader = new AudioDownloader(video, "insert path" + video.Title + video.AudioExtension);
 	
 	// Register the ProgressChanged event and print the current progress
 	audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
