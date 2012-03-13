@@ -34,7 +34,7 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 ```c#
 
 	// Our test youtube link
-	const string link = "http://www.youtube.com/watch?v=6bMmhKz6KXg";
+	const string link = "insert youtube link here";
 	
 	/*
 	 * Get the available video formats.
@@ -60,7 +60,7 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 	 * The second argument is the path to save the video file.
 	 * Automatic video title infering will be supported later.
 	 */
-	var videoDownloader = new VideoDownloader(video, "D:/Downloads/test" + video.VideoExtension);
+	var videoDownloader = new VideoDownloader(video, "path to download + video.Title + video.VideoExtension);
 	
 	// Register the ProgressChanged event and print the current progress
 	videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
