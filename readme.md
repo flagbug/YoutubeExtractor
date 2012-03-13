@@ -60,7 +60,7 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 	 * The second argument is the path to save the video file.
 	 * Automatic video title infering will be supported later.
 	 */
-	var videoDownloader = new VideoDownloader(video, "path to download + video.Title + video.VideoExtension);
+	var videoDownloader = new VideoDownloader(video, "path to download" + video.Title + video.VideoExtension);
 	
 	// Register the ProgressChanged event and print the current progress
 	videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
