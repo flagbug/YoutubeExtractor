@@ -34,7 +34,7 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 ```c#
 
 	// Our test youtube link
-	const string link = "insert youtube link";
+	string link = "insert youtube link";
 	
 	/*
 	 * Get the available video formats.
