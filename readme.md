@@ -1,4 +1,4 @@
-# YouTubeExtractor
+# YoutubeExtractor
 
 ## Overview
 YoutubeExtractor is a reusable library for .NET, written in C#, that allows to download videos from YouTube and/or extract their audio track (currently only for flash videos).
@@ -34,7 +34,7 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 ```c#
 
 	// Our test youtube link
-	const string link = "http://www.youtube.com/watch?v=6bMmhKz6KXg";
+	string link = "insert youtube link";
 	
 	/*
 	 * Get the available video formats.
@@ -58,9 +58,8 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 	 * Create the video downloader.
 	 * The first argument is the video to download.
 	 * The second argument is the path to save the video file.
-	 * Automatic video title infering will be supported later.
 	 */
-	var videoDownloader = new VideoDownloader(video, "D:/Downloads/test" + video.VideoExtension);
+	var videoDownloader = new VideoDownloader(video, "insert path" + video.Title + video.VideoExtension);
 	
 	// Register the ProgressChanged event and print the current progress
 	videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
@@ -93,9 +92,8 @@ YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtrac
 	 * Create the audio downloader.
 	 * The first argument is the video where the audio should be extracted from.
 	 * The second argument is the path to save the audio file.
-	 * Automatic video title infering will be supported later.
 	 */
-	var audioDownloader = new AudioDownloader(video, "D:/Downloads/test" + video.AudioExtension);
+	var audioDownloader = new AudioDownloader(video, "insert path" + video.Title + video.AudioExtension);
 	
 	// Register the ProgressChanged event and print the current progress
 	audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
