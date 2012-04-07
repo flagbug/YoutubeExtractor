@@ -5,10 +5,10 @@ namespace YoutubeExtractor
 {
     internal class AacAudioExtractor : IAudioExtractor
     {
-        readonly FileStream fileStream;
-        int aacProfile;
-        int sampleRateIndex;
-        int channelConfig;
+        private readonly FileStream fileStream;
+        private int aacProfile;
+        private int sampleRateIndex;
+        private int channelConfig;
 
         public string VideoPath { get; private set; }
 
@@ -20,7 +20,10 @@ namespace YoutubeExtractor
 
         public void WriteChunk(byte[] chunk, uint timeStamp)
         {
-            if (chunk.Length < 1) return;
+            if (chunk.Length < 1)
+            {
+                return;
+            }
 
             if (chunk[0] == 0)
             {
@@ -36,7 +39,7 @@ namespace YoutubeExtractor
                 sampleRateIndex = BitHelper.Read(ref bits, 4);
                 channelConfig = BitHelper.Read(ref bits, 4);
 
-                if ((aacProfile < 0) || (aacProfile > 3))
+                if (aacProfile < 0 || aacProfile > 3)
                     throw new Exception("Unsupported AAC profile.");
                 if (sampleRateIndex > 12)
                     throw new Exception("Invalid AAC sample rate index.");

@@ -11,7 +11,7 @@ namespace YoutubeExtractor
 
         public static int Read(ref ulong x, int length)
         {
-            int r = (int)(x >> (64 - length));
+            int r = (int)(x >> 64 - length);
             x <<= length;
             return r;
         }
@@ -25,7 +25,7 @@ namespace YoutubeExtractor
 
             for (int i = 0; i <= Math.Min(endByte - startByte, 7); i++)
             {
-                bits |= (ulong)bytes[startByte + i] << (56 - (i * 8));
+                bits |= (ulong)bytes[startByte + i] << 56 - i * 8;
             }
 
             if (skipBits != 0)
@@ -40,8 +40,8 @@ namespace YoutubeExtractor
 
         public static void Write(ref ulong x, int length, int value)
         {
-            ulong mask = 0xFFFFFFFFFFFFFFFF >> (64 - length);
-            x = (x << length) | ((ulong)value & mask);
+            ulong mask = 0xFFFFFFFFFFFFFFFF >> 64 - length;
+            x = x << length | (ulong)value & mask;
         }
 
         public static byte[] CopyBlock(byte[] bytes, int offset, int length)
@@ -63,7 +63,7 @@ namespace YoutubeExtractor
 
                 for (i = 0; i < endByte - startByte; i++)
                 {
-                    dst[i] = (byte)((bytes[startByte + i] << shiftA) | (bytes[startByte + i + 1] >> shiftB));
+                    dst[i] = (byte)(bytes[startByte + i] << shiftA | bytes[startByte + i + 1] >> shiftB);
                 }
 
                 if (i < dst.Length)
@@ -72,7 +72,7 @@ namespace YoutubeExtractor
                 }
             }
 
-            dst[dst.Length - 1] &= (byte)(0xFF << ((dst.Length * 8) - length));
+            dst[dst.Length - 1] &= (byte)(0xFF << dst.Length * 8 - length);
 
             return dst;
         }
