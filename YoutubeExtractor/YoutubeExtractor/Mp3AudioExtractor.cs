@@ -5,20 +5,20 @@ namespace YoutubeExtractor
 {
     internal class Mp3AudioExtractor : IAudioExtractor
     {
-        readonly FileStream fileStream;
-        readonly List<string> warnings;
-        readonly List<byte[]> chunkBuffer;
-        readonly List<uint> frameOffsets;
-        uint totalFrameLength;
-        bool isVbr;
-        bool delayWrite;
-        bool hasVbrHeader;
-        bool writeVbrHeader;
-        int firstBitRate;
-        int mpegVersion;
-        int sampleRate;
-        int channelMode;
-        uint firstFrameHeader;
+        private readonly FileStream fileStream;
+        private readonly List<string> warnings;
+        private readonly List<byte[]> chunkBuffer;
+        private readonly List<uint> frameOffsets;
+        private uint totalFrameLength;
+        private bool isVbr;
+        private bool delayWrite;
+        private bool hasVbrHeader;
+        private bool writeVbrHeader;
+        private int firstBitRate;
+        private int mpegVersion;
+        private int sampleRate;
+        private int channelMode;
+        private uint firstFrameHeader;
 
         public string VideoPath { get; private set; }
 
@@ -107,12 +107,12 @@ namespace YoutubeExtractor
                 BitHelper.Read(ref header, 1);
                 channelMode = BitHelper.Read(ref header, 2);
 
-                if ((mpegVersion == 1) || (layer != 1) || (bitRate == 0) || (bitRate == 15) || (sampleRate == 3))
+                if (mpegVersion == 1 || layer != 1 || bitRate == 0 || bitRate == 15 || sampleRate == 3)
                 {
                     break;
                 }
 
-                bitRate = ((mpegVersion == 3) ? mpeg1BitRate[bitRate] : mpeg2XBitRate[bitRate]) * 1000;
+                bitRate = (mpegVersion == 3 ? mpeg1BitRate[bitRate] : mpeg2XBitRate[bitRate]) * 1000;
 
                 switch (mpegVersion)
                 {
@@ -163,7 +163,7 @@ namespace YoutubeExtractor
                         this.firstFrameHeader = BigEndianBitConverter.ToUInt32(buffer, offset);
                     }
 
-                    else if (!this.isVbr && (bitRate != this.firstBitRate))
+                    else if (!this.isVbr && bitRate != this.firstBitRate)
                     {
                         this.isVbr = true;
 
@@ -202,7 +202,7 @@ namespace YoutubeExtractor
                 uint header = this.firstFrameHeader;
                 int dataOffset = GetFrameDataOffset(this.mpegVersion, this.channelMode);
                 header &= 0xFFFE0DFF; // Clear CRC, bitrate, and padding fields
-                header |= (uint)((mpegVersion == 3) ? 5 : 8) << 12; // 64 kbit/sec
+                header |= (uint)(mpegVersion == 3 ? 5 : 8) << 12; // 64 kbit/sec
                 BitHelper.CopyBytes(buffer, 0, BigEndianBitConverter.GetBytes(header));
                 BitHelper.CopyBytes(buffer, dataOffset, BigEndianBitConverter.GetBytes(0x58696E67)); // "Xing"
                 BitHelper.CopyBytes(buffer, dataOffset + 4, BigEndianBitConverter.GetBytes((uint)0x7)); // Flags
@@ -213,7 +213,7 @@ namespace YoutubeExtractor
                 {
                     int frameIndex = (int)((i / 100.0) * this.frameOffsets.Count);
 
-                    buffer[dataOffset + 16 + i] = (byte)((this.frameOffsets[frameIndex] / (double)this.totalFrameLength) * 256.0);
+                    buffer[dataOffset + 16 + i] = (byte)(this.frameOffsets[frameIndex] / (double)this.totalFrameLength * 256.0);
                 }
             }
 
@@ -222,14 +222,14 @@ namespace YoutubeExtractor
 
         private static int GetFrameLength(int mpegVersion, int bitRate, int sampleRate, int padding)
         {
-            return ((mpegVersion == 3) ? 144 : 72) * bitRate / sampleRate + padding;
+            return (mpegVersion == 3 ? 144 : 72) * bitRate / sampleRate + padding;
         }
 
         private static int GetFrameDataOffset(int mpegVersion, int channelMode)
         {
-            return 4 + ((mpegVersion == 3) ?
-                ((channelMode == 3) ? 17 : 32) :
-                ((channelMode == 3) ? 9 : 17));
+            return 4 + (mpegVersion == 3 ?
+                (channelMode == 3 ? 17 : 32) :
+                (channelMode == 3 ? 9 : 17));
         }
     }
 }
