@@ -126,6 +126,11 @@
             Get or set how <see cref="T:System.DateTime"/> time zones are handling when reading JSON.
             </summary>
         </member>
+        <member name="P:Newtonsoft.Json.JsonReader.MaxDepth">
+            <summary>
+            Gets or sets the maximum depth allowed when reading JSON. Reading past this depth will throw a <see cref="T:Newtonsoft.Json.JsonReaderException"/>.
+            </summary>
+        </member>
         <member name="P:Newtonsoft.Json.JsonReader.TokenType">
             <summary>
             Gets the type of the current JSON token. 
@@ -2934,6 +2939,11 @@
             </summary>
             <value>The context.</value>
         </member>
+        <member name="P:Newtonsoft.Json.JsonSerializerSettings.MaxDepth">
+            <summary>
+            Gets or sets the maximum depth allowed when reading JSON. Reading past this depth will throw a <see cref="T:Newtonsoft.Json.JsonReaderException"/>.
+            </summary>
+        </member>
         <member name="P:Newtonsoft.Json.JsonSerializerSettings.Formatting">
             <summary>
             Indicates how JSON text output is formatted.
@@ -3094,12 +3104,20 @@
         </member>
         <member name="F:Newtonsoft.Json.MemberSerialization.OptOut">
             <summary>
-            All members are serialized by default. Members can be excluded using the <see cref="T:Newtonsoft.Json.JsonIgnoreAttribute"/>.
+            All public members are serialized by default. Members can be excluded using <see cref="T:Newtonsoft.Json.JsonIgnoreAttribute"/> or <see cref="T:System.NonSerializedAttribute"/>.
+            This is the default member serialization mode.
             </summary>
         </member>
         <member name="F:Newtonsoft.Json.MemberSerialization.OptIn">
             <summary>
-            Only members must be marked with the <see cref="T:Newtonsoft.Json.JsonPropertyAttribute"/> are serialized.
+            Only members must be marked with <see cref="T:Newtonsoft.Json.JsonPropertyAttribute"/> or <see cref="T:System.Runtime.Serialization.DataMemberAttribute"/> are serialized.
+            This member serialization mode can also be set by marking the class with <see cref="T:System.Runtime.Serialization.DataContractAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:Newtonsoft.Json.MemberSerialization.Fields">
+            <summary>
+            All public and private fields are serialized. Members can be excluded using <see cref="T:Newtonsoft.Json.JsonIgnoreAttribute"/> or <see cref="T:System.NonSerializedAttribute"/>.
+            This member serialization mode can also be set by marking the class with <see cref="T:System.SerializableAttribute"/>.
             </summary>
         </member>
         <member name="T:Newtonsoft.Json.ObjectCreationHandling">
@@ -4424,6 +4442,11 @@
         <member name="P:Newtonsoft.Json.JsonSerializer.Culture">
             <summary>
             Gets or sets the culture used when reading JSON. Defaults to <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>.
+            </summary>
+        </member>
+        <member name="P:Newtonsoft.Json.JsonSerializer.MaxDepth">
+            <summary>
+            Gets or sets the maximum depth allowed when reading JSON. Reading past this depth will throw a <see cref="T:Newtonsoft.Json.JsonReaderException"/>.
             </summary>
         </member>
         <member name="T:Newtonsoft.Json.Linq.Extensions">
@@ -5954,10 +5977,18 @@
         </member>
         <member name="P:Newtonsoft.Json.Serialization.DefaultContractResolver.IgnoreSerializableInterface">
             <summary>
-            Gets or sets a value indicating whether to ignore the ISerializable interface when serializing and deserializing types.
+            Gets or sets a value indicating whether to ignore the <see cref="T:System.Runtime.Serialization.ISerializable"/> interface when serializing and deserializing types.
             </summary>
             <value>
-            	<c>true</c> if the ISerializable interface will be ignored when serializing and deserializing types; otherwise, <c>false</c>.
+            	<c>true</c> if the <see cref="T:System.Runtime.Serialization.ISerializable"/> interface will be ignored when serializing and deserializing types; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Newtonsoft.Json.Serialization.DefaultContractResolver.IgnoreSerializableAttribute">
+            <summary>
+            Gets or sets a value indicating whether to ignore the <see cref="T:System.SerializableAttribute"/> attribute when serializing and deserializing types.
+            </summary>
+            <value>
+            	<c>true</c> if the <see cref="T:System.SerializableAttribute"/> attribute will be ignored when serializing and deserializing types; otherwise, <c>false</c>.
             </value>
         </member>
         <member name="M:Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver.#ctor">
@@ -6755,14 +6786,14 @@
             Include the .NET type name when serializing into a JSON array structure.
             </summary>
         </member>
-        <member name="F:Newtonsoft.Json.TypeNameHandling.Auto">
-            <summary>
-            Include the .NET type name when the type of the object being serialized is not the same as its declared type.
-            </summary>
-        </member>
         <member name="F:Newtonsoft.Json.TypeNameHandling.All">
             <summary>
             Always include the .NET type name when serializing.
+            </summary>
+        </member>
+        <member name="F:Newtonsoft.Json.TypeNameHandling.Auto">
+            <summary>
+            Include the .NET type name when the type of the object being serialized is not the same as its declared type.
             </summary>
         </member>
         <member name="M:Newtonsoft.Json.Utilities.ConvertUtils.Convert(System.Object,System.Globalization.CultureInfo,System.Type)">
