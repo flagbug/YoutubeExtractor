@@ -3113,6 +3113,14 @@
             Gets or sets the culture used when reading JSON. Defaults to <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>.
             </summary>
         </member>
+        <member name="P:Newtonsoft.Json.JsonSerializerSettings.CheckAdditionalContent">
+            <summary>
+            Gets a value indicating whether there will be a check for additional content after deserializing an object.
+            </summary>
+            <value>
+            	<c>true</c> if there will be a check for additional content after deserializing an object; otherwise, <c>false</c>.
+            </value>
+        </member>
         <member name="T:Newtonsoft.Json.JsonValidatingReader">
             <summary>
             Represents a reader that provides <see cref="T:Newtonsoft.Json.Schema.JsonSchema"/> validation.
@@ -4634,6 +4642,14 @@
             Gets or sets the maximum depth allowed when reading JSON. Reading past this depth will throw a <see cref="T:Newtonsoft.Json.JsonReaderException"/>.
             </summary>
         </member>
+        <member name="P:Newtonsoft.Json.JsonSerializer.CheckAdditionalContent">
+            <summary>
+            Gets a value indicating whether there will be a check for additional JSON content after deserializing an object.
+            </summary>
+            <value>
+            	<c>true</c> if there will be a check for additional JSON content after deserializing an object; otherwise, <c>false</c>.
+            </value>
+        </member>
         <member name="T:Newtonsoft.Json.Linq.Extensions">
             <summary>
             Contains the LINQ to JSON extension methods.
@@ -6133,6 +6149,13 @@
         <member name="M:Newtonsoft.Json.Serialization.DefaultContractResolver.ResolvePropertyName(System.String)">
             <summary>
             Resolves the name of the property.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>Name of the property.</returns>
+        </member>
+        <member name="M:Newtonsoft.Json.Serialization.DefaultContractResolver.GetResolvedPropertyName(System.String)">
+            <summary>
+            Gets the resolved name of the property.
             </summary>
             <param name="propertyName">Name of the property.</param>
             <returns>Name of the property.</returns>
