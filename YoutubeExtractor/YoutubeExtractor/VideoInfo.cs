@@ -3,9 +3,59 @@
     public class VideoInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="VideoInfo"/> class.
+        /// </summary>
+        /// <param name="downloadUrl">The download URL.</param>
+        /// <param name="title">The video title.</param>
+        /// <param name="formatCode">The format code.</param>
+        internal VideoInfo(string downloadUrl, string title, int formatCode)
+        {
+            this.DownloadUrl = downloadUrl;
+            this.Title = title;
+            this.FormatCode = formatCode;
+        }
+
+        /// <summary>
+        /// Gets the audio extension.
+        /// </summary>
+        public string AudioExtension
+        {
+            get
+            {
+                if (this.VideoFormat == VideoFormat.FlashAacHighQuality || this.VideoFormat == VideoFormat.FlashAacLowQuality)
+                {
+                    return ".aac";
+                }
+
+                if (this.VideoFormat == VideoFormat.FlashMp3HighQuality || this.VideoFormat == VideoFormat.FlashMp3LowQuality)
+                {
+                    return ".mp3";
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if the audio of this video can be extracted by YoutubeExtractor; otherwise, <c>false</c>.
+        /// </value>
+        public bool CanExtractAudio
+        {
+            get { return this.VideoType == VideoType.Flash; }
+        }
+
+        /// <summary>
         /// Gets the download URL.
         /// </summary>
         public string DownloadUrl { get; private set; }
+
+        /// <summary>
+        /// Gets the format code.
+        /// </summary>
+        public int FormatCode { get; private set; }
 
         /// <summary>
         /// Gets the video title.
@@ -13,41 +63,28 @@
         public string Title { get; private set; }
 
         /// <summary>
-        /// Gets the type of the video.
+        /// Gets the video extension.
         /// </summary>
-        /// <value>
-        /// The type of the video.
-        /// </value>
-        public VideoType VideoType
+        public string VideoExtension
         {
             get
             {
-                switch (this.FormatCode)
+                switch (this.VideoType)
                 {
-                    case 34:
-                    case 35:
-                    case 5:
-                    case 6:
-                        return VideoType.Flash;
+                    case VideoType.Mp4:
+                        return ".mp4";
 
-                    case 18:
-                    case 22:
-                    case 37:
-                    case 38:
-                    case 82:
-                    case 84:
-                        return VideoType.Mp4;
+                    case VideoType.Mobile:
+                        return ".3gp";
 
-                    case 13:
-                    case 17:
-                        return VideoType.Mobile;
+                    case VideoType.Flash:
+                        return ".flv";
 
-                    case 43:
-                    case 45:
-                        return VideoType.WebM;
+                    case VideoType.WebM:
+                        return ".webm";
                 }
 
-                return VideoType.Unknown;
+                return null;
             }
         }
 
@@ -109,79 +146,42 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
+        /// Gets the type of the video.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if the audio of this video can be extracted by YoutubeExtractor; otherwise, <c>false</c>.
+        /// The type of the video.
         /// </value>
-        public bool CanExtractAudio
-        {
-            get { return this.VideoType == VideoType.Flash; }
-        }
-
-        /// <summary>
-        /// Gets the audio extension.
-        /// </summary>
-        public string AudioExtension
+        public VideoType VideoType
         {
             get
             {
-                if (this.VideoFormat == VideoFormat.FlashAacHighQuality || this.VideoFormat == VideoFormat.FlashAacLowQuality)
+                switch (this.FormatCode)
                 {
-                    return ".aac";
+                    case 34:
+                    case 35:
+                    case 5:
+                    case 6:
+                        return VideoType.Flash;
+
+                    case 18:
+                    case 22:
+                    case 37:
+                    case 38:
+                    case 82:
+                    case 84:
+                        return VideoType.Mp4;
+
+                    case 13:
+                    case 17:
+                        return VideoType.Mobile;
+
+                    case 43:
+                    case 45:
+                        return VideoType.WebM;
                 }
 
-                if (this.VideoFormat == VideoFormat.FlashMp3HighQuality || this.VideoFormat == VideoFormat.FlashMp3LowQuality)
-                {
-                    return ".mp3";
-                }
-
-                return null;
+                return VideoType.Unknown;
             }
-        }
-
-        /// <summary>
-        /// Gets the video extension.
-        /// </summary>
-        public string VideoExtension
-        {
-            get
-            {
-                switch (this.VideoType)
-                {
-                    case VideoType.Mp4:
-                        return ".mp4";
-
-                    case VideoType.Mobile:
-                        return ".3gp";
-
-                    case VideoType.Flash:
-                        return ".flv";
-
-                    case VideoType.WebM:
-                        return ".webm";
-                }
-
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Gets the format code.
-        /// </summary>
-        public int FormatCode { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VideoInfo"/> class.
-        /// </summary>
-        /// <param name="downloadUrl">The download URL.</param>
-        /// <param name="title">The video title.</param>
-        /// <param name="formatCode">The format code.</param>
-        internal VideoInfo(string downloadUrl, string title, int formatCode)
-        {
-            this.DownloadUrl = downloadUrl;
-            this.Title = title;
-            this.FormatCode = formatCode;
         }
     }
 }

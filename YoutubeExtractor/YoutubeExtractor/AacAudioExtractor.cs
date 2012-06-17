@@ -7,15 +7,20 @@ namespace YoutubeExtractor
     {
         private readonly FileStream fileStream;
         private int aacProfile;
-        private int sampleRateIndex;
         private int channelConfig;
-
-        public string VideoPath { get; private set; }
+        private int sampleRateIndex;
 
         public AacAudioExtractor(string path)
         {
             this.VideoPath = path;
             fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 64 * 1024);
+        }
+
+        public string VideoPath { get; private set; }
+
+        public void Dispose()
+        {
+            this.fileStream.Dispose();
         }
 
         public void WriteChunk(byte[] chunk, uint timeStamp)
@@ -74,11 +79,6 @@ namespace YoutubeExtractor
                 fileStream.Write(BigEndianBitConverter.GetBytes(bits), 1, 7);
                 fileStream.Write(chunk, 1, dataSize);
             }
-        }
-
-        public void Dispose()
-        {
-            this.fileStream.Dispose();
         }
     }
 }

@@ -8,21 +8,6 @@ namespace ExampleApplication
 {
     internal class Program
     {
-        private static void Main()
-        {
-            // Our test youtube link
-            const string link = "http://www.youtube.com/watch?v=6bMmhKz6KXg";
-
-            /*
-             * Get the available video formats.
-             * We'll work with them in the video and audio download examples.
-             */
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
-
-            //DownloadAudio(videoInfos);
-            //DownloadVideo(videoInfos);
-        }
-
         private static void DownloadAudio(IEnumerable<VideoInfo> videoInfos)
         {
             /*
@@ -79,6 +64,21 @@ namespace ExampleApplication
              * For GUI applications note, that this method runs synchronously.
              */
             videoDownloader.Execute();
+        }
+
+        private static void Main()
+        {
+            // Our test youtube link
+            const string link = "http://www.youtube.com/watch?v=6bMmhKz6KXg";
+
+            /*
+             * Get the available video formats.
+             * We'll work with them in the video and audio download examples.
+             */
+            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
+
+            //DownloadAudio(videoInfos);
+            //DownloadVideo(videoInfos);
         }
     }
 }

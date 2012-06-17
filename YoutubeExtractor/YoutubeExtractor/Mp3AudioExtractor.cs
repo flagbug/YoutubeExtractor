@@ -5,27 +5,20 @@ namespace YoutubeExtractor
 {
     internal class Mp3AudioExtractor : IAudioExtractor
     {
-        private readonly FileStream fileStream;
-        private readonly List<string> warnings;
         private readonly List<byte[]> chunkBuffer;
+        private readonly FileStream fileStream;
         private readonly List<uint> frameOffsets;
-        private uint totalFrameLength;
-        private bool isVbr;
+        private readonly List<string> warnings;
+        private int channelMode;
         private bool delayWrite;
-        private bool hasVbrHeader;
-        private bool writeVbrHeader;
         private int firstBitRate;
+        private uint firstFrameHeader;
+        private bool hasVbrHeader;
+        private bool isVbr;
         private int mpegVersion;
         private int sampleRate;
-        private int channelMode;
-        private uint firstFrameHeader;
-
-        public string VideoPath { get; private set; }
-
-        public IEnumerable<string> Warnings
-        {
-            get { return this.warnings; }
-        }
+        private uint totalFrameLength;
+        private bool writeVbrHeader;
 
         public Mp3AudioExtractor(string path)
         {
@@ -35,6 +28,26 @@ namespace YoutubeExtractor
             this.chunkBuffer = new List<byte[]>();
             this.frameOffsets = new List<uint>();
             this.delayWrite = true;
+        }
+
+        public string VideoPath { get; private set; }
+
+        public IEnumerable<string> Warnings
+        {
+            get { return this.warnings; }
+        }
+
+        public void Dispose()
+        {
+            this.Flush();
+
+            if (this.writeVbrHeader)
+            {
+                this.fileStream.Seek(0, SeekOrigin.Begin);
+                this.WriteVbrHeader(false);
+            }
+
+            this.fileStream.Dispose();
         }
 
         public void WriteChunk(byte[] chunk, uint timeStamp)
@@ -53,17 +66,16 @@ namespace YoutubeExtractor
             }
         }
 
-        public void Dispose()
+        private static int GetFrameDataOffset(int mpegVersion, int channelMode)
         {
-            this.Flush();
+            return 4 + (mpegVersion == 3 ?
+                (channelMode == 3 ? 17 : 32) :
+                (channelMode == 3 ? 9 : 17));
+        }
 
-            if (this.writeVbrHeader)
-            {
-                this.fileStream.Seek(0, SeekOrigin.Begin);
-                this.WriteVbrHeader(false);
-            }
-
-            this.fileStream.Dispose();
+        private static int GetFrameLength(int mpegVersion, int bitRate, int sampleRate, int padding)
+        {
+            return (mpegVersion == 3 ? 144 : 72) * bitRate / sampleRate + padding;
         }
 
         private void Flush()
@@ -218,18 +230,6 @@ namespace YoutubeExtractor
             }
 
             this.fileStream.Write(buffer, 0, buffer.Length);
-        }
-
-        private static int GetFrameLength(int mpegVersion, int bitRate, int sampleRate, int padding)
-        {
-            return (mpegVersion == 3 ? 144 : 72) * bitRate / sampleRate + padding;
-        }
-
-        private static int GetFrameDataOffset(int mpegVersion, int channelMode)
-        {
-            return 4 + (mpegVersion == 3 ?
-                (channelMode == 3 ? 17 : 32) :
-                (channelMode == 3 ? 9 : 17));
         }
     }
 }

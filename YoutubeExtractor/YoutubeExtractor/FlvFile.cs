@@ -5,14 +5,12 @@ namespace YoutubeExtractor
 {
     internal class FlvFile : IDisposable
     {
-        private readonly string inputPath;
-        private FileStream fileStream;
-        private long fileOffset;
         private readonly long fileLength;
-        IAudioExtractor audioExtractor;
+        private readonly string inputPath;
         private readonly string outputPath;
-
-        public event EventHandler<ProgressEventArgs> ConversionProgressChanged;
+        private IAudioExtractor audioExtractor;
+        private long fileOffset;
+        private FileStream fileStream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlvFile"/> class.
@@ -28,7 +26,15 @@ namespace YoutubeExtractor
             this.fileLength = fileStream.Length;
         }
 
+        public event EventHandler<ProgressEventArgs> ConversionProgressChanged;
+
         public bool ExtractedAudio { get; private set; }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         public void ExtractStreams()
         {
@@ -70,6 +76,84 @@ namespace YoutubeExtractor
             }
 
             this.CloseOutput(false);
+        }
+
+        private void CloseOutput(bool disposing)
+        {
+            if (this.audioExtractor != null)
+            {
+                if (disposing && (this.audioExtractor.VideoPath != null))
+                {
+                    try
+                    {
+                        File.Delete(this.audioExtractor.VideoPath);
+                    }
+                    catch { }
+                }
+
+                this.audioExtractor.Dispose();
+                this.audioExtractor = null;
+            }
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (this.fileStream != null)
+                {
+                    this.fileStream.Close();
+                    this.fileStream = null;
+                }
+
+                this.CloseOutput(true);
+            }
+        }
+
+        private IAudioExtractor GetAudioWriter(uint mediaInfo)
+        {
+            uint format = mediaInfo >> 4;
+
+            switch (format)
+            {
+                case 14:
+                case 2:
+                    return new Mp3AudioExtractor(this.outputPath);
+
+                case 10:
+                    return new AacAudioExtractor(this.outputPath);
+            }
+
+            string typeStr;
+
+            switch (format)
+            {
+                case 1:
+                    typeStr = "ADPCM";
+                    break;
+
+                case 6:
+                case 5:
+                case 4:
+                    typeStr = "Nellymoser";
+                    break;
+
+                default:
+                    typeStr = "format=" + format;
+                    break;
+            }
+
+            throw new InvalidOperationException("Unable to extract audio (" + typeStr + " is unsupported).");
+        }
+
+        private byte[] ReadBytes(int length)
+        {
+            var buff = new byte[length];
+
+            this.fileStream.Read(buff, 0, length);
+            this.fileOffset += length;
+
+            return buff;
         }
 
         private bool ReadTag()
@@ -115,54 +199,6 @@ namespace YoutubeExtractor
             return true;
         }
 
-        private IAudioExtractor GetAudioWriter(uint mediaInfo)
-        {
-            uint format = mediaInfo >> 4;
-
-            switch (format)
-            {
-                case 14:
-                case 2:
-                    return new Mp3AudioExtractor(this.outputPath);
-
-                case 10:
-                    return new AacAudioExtractor(this.outputPath);
-            }
-
-            string typeStr;
-
-            switch (format)
-            {
-                case 1:
-                    typeStr = "ADPCM";
-                    break;
-
-                case 6:
-                case 5:
-                case 4:
-                    typeStr = "Nellymoser";
-                    break;
-
-                default:
-                    typeStr = "format=" + format;
-                    break;
-            }
-
-            throw new InvalidOperationException("Unable to extract audio (" + typeStr + " is unsupported).");
-        }
-
-        private void Seek(long offset)
-        {
-            this.fileStream.Seek(offset, SeekOrigin.Begin);
-            this.fileOffset = offset;
-        }
-
-        private uint ReadUInt8()
-        {
-            this.fileOffset += 1;
-            return (uint)this.fileStream.ReadByte();
-        }
-
         private uint ReadUInt24()
         {
             var x = new byte[4];
@@ -183,52 +219,16 @@ namespace YoutubeExtractor
             return BigEndianBitConverter.ToUInt32(x, 0);
         }
 
-        private byte[] ReadBytes(int length)
+        private uint ReadUInt8()
         {
-            var buff = new byte[length];
-
-            this.fileStream.Read(buff, 0, length);
-            this.fileOffset += length;
-
-            return buff;
+            this.fileOffset += 1;
+            return (uint)this.fileStream.ReadByte();
         }
 
-        public void Dispose()
+        private void Seek(long offset)
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (this.fileStream != null)
-                {
-                    this.fileStream.Close();
-                    this.fileStream = null;
-                }
-
-                this.CloseOutput(true);
-            }
-        }
-
-        private void CloseOutput(bool disposing)
-        {
-            if (this.audioExtractor != null)
-            {
-                if (disposing && (this.audioExtractor.VideoPath != null))
-                {
-                    try
-                    {
-                        File.Delete(this.audioExtractor.VideoPath);
-                    }
-                    catch { }
-                }
-
-                this.audioExtractor.Dispose();
-                this.audioExtractor = null;
-            }
+            this.fileStream.Seek(offset, SeekOrigin.Begin);
+            this.fileOffset = offset;
         }
     }
 }

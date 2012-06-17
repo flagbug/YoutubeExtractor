@@ -2,33 +2,6 @@
 {
     internal static class BigEndianBitConverter
     {
-        public static ulong ToUInt64(byte[] value, int startIndex)
-        {
-            return
-                (ulong)value[startIndex] << 56 |
-                (ulong)value[startIndex + 1] << 48 |
-                (ulong)value[startIndex + 2] << 40 |
-                (ulong)value[startIndex + 3] << 32 |
-                (ulong)value[startIndex + 4] << 24 |
-                (ulong)value[startIndex + 5] << 16 |
-                (ulong)value[startIndex + 6] << 8 |
-                value[startIndex + 7];
-        }
-
-        public static uint ToUInt32(byte[] value, int startIndex)
-        {
-            return
-                (uint)value[startIndex] << 24 |
-                (uint)value[startIndex + 1] << 16 |
-                (uint)value[startIndex + 2] << 8 |
-                value[startIndex + 3];
-        }
-
-        public static ushort ToUInt16(byte[] value, int startIndex)
-        {
-            return (ushort)(value[startIndex] << 8 | value[startIndex + 1]);
-        }
-
         public static byte[] GetBytes(ulong value)
         {
             var buff = new byte[8];
@@ -65,6 +38,33 @@
             buff[1] = (byte)(value);
 
             return buff;
+        }
+
+        public static ushort ToUInt16(byte[] value, int startIndex)
+        {
+            return (ushort)(value[startIndex] << 8 | value[startIndex + 1]);
+        }
+
+        public static uint ToUInt32(byte[] value, int startIndex)
+        {
+            return
+                (uint)value[startIndex] << 24 |
+                (uint)value[startIndex + 1] << 16 |
+                (uint)value[startIndex + 2] << 8 |
+                value[startIndex + 3];
+        }
+
+        public static ulong ToUInt64(byte[] value, int startIndex)
+        {
+            return
+                (ulong)value[startIndex] << 56 |
+                (ulong)value[startIndex + 1] << 48 |
+                (ulong)value[startIndex + 2] << 40 |
+                (ulong)value[startIndex + 3] << 32 |
+                (ulong)value[startIndex + 4] << 24 |
+                (ulong)value[startIndex + 5] << 16 |
+                (ulong)value[startIndex + 6] << 8 |
+                value[startIndex + 7];
         }
     }
 }
