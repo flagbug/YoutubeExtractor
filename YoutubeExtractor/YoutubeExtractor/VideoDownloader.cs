@@ -30,11 +30,7 @@ namespace YoutubeExtractor
 
             client.DownloadFileCompleted += (sender, args) => handle.Set();
             client.DownloadProgressChanged += (sender, args) =>
-            {
-                double progress = (args.BytesReceived * 1.0 / args.TotalBytesToReceive) * 100;
-
-                this.OnProgressChanged(new ProgressEventArgs(progress));
-            };
+                this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage));
 
             this.OnDownloadStarted(EventArgs.Empty);
 
