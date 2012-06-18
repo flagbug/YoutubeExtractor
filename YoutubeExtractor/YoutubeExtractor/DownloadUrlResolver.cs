@@ -21,6 +21,8 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="videoUrl">The URL of the YouTube video.</param>
         /// <returns>A list of <see cref="VideoInfo"/>s that can be used to download the video.</returns>
+        /// <exception cref="ArgumentException">videoUrl is not a valid YouTube URL.</exception>
+        /// <exception cref="WebException">An error occured while downloading the video infos.</exception>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
             videoUrl = NormalizeYoutubeUrl(videoUrl);
@@ -139,7 +141,7 @@ namespace YoutubeExtractor
 
             if (!url.StartsWith("http://youtube.com/watch"))
             {
-                throw new InvalidOperationException("URL is not a valid youtube URL!");
+                throw new ArgumentException("URL is not a valid youtube URL!");
             }
 
             return url;
