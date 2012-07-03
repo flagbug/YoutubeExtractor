@@ -106,6 +106,9 @@
                     case 45:
                         return VideoFormat.WebM720;
 
+                    case 46:
+                        return VideoFormat.WebM1080;
+
                     case 38:
                         return VideoFormat.HighDefinition4K;
 
@@ -177,6 +180,7 @@
 
                     case 43:
                     case 45:
+                    case 46:
                         return VideoType.WebM;
                 }
 

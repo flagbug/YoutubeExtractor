@@ -3,6 +3,11 @@
     public enum VideoFormat
     {
         /// <summary>
+        /// A WebM video with 1080p resolution (.webm).
+        /// </summary>
+        WebM1080,
+
+        /// <summary>
         /// A WebM video with 720p resolution (.webm).
         /// </summary>
         WebM720,
@@ -75,6 +80,6 @@
         /// <summary>
         /// Unkown format
         /// </summary>
-        Unkown
+        Unkown,
     }
 }
