@@ -1,7 +1,21 @@
+----------------------------------- v0.2.0 -----------------------------------
+
+FEATURES:
+- Added support for full HD WebM (format code 46).
+- Added support for some 3GP format (format code 36).
+
+CHANGES:
+- DownloadUrlResolver.GetDownloadUrls now throws ArgumentException, instead of
+  InvalidOperationException, if the YouTube url is not valid.
+- Updated JSON.NET to version 4.5.7
+
 ----------------------------------- v0.1.0 -----------------------------------
 
-- Added more documentation (especially method XML-comments)
+FEATURES:
 - Added the "Title" property in the Videoinfo class, that returns the title 
   of the video.
 - The DownloadUrlResolver.GetDownloadUrls method is less strict with the 
   videoUrl argument and also accepts short-URLs (youtu.be)
+
+IMPROVEMENTS
+- Added more documentation (especially method XML-comments)
