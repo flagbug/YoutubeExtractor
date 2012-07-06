@@ -141,6 +141,7 @@
 
                     case 13:
                     case 17:
+                    case 36:
                         return VideoFormat.Mobile;
                 }
 
@@ -176,6 +177,7 @@
 
                     case 13:
                     case 17:
+                    case 36:
                         return VideoType.Mobile;
 
                     case 43:
