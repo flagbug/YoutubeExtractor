@@ -3,12 +3,13 @@
 ## Overview
 YoutubeExtractor is a reusable library for .NET, written in C#, that allows to download videos from YouTube and/or extract their audio track (currently only for flash videos).
 
-The original project, youtubeFisher, is a pure GUI application, but there was the need for a reusable library.
+## Credits
 
-## Authors
-All credits go to the [youtubeFisher](http://youtubefisher.codeplex.com/) project.
+### - [YoutubeFisher](http://youtubefisher.codeplex.com/)
+Code for resolving the video download links
 
-I, flagbug, just extracted the code out of this project, cleaned it up and packaged it into reusable classes.
+### - [FlvExtract](http://moitah.net/)
+Code for extracting MP3 and AAC audio tracks out of flash files.
 
 ## License
 
