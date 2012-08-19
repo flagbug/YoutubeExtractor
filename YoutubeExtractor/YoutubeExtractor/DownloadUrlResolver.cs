@@ -24,7 +24,7 @@ namespace YoutubeExtractor
         /// <exception cref="ArgumentNullException">The <paramref name="videoUrl"/> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">The <paramref name="videoUrl"/> parameter is not a valid YouTube URL.</exception>
         /// <exception cref="WebException">An error occurred while downloading the YouTube page html.</exception>
-        /// <exception cref="YoutubeParseException"></exception>
+        /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
             if (videoUrl == null)
