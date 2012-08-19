@@ -1,6 +1,7 @@
 
-/YoutubeExtractor/_ReSharper.YoutubeExtractor
-/YoutubeExtractor/YoutubeExtractor/bin
-/YoutubeExtractor/YoutubeExtractor/obj
-/YoutubeExtractor/ExampleApplication/bin
-/YoutubeExtractor/ExampleApplication/obj
+_ReSharper*
+[Bb]in/
+[Oo]bj/
+*.ncrunchsolution
+*.user
+*.suo

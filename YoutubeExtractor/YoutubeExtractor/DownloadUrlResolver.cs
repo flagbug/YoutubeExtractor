@@ -21,10 +21,15 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="videoUrl">The URL of the YouTube video.</param>
         /// <returns>A list of <see cref="VideoInfo"/>s that can be used to download the video.</returns>
-        /// <exception cref="ArgumentException">videoUrl is not a valid YouTube URL.</exception>
-        /// <exception cref="WebException">An error occured while downloading the video infos.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="videoUrl"/> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">The <paramref name="videoUrl"/> parameter is not a valid YouTube URL.</exception>
+        /// <exception cref="WebException">An error occurred while downloading the YouTube page html.</exception>
+        /// <exception cref="YoutubeParseException"></exception>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
+            if (videoUrl == null)
+                throw new ArgumentNullException("videoUrl");
+
             videoUrl = NormalizeYoutubeUrl(videoUrl);
 
             const string startConfig = "yt.playerConfig = ";
@@ -44,44 +49,61 @@ namespace YoutubeExtractor
 
             if (playerConfigIndex > -1)
             {
-                string signature = pageSource.Substring(playerConfigIndex);
-                int endOfJsonIndex = signature.TrimEnd(' ').IndexOf("yt.setConfig", StringComparison.Ordinal);
-                signature = signature.Substring(startConfig.Length, endOfJsonIndex - 26);
-
-                JObject playerConfig = JObject.Parse(signature);
-                JObject playerArgs = JObject.Parse(playerConfig["args"].ToString());
-                var availableFormats = (string)playerArgs["url_encoded_fmt_stream_map"];
-
-                const string argument = "url=";
-                const string endOfQueryString = "&quality";
-
-                if (availableFormats != String.Empty)
+                try
                 {
-                    var urlList = new List<string>(Regex.Split(availableFormats, argument));
+                    string signature = pageSource.Substring(playerConfigIndex);
+                    int endOfJsonIndex = signature.TrimEnd(' ').IndexOf("yt.setConfig", StringComparison.Ordinal);
+                    signature = signature.Substring(startConfig.Length, endOfJsonIndex - 26);
 
-                    var downLoadInfos = new List<VideoInfo>();
+                    JObject playerConfig = JObject.Parse(signature);
+                    JObject playerArgs = JObject.Parse(playerConfig["args"].ToString());
+                    var availableFormats = (string)playerArgs["url_encoded_fmt_stream_map"];
 
-                    // Format the URL
-                    var urls = urlList
-                        .Where(entry => !String.IsNullOrEmpty(entry.Trim()))
-                        .Select(entry => entry.Substring(0, entry.IndexOf(endOfQueryString, StringComparison.Ordinal)))
-                        .Select(entry => new Uri(Uri.UnescapeDataString(entry)));
+                    const string argument = "url=";
+                    const string endOfQueryString = "&quality";
 
-                    foreach (Uri url in urls)
+                    if (availableFormats != String.Empty)
                     {
-                        NameValueCollection queryString = HttpUtility.ParseQueryString(url.Query);
+                        var urlList =
+                            Regex.Split(availableFormats, argument)
+                                .Skip(1); // The first item is empty or contains no valid value
 
-                        // for this version, only get the download URL
-                        byte formatCode = Byte.Parse(queryString["itag"]);
-                        // Currently based on youtube specifications (later we'll depend on the MIME type returned from the web request)
-                        downLoadInfos.Add(new VideoInfo(url.ToString(), videoTitle, formatCode));
+                        var downLoadInfos = new List<VideoInfo>();
+
+                        // Format the URL
+                        var urls = urlList
+                            .Select(entry => entry.Substring(0, entry.IndexOf(endOfQueryString, StringComparison.Ordinal)))
+                            .Select(entry => new Uri(Uri.UnescapeDataString(entry)));
+
+                        foreach (Uri url in urls)
+                        {
+                            NameValueCollection queryString = HttpUtility.ParseQueryString(url.Query);
+
+                            // for this version, only get the download URL
+                            byte formatCode = Byte.Parse(queryString["itag"]);
+                            // Currently based on YouTube specifications (later we'll depend on the MIME type returned from the web request)
+                            downLoadInfos.Add(new VideoInfo(url.ToString(), videoTitle, formatCode));
+                        }
+
+                        return downLoadInfos;
                     }
-
-                    return downLoadInfos;
+                }
+                catch (Exception ex)
+                {
+                    ThrowYoutubeParseException(ex);
                 }
             }
 
-            return Enumerable.Empty<VideoInfo>();
+            ThrowYoutubeParseException(null);
+
+            return null;
+        }
+
+        private static void ThrowYoutubeParseException(Exception innerException)
+        {
+            throw new YoutubeParseException("Could not parse the Youtube page.\n" +
+                                            "This may be due to a change of the Youtube page structure.\n" +
+                                            "Please report this bug at www.github.com/flagbug/YoutubeExtractor/issues", innerException);
         }
 
         private static string GetVideoTitle(string pageSource)

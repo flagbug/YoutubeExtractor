@@ -55,6 +55,7 @@
     <Compile Include="VideoFormat.cs" />
     <Compile Include="VideoInfo.cs" />
     <Compile Include="VideoType.cs" />
+    <Compile Include="YoutubeParseException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
