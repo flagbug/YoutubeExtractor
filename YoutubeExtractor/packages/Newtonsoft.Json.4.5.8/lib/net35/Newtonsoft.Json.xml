@@ -940,7 +940,7 @@
             <summary>
             Writes a <see cref="T:Byte[]"/> value that represents a BSON object id.
             </summary>
-            <param name="value"></param>
+            <param name="value">The Object ID value to write.</param>
         </member>
         <member name="M:Newtonsoft.Json.Bson.BsonWriter.WriteRegex(System.String,System.String)">
             <summary>
@@ -1123,7 +1123,7 @@
             <summary>
             Create a custom object
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">The object type to convert.</typeparam>
         </member>
         <member name="M:Newtonsoft.Json.Converters.CustomCreationConverter`1.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
             <summary>
@@ -1148,7 +1148,7 @@
             Creates an object which will then be populated by the serializer.
             </summary>
             <param name="objectType">Type of the object.</param>
-            <returns></returns>
+            <returns>The created object.</returns>
         </member>
         <member name="M:Newtonsoft.Json.Converters.CustomCreationConverter`1.CanConvert(System.Type)">
             <summary>
@@ -1310,9 +1310,6 @@
             </returns>
         </member>
         <member name="T:Newtonsoft.Json.Converters.StringEnumConverter">
-            <summary>
-            Converts an <see cref="T:System.Enum"/> to and from its name string value.
-            </summary>
             <summary>
             Converts an <see cref="T:System.Enum"/> to and from its name string value.
             </summary>
@@ -2340,12 +2337,14 @@
             <summary>
             Creates the specified .NET type from the <see cref="T:Newtonsoft.Json.Linq.JToken"/>.
             </summary>
+            <typeparam name="T">The object type that the token will be deserialized to.</typeparam>
             <returns>The new object created from the JSON value.</returns>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JToken.ToObject``1(Newtonsoft.Json.JsonSerializer)">
             <summary>
             Creates the specified .NET type from the <see cref="T:Newtonsoft.Json.Linq.JToken"/> using the specified <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
             </summary>
+            <typeparam name="T">The object type that the token will be deserialized to.</typeparam>
             <param name="jsonSerializer">The <see cref="T:Newtonsoft.Json.JsonSerializer"/> that will be used when creating the object.</param>
             <returns>The new object created from the JSON value.</returns>
         </member>
@@ -2490,6 +2489,12 @@
             <param name="value">The value.</param>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JValue.#ctor(System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JValue"/> class with the given value.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:Newtonsoft.Json.Linq.JValue.#ctor(System.Single)">
             <summary>
             Initializes a new instance of the <see cref="T:Newtonsoft.Json.Linq.JValue"/> class with the given value.
             </summary>
@@ -2852,6 +2857,9 @@
             <summary>
             Specifies reference handling options for the <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="PreservingObjectReferencesOn" title="Preserve Object References"/>       
+            </example>
         </member>
         <member name="F:Newtonsoft.Json.PreserveReferencesHandling.None">
             <summary>
@@ -2905,6 +2913,10 @@
             <summary>
             Specifies default value handling options for the <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeDefaultValueHandlingObject" title="DefaultValueHandling Class"/>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeDefaultValueHandlingExample" title="DefaultValueHandling Ignore Example"/>
+            </example>
         </member>
         <member name="F:Newtonsoft.Json.DefaultValueHandling.Include">
             <summary>
@@ -3941,6 +3953,9 @@
             <summary>
             Provides methods for converting between common language runtime types and JSON types.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="SerializeObject" title="Serializing and Deserializing JSON with JsonConvert" />
+            </example>
         </member>
         <member name="F:Newtonsoft.Json.JsonConvert.True">
             <summary>
@@ -5008,6 +5023,9 @@
             <summary>
             Represents a JSON object.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParse" title="Parsing a JSON Object from Text" />
+            </example>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JObject.#ctor">
             <summary>
@@ -5064,6 +5082,9 @@
             </summary>
             <param name="json">A <see cref="T:System.String"/> that contains JSON.</param>
             <returns>A <see cref="T:Newtonsoft.Json.Linq.JObject"/> populated from the string that contains JSON.</returns>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParse" title="Parsing a JSON Object from Text"/>
+            </example>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JObject.FromObject(System.Object)">
             <summary>
@@ -5267,6 +5288,9 @@
             <summary>
             Represents a JSON array.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParseArray" title="Parsing a JSON Array from Text" />
+            </example>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JArray.#ctor">
             <summary>
@@ -5304,6 +5328,9 @@
             </summary>
             <param name="json">A <see cref="T:System.String"/> that contains JSON.</param>
             <returns>A <see cref="T:Newtonsoft.Json.Linq.JArray"/> populated from the string that contains JSON.</returns>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\LinqToJsonTests.cs" region="LinqToJsonCreateParseArray" title="Parsing a JSON Array from Text"/>
+            </example>
         </member>
         <member name="M:Newtonsoft.Json.Linq.JArray.FromObject(System.Object)">
             <summary>
@@ -6006,6 +6033,10 @@
             <summary>
             Used by <see cref="T:Newtonsoft.Json.JsonSerializer"/> to resolves a <see cref="T:Newtonsoft.Json.Serialization.JsonContract"/> for a given <see cref="T:System.Type"/>.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeContractResolverObject" title="IContractResolver Class"/>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeContractResolverExample" title="IContractResolver Example"/>
+            </example>
         </member>
         <member name="M:Newtonsoft.Json.Serialization.IContractResolver.ResolveContract(System.Type)">
             <summary>
@@ -6072,7 +6103,7 @@
             Resolves the default <see cref="T:Newtonsoft.Json.JsonConverter"/> for the contract.
             </summary>
             <param name="objectType">Type of the object.</param>
-            <returns></returns>
+            <returns>The contract's default <see cref="T:Newtonsoft.Json.JsonConverter"/>.</returns>
         </member>
         <member name="M:Newtonsoft.Json.Serialization.DefaultContractResolver.CreateDictionaryContract(System.Type)">
             <summary>
@@ -6278,6 +6309,12 @@
             </summary>
             <value>The <see cref="T:System.Type"/> of the collection items.</value>
         </member>
+        <member name="P:Newtonsoft.Json.Serialization.JsonArrayContract.IsMultidimensionalArray">
+            <summary>
+            Gets a value indicating whether the collection type is a multidimensional array.
+            </summary>
+            <value><c>true</c> if the collection type is a multidimensional array; otherwise, <c>false</c>.</value>
+        </member>
         <member name="T:Newtonsoft.Json.Serialization.JsonDictionaryContract">
             <summary>
             Contract details for a <see cref="T:System.Type"/> used by the <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
@@ -6386,6 +6423,12 @@
             Gets a value indicating whether this <see cref="T:Newtonsoft.Json.Serialization.JsonProperty"/> is writable.
             </summary>
             <value><c>true</c> if writable; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Newtonsoft.Json.Serialization.JsonProperty.HasMemberAttribute">
+            <summary>
+            Gets a value indicating whether this <see cref="T:Newtonsoft.Json.Serialization.JsonProperty"/> has a member attribute.
+            </summary>
+            <value><c>true</c> if has a member attribute; otherwise, <c>false</c>.</value>
         </member>
         <member name="P:Newtonsoft.Json.Serialization.JsonProperty.DefaultValue">
             <summary>
@@ -6539,6 +6582,10 @@
             <summary>
             Specifies null value handling options for the <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
             </summary>
+            <example>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeNullValueHandlingObject" title="NullValueHandling Class"/>
+              <code lang="cs" source="..\Src\Newtonsoft.Json.Tests\Documentation\SerializationTests.cs" region="ReducingSerializedJsonSizeNullValueHandlingExample" title="NullValueHandling Ignore Example"/>
+            </example>
         </member>
         <member name="F:Newtonsoft.Json.NullValueHandling.Include">
             <summary>
@@ -7005,6 +7052,7 @@
             <summary>
             Represents a method that constructs an object.
             </summary>
+            <typeparam name="T">The object type to create.</typeparam>
         </member>
         <member name="T:Newtonsoft.Json.TypeNameHandling">
             <summary>
