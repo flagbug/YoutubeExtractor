@@ -190,5 +190,10 @@
                 return VideoType.Unknown;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("Full Title: {0}, Format: {1}", this.Title + this.VideoExtension, this.VideoFormat);
+        }
     }
 }
