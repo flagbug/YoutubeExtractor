@@ -181,6 +181,7 @@
                         return VideoType.Mobile;
 
                     case 43:
+                    case 44:
                     case 45:
                     case 46:
                         return VideoType.WebM;
