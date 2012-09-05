@@ -18,6 +18,9 @@
         /// <summary>
         /// Gets the audio extension.
         /// </summary>
+        /// <value>
+        /// The audio extension. <c>null</c>, if the audio extension is unknown.
+        /// </value>
         public string AudioExtension
         {
             get
@@ -65,6 +68,9 @@
         /// <summary>
         /// Gets the video extension.
         /// </summary>
+        /// <value>
+        /// The video extension. <c>null</c>, if the video extension is unknown.
+        /// </value>
         public string VideoExtension
         {
             get
@@ -97,6 +103,30 @@
             {
                 switch (this.FormatCode)
                 {
+                    case 5:
+                        return VideoFormat.FlashMp3LowQuality;
+
+                    case 6:
+                        return VideoFormat.FlashMp3HighQuality;
+
+                    case 18:
+                        return VideoFormat.Standard360;
+
+                    case 22:
+                        return VideoFormat.HighDefinition720;
+
+                    case 34:
+                        return VideoFormat.FlashAacLowQuality;
+
+                    case 35:
+                        return VideoFormat.FlashAacHighQuality;
+
+                    case 37:
+                        return VideoFormat.HighDefinition1080;
+
+                    case 38:
+                        return VideoFormat.HighDefinition4K;
+
                     case 43:
                         return VideoFormat.WebM360;
 
@@ -109,35 +139,11 @@
                     case 46:
                         return VideoFormat.WebM1080;
 
-                    case 38:
-                        return VideoFormat.HighDefinition4K;
-
-                    case 37:
-                        return VideoFormat.HighDefinition1080;
-
-                    case 22:
-                        return VideoFormat.HighDefinition720;
-
                     case 82:
                         return VideoFormat.Standard360_3D;
 
                     case 84:
                         return VideoFormat.HighDefinition720_3D;
-
-                    case 35:
-                        return VideoFormat.FlashAacHighQuality;
-
-                    case 34:
-                        return VideoFormat.FlashAacLowQuality;
-
-                    case 18:
-                        return VideoFormat.Standard360;
-
-                    case 6:
-                        return VideoFormat.FlashMp3HighQuality;
-
-                    case 5:
-                        return VideoFormat.FlashMp3LowQuality;
 
                     case 13:
                     case 17:
