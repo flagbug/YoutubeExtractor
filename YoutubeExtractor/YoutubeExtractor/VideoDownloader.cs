@@ -34,10 +34,17 @@ namespace YoutubeExtractor
 
             this.OnDownloadStarted(EventArgs.Empty);
 
-            client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
+            try
+            {
+                client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
 
-            handle.WaitOne();
-            handle.Close();
+                handle.WaitOne();
+            }
+
+            finally
+            {
+                handle.Close();
+            }
 
             this.OnDownloadFinished(EventArgs.Empty);
         }
