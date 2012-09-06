@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -7,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
 {
@@ -23,6 +23,7 @@ namespace YoutubeExtractor
         /// <returns>A list of <see cref="VideoInfo"/>s that can be used to download the video.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="videoUrl"/> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">The <paramref name="videoUrl"/> parameter is not a valid YouTube URL.</exception>
+        /// <exception cref="VideoNotAvailableException">The video is not available.</exception>
         /// <exception cref="WebException">An error occurred while downloading the YouTube page html.</exception>
         /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
@@ -81,6 +82,7 @@ namespace YoutubeExtractor
 
                             // for this version, only get the download URL
                             byte formatCode = Byte.Parse(queryString["itag"]);
+
                             // Currently based on YouTube specifications (later we'll depend on the MIME type returned from the web request)
                             downLoadInfos.Add(new VideoInfo(url.ToString(), videoTitle, formatCode));
                         }
@@ -88,22 +90,26 @@ namespace YoutubeExtractor
                         return downLoadInfos;
                     }
                 }
+
                 catch (Exception ex)
                 {
                     ThrowYoutubeParseException(ex);
                 }
             }
 
+            else
+            {
+                const string unavailableContainer = "<div id=\"watch-player-unavailable\">";
+
+                if (pageSource.Contains(unavailableContainer))
+                {
+                    throw new VideoNotAvailableException();
+                }
+            }
+
             ThrowYoutubeParseException(null);
 
             return null;
-        }
-
-        private static void ThrowYoutubeParseException(Exception innerException)
-        {
-            throw new YoutubeParseException("Could not parse the Youtube page.\n" +
-                                            "This may be due to a change of the Youtube page structure.\n" +
-                                            "Please report this bug at www.github.com/flagbug/YoutubeExtractor/issues", innerException);
         }
 
         private static string GetVideoTitle(string pageSource)
@@ -167,6 +173,13 @@ namespace YoutubeExtractor
             }
 
             return url;
+        }
+
+        private static void ThrowYoutubeParseException(Exception innerException)
+        {
+            throw new YoutubeParseException("Could not parse the Youtube page.\n" +
+                                            "This may be due to a change of the Youtube page structure.\n" +
+                                            "Please report this bug at www.github.com/flagbug/YoutubeExtractor/issues", innerException);
         }
     }
 }
