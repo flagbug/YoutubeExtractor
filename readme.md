@@ -50,18 +50,17 @@ IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 ```c#
 
 /*
- * Select the standard youtube quality
- * See the VideoFormat enum for more info about the quality.
+ * Select the first .mp4 video with 360p resolution
  */
 VideoInfo video = videoInfos
-    .First(info => info.VideoFormat == VideoFormat.Standard360);
+    .First(info => info.VideoType == VideoType.Mp4 && info.Resolution == 360);
 
 /*
  * Create the video downloader.
  * The first argument is the video to download.
  * The second argument is the path to save the video file.
  */
-var videoDownloader = new VideoDownloader(video, "insert path" + video.Title + video.VideoExtension);
+var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + video.VideoExtension));
 
 // Register the ProgressChanged event and print the current progress
 videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
@@ -79,24 +78,19 @@ videoDownloader.Execute();
 ```c#
 
 /*
- * We want the first flash (only flash audio extraction is currently supported)
- * video with the highest audio quality.
- * See the VideoFormat enum for more info about the quality.
+ * We want the first extractable video with the highest audio quality.
  */
 VideoInfo video = videoInfos
     .Where(info => info.CanExtractAudio)
-    .First(info =>
-           info.VideoFormat == VideoFormat.FlashAacHighQuality ||
-           info.VideoFormat == VideoFormat.FlashAacLowQuality ||
-           info.VideoFormat == VideoFormat.FlashMp3HighQuality ||
-           info.VideoFormat == VideoFormat.FlashMp3LowQuality);
+    .OrderByDescending(info => info.AudioBitrate)
+    .First();
 
 /*
  * Create the audio downloader.
  * The first argument is the video where the audio should be extracted from.
  * The second argument is the path to save the audio file.
  */
-var audioDownloader = new AudioDownloader(video, "insert path" + video.Title + video.AudioExtension);
+var audioDownloader = new AudioDownloader(video, Path.Combine("D:/Downloads", video.Title + video.AudioExtension));
 
 // Register the ProgressChanged event and print the current progress
 audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);

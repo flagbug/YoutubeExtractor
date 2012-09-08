@@ -1,3 +1,23 @@
+----------------------------------- v0.3.0 -----------------------------------
+
+NOTES:
+- Warning: This release contains breaking changes!
+- The complete VideoInfo class has been overhauled, to support new formats and 
+  features.
+
+FEATURES:
+- New video formats, especially 3D formats.
+- New audio type: Ogg Vorbis
+- The new property "Resolution" returns the video resolution, for example 1080 
+  for a video with a resolution of 1080p.
+- The new property "Is3D" indicates, if a video is 3D
+- The new property "AudioType" returnsthe audio encoding (Mp3, Aac, Vorbis)
+- The new property "AudioBitrate" returns approximate the audio bitrate in 
+  kbit/s.
+
+CHANGES:
+- The "VideoFormat" property has been completely removed.
+
 ----------------------------------- v0.2.1 -----------------------------------
 
 CHANGES:
