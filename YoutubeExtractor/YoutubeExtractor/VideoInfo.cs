@@ -48,7 +48,7 @@ namespace YoutubeExtractor
         /// The approximate audio bitrate in kbit/s.
         /// </summary>
         /// <value>
-        /// The approximate audio bitrate in kbit/s. 0, if the bitrate is unknown.
+        /// The approximate audio bitrate in kbit/s, or 0 if the bitrate is unknown.
         /// </value>
         public int AudioBitrate { get; private set; }
 
@@ -56,7 +56,7 @@ namespace YoutubeExtractor
         /// Gets the audio extension.
         /// </summary>
         /// <value>
-        /// The audio extension. <c>null</c>, if the audio extension is unknown.
+        /// The audio extension, or <c>null</c> if the audio extension is unknown.
         /// </value>
         public string AudioExtension
         {
@@ -109,6 +109,9 @@ namespace YoutubeExtractor
         /// <summary>
         /// Gets the resolution of the video.
         /// </summary>
+        /// <value>
+        /// The resolution of the video, or 0 if the resolution is unkown.
+        /// </value>
         public int Resolution { get; private set; }
 
         /// <summary>
@@ -120,7 +123,7 @@ namespace YoutubeExtractor
         /// Gets the video extension.
         /// </summary>
         /// <value>
-        /// The video extension. <c>null</c>, if the video extension is unknown.
+        /// The video extension, or <c>null</c> if the video extension is unknown.
         /// </value>
         public string VideoExtension
         {
