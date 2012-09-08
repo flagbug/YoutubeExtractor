@@ -11,17 +11,12 @@ namespace ExampleApplication
         private static void DownloadAudio(IEnumerable<VideoInfo> videoInfos)
         {
             /*
-             * We want the first flash (only flash audio extraction is currently supported)
-             * video with the highest audio quality.
-             * See the VideoFormat enum for more info about the quality.
+             * We want the first extractable video with the highest audio quality.
              */
             VideoInfo video = videoInfos
                 .Where(info => info.CanExtractAudio)
-                .First(info =>
-                       info.VideoFormat == VideoFormat.FlashAacHighQuality ||
-                       info.VideoFormat == VideoFormat.FlashAacLowQuality ||
-                       info.VideoFormat == VideoFormat.FlashMp3HighQuality ||
-                       info.VideoFormat == VideoFormat.FlashMp3LowQuality);
+                .OrderByDescending(info => info.AudioBitrate)
+                .First();
 
             /*
              * Create the audio downloader.
@@ -43,11 +38,10 @@ namespace ExampleApplication
         private static void DownloadVideo(IEnumerable<VideoInfo> videoInfos)
         {
             /*
-             * Select the standard youtube quality
-             * See the VideoFormat enum for more info about the quality.
+             * Select the first .mp4 video with 360p resolution
              */
             VideoInfo video = videoInfos
-                .First(info => info.VideoFormat == VideoFormat.Standard360);
+                .First(info => info.VideoType == VideoType.Mp4 && info.Resolution == 360);
 
             /*
              * Create the video downloader.
@@ -77,7 +71,7 @@ namespace ExampleApplication
              */
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 
-            DownloadAudio(videoInfos);
+            //DownloadAudio(videoInfos);
             //DownloadVideo(videoInfos);
         }
     }

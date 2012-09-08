@@ -134,7 +134,21 @@ namespace YoutubeExtractor
                 byte formatCode = Byte.Parse(queryString["itag"]);
 
                 // Currently based on YouTube specifications (later we'll depend on the MIME type returned from the web request)
-                downLoadInfos.Add(new VideoInfo(url.ToString(), videoTitle, formatCode));
+
+                VideoInfo info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
+
+                if (info != null)
+                {
+                    info.DownloadUrl = url.ToString();
+                    info.Title = videoTitle;
+                }
+
+                else
+                {
+                    info = new VideoInfo(formatCode);
+                }
+
+                downLoadInfos.Add(info);
             }
 
             return downLoadInfos;
