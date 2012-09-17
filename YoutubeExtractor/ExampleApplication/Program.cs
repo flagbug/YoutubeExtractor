@@ -71,7 +71,8 @@ namespace ExampleApplication
              */
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 
-            //DownloadAudio(videoInfos);
+            DownloadAudio(videoInfos);
+
             //DownloadVideo(videoInfos);
         }
     }

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -36,31 +35,25 @@ namespace YoutubeExtractor
             string pageSource = GetPageSource(videoUrl);
             string videoTitle = GetVideoTitle(pageSource);
 
-            const string startConfig = "yt.playerConfig = ";
+            string id = HttpUtility.ParseQueryString(new Uri(videoUrl).Query)["v"];
 
-            int playerConfigIndex = pageSource.IndexOf(startConfig, StringComparison.Ordinal);
+            string requestUrl = String.Format("http://www.youtube.com/get_video_info?&video_id={0}&el=detailpage&ps=default&eurl=&gl=US&hl=en", id);
 
-            if (playerConfigIndex > -1)
+            string source = GetPageSource(requestUrl);
+
+            string decoded = HttpUtility.UrlDecode(source);
+            decoded = HttpUtility.UrlDecode(decoded);
+
+            try
             {
-                try
-                {
-                    string signature = GetSignature(pageSource, playerConfigIndex, startConfig);
+                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(decoded);
 
-                    string availableFormats = GetAvailableFormats(signature);
+                return GetVideoInfos(downloadUrls, videoTitle);
+            }
 
-                    if (availableFormats != String.Empty)
-                    {
-                        IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(availableFormats);
-
-                        return GetVideoInfos(downloadUrls, videoTitle);
-                    }
-                }
-
-                // Wrap the exception in a YoutubeParseException
-                catch (Exception ex)
-                {
-                    ThrowYoutubeParseException(ex);
-                }
+            catch (Exception ex)
+            {
+                ThrowYoutubeParseException(ex);
             }
 
             if (IsVideoUnavailable(pageSource))
@@ -79,9 +72,11 @@ namespace YoutubeExtractor
             const string argument = "url=";
             const string endOfQueryString = "&quality";
 
-            var urlList =
-                Regex.Split(availableFormats, argument)
-                    .Skip(1); // The first item is empty or contains no valid value
+            var urlList = Regex.Split(availableFormats, argument).ToList();
+
+            // The first and last items are garbage
+            urlList.RemoveAt(0);
+            urlList.RemoveAt(urlList.Count - 1);
 
             // Format the URL
             var urls = urlList
@@ -89,15 +84,6 @@ namespace YoutubeExtractor
                 .Select(entry => new Uri(Uri.UnescapeDataString(entry)));
 
             return urls;
-        }
-
-        private static string GetAvailableFormats(string signature)
-        {
-            JObject playerConfig = JObject.Parse(signature);
-            JObject playerArgs = JObject.Parse(playerConfig["args"].ToString());
-            var availableFormats = (string)playerArgs["url_encoded_fmt_stream_map"];
-
-            return availableFormats;
         }
 
         private static string GetPageSource(string videoUrl)
@@ -113,15 +99,6 @@ namespace YoutubeExtractor
             return pageSource;
         }
 
-        private static string GetSignature(string pageSource, int playerConfigIndex, string startConfig)
-        {
-            string signature = pageSource.Substring(playerConfigIndex);
-            int endOfJsonIndex = signature.TrimEnd(' ').IndexOf("yt.setConfig", StringComparison.Ordinal);
-            signature = signature.Substring(startConfig.Length, endOfJsonIndex - 26);
-
-            return signature;
-        }
-
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
         {
             var downLoadInfos = new List<VideoInfo>();
@@ -134,7 +111,6 @@ namespace YoutubeExtractor
                 byte formatCode = Byte.Parse(queryString["itag"]);
 
                 // Currently based on YouTube specifications (later we'll depend on the MIME type returned from the web request)
-
                 VideoInfo info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
 
                 if (info != null)
