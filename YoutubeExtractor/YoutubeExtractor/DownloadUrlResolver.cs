@@ -186,6 +186,7 @@ namespace YoutubeExtractor
             {
                 url = url.Replace("youtube.com/v/", "youtube.com/watch?v=");
             }
+
             else if (url.StartsWith("http://youtube.com/watch#"))
             {
                 url = url.Replace("youtube.com/watch#", "youtube.com/watch?");
