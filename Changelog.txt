@@ -1,3 +1,11 @@
+----------------------------------- v0.3.1 -----------------------------------
+
+NOTES:
+-There is no longer a dependency to Newtonsoft.Json.
+
+BUGFIXES:
+- Fixed the parsing of the download urls, as YouTube changed their layout.
+
 ----------------------------------- v0.3.0 -----------------------------------
 
 NOTES:
