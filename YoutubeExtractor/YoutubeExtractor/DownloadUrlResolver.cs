@@ -74,14 +74,12 @@ namespace YoutubeExtractor
 
             var urlList = Regex.Split(availableFormats, argument).ToList();
 
-            // The first and last items are garbage
-            urlList.RemoveAt(0);
-            urlList.RemoveAt(urlList.Count - 1);
-
             // Format the URL
-            var urls = urlList
-                .Select(entry => entry.Substring(0, entry.IndexOf(endOfQueryString, StringComparison.Ordinal)))
-                .Select(entry => new Uri(Uri.UnescapeDataString(entry)));
+            var urls = from url in urlList
+                       let index = url.IndexOf(endOfQueryString, StringComparison.Ordinal)
+                       where index > 0
+                       let finalUrl = url.Substring(0, index)
+                       select new Uri(Uri.UnescapeDataString(finalUrl));
 
             return urls;
         }
