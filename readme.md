@@ -18,7 +18,6 @@ YouTubeExtractor is licenced under the [GNU General Public License version 2 (GP
 ## Dependencies
 
 - .NET Framework 3.5
-- [JSON.NET](http://json.codeplex.com/)
 
 ## NuGet
 
