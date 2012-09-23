@@ -34,7 +34,7 @@ namespace YoutubeExtractor
             : this(formatCode, VideoType.Unknown, 0, false, AudioType.Unknown, 0)
         { }
 
-        internal VideoInfo(int formatCode, VideoType videoType, int resolution, bool is3D, AudioType audioType, int audioBitrate)
+        private VideoInfo(int formatCode, VideoType videoType, int resolution, bool is3D, AudioType audioType, int audioBitrate)
         {
             this.FormatCode = formatCode;
             this.VideoType = videoType;
