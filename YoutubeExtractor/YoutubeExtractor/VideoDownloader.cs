@@ -28,7 +28,19 @@ namespace YoutubeExtractor
 
             var client = new WebClient();
 
-            client.DownloadFileCompleted += (sender, args) => handle.Set();
+            client.DownloadFileCompleted += (sender, args) =>
+            {
+                if (args == null)
+                {
+                    handle.Set();
+                }
+
+                else
+                {
+                    throw args.Error; // DownloadFileAsync passes the exception to the DownloadFileCompleted event, if one occurs
+                }
+            };
+
             client.DownloadProgressChanged += (sender, args) =>
                 this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage));
 
