@@ -1,3 +1,16 @@
+----------------------------------- v0.3.3 -----------------------------------
+
+CHANGES:
+- The AudioDownloader.Execute method can now throw the 
+  "AudioExtractionException", that is thrown when an error occurs during audio 
+  extraction.
+
+IMPROVEMENTS:
+- Added more documentation for exception handling.
+
+BUGFIXES:
+- The VideoDownloader.Execute method doesn't swallow exceptions anymore.
+
 ----------------------------------- v0.3.2 -----------------------------------
 
 BUGFIXES:
