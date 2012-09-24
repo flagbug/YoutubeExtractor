@@ -2,6 +2,9 @@
 
 namespace YoutubeExtractor
 {
+    /// <summary>
+    /// Provides the base class for the <see cref="AudioDownloader"/> and <see cref="VideoDownloader"/> class.
+    /// </summary>
     public abstract class Downloader
     {
         /// <summary>
@@ -9,8 +12,15 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to download/convert.</param>
         /// <param name="savePath">The path to save the video/audio.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
         protected Downloader(VideoInfo video, string savePath)
         {
+            if (video == null)
+                throw new ArgumentNullException("video");
+
+            if (savePath == null)
+                throw new ArgumentNullException("savePath");
+
             this.Video = video;
             this.SavePath = savePath;
         }

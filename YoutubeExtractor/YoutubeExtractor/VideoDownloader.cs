@@ -15,6 +15,7 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to download.</param>
         /// <param name="savePath">The path to save the video.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
         public VideoDownloader(VideoInfo video, string savePath)
             : base(video, savePath)
         { }

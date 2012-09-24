@@ -14,6 +14,7 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to convert.</param>
         /// <param name="savePath">The path to save the audio.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
         public AudioDownloader(VideoInfo video, string savePath)
             : base(video, savePath)
         { }
