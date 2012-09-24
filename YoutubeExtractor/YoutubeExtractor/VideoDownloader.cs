@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -21,6 +22,8 @@ namespace YoutubeExtractor
         /// <summary>
         /// Starts the video download.
         /// </summary>
+        /// <exception cref="IOException">The video file could not be saved.</exception>
+        /// <exception cref="WebException">An error occured while downloading the video.</exception>
         public override void Execute()
         {
             // We need a handle to keep the method synchronously

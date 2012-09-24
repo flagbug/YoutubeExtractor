@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 
 namespace YoutubeExtractor
 {
@@ -18,8 +19,15 @@ namespace YoutubeExtractor
         { }
 
         /// <summary>
-        /// Starts the download and then extracts the audio track of the video.
+        /// Downloads the video from YouTube and then extracts the audio track out if it.
         /// </summary>
+        /// <exception cref="IOException">
+        /// The temporary video file could not be created.
+        /// - or -
+        /// The audio file could not be created.
+        /// </exception>
+        /// <exception cref="AudioExtractionException">An error occured during audio extraction.</exception>
+        /// <exception cref="WebException">An error occured while downloading the video.</exception>
         public override void Execute()
         {
             string tempPath = Path.GetTempFileName();

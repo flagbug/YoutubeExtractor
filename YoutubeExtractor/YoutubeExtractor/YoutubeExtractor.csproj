@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="AacAudioExtractor.cs" />
     <Compile Include="AudioDownloader.cs" />
+    <Compile Include="AudioExtractionException.cs" />
     <Compile Include="AudioType.cs" />
     <Compile Include="BigEndianBitConverter.cs" />
     <Compile Include="BitHelper.cs" />

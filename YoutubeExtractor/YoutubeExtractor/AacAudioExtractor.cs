@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace YoutubeExtractor
 {
@@ -45,11 +44,11 @@ namespace YoutubeExtractor
                 channelConfig = BitHelper.Read(ref bits, 4);
 
                 if (aacProfile < 0 || aacProfile > 3)
-                    throw new Exception("Unsupported AAC profile.");
+                    throw new AudioExtractionException("Unsupported AAC profile.");
                 if (sampleRateIndex > 12)
-                    throw new Exception("Invalid AAC sample rate index.");
+                    throw new AudioExtractionException("Invalid AAC sample rate index.");
                 if (channelConfig > 6)
-                    throw new Exception("Invalid AAC channel configuration.");
+                    throw new AudioExtractionException("Invalid AAC channel configuration.");
             }
 
             else

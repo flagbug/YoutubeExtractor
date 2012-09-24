@@ -36,6 +36,7 @@ namespace YoutubeExtractor
             GC.SuppressFinalize(this);
         }
 
+        /// <exception cref="AudioExtractionException">The input file is not an FLV file.</exception>
         public void ExtractStreams()
         {
             this.Seek(0);
@@ -43,7 +44,7 @@ namespace YoutubeExtractor
             if (this.ReadUInt32() != 0x464C5601)
             {
                 // not a FLV file
-                throw new InvalidOperationException("Invalid input file. Impossible to extract audio track.");
+                throw new AudioExtractionException("Invalid input file. Impossible to extract audio track.");
             }
 
             this.ReadUInt8();
@@ -82,7 +83,7 @@ namespace YoutubeExtractor
         {
             if (this.audioExtractor != null)
             {
-                if (disposing && (this.audioExtractor.VideoPath != null))
+                if (disposing && this.audioExtractor.VideoPath != null)
                 {
                     try
                     {
@@ -143,7 +144,7 @@ namespace YoutubeExtractor
                     break;
             }
 
-            throw new InvalidOperationException("Unable to extract audio (" + typeStr + " is unsupported).");
+            throw new AudioExtractionException("Unable to extract audio (" + typeStr + " is unsupported).");
         }
 
         private byte[] ReadBytes(int length)
@@ -190,7 +191,7 @@ namespace YoutubeExtractor
 
                 if (this.audioExtractor == null)
                 {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("No supported audio writer found.");
                 }
 
                 this.audioExtractor.WriteChunk(data, timeStamp);
