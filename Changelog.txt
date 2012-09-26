@@ -1,3 +1,10 @@
+----------------------------------- v0.3.4 -----------------------------------
+
+BUGFIXES:
+- Fixed a bug, that caused a 403 forbidden exception.
+- Fixed a bug, that caused a NullReferenceExcepion when the download has 
+  finished.
+
 ----------------------------------- v0.3.3 -----------------------------------
 
 CHANGES:
