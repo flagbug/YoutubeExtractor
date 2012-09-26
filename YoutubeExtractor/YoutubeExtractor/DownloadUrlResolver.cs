@@ -78,7 +78,7 @@ namespace YoutubeExtractor
             var urls = from url in urlList
                        let index = url.IndexOf(endOfQueryString, StringComparison.Ordinal)
                        where index > 0
-                       let finalUrl = url.Substring(0, index)
+                       let finalUrl = url.Substring(0, index).Replace("&sig=", "&signature=")
                        select new Uri(Uri.UnescapeDataString(finalUrl));
 
             return urls;
