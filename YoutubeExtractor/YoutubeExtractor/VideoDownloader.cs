@@ -21,6 +21,11 @@ namespace YoutubeExtractor
         { }
 
         /// <summary>
+        /// Occurs when the downlaod progress of the video file has changed.
+        /// </summary>
+        public event EventHandler<ProgressEventArgs> DownloadProgressChanged;
+
+        /// <summary>
         /// Starts the video download.
         /// </summary>
         /// <exception cref="IOException">The video file could not be saved.</exception>
@@ -44,7 +49,17 @@ namespace YoutubeExtractor
             };
 
             client.DownloadProgressChanged += (sender, args) =>
-                this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage));
+            {
+                var progressArgs = new ProgressEventArgs(args.ProgressPercentage);
+
+                // Backwards compatibility
+                this.OnProgressChanged(progressArgs);
+
+                if (this.DownloadProgressChanged != null)
+                {
+                    this.DownloadProgressChanged(this, progressArgs);
+                }
+            };
 
             this.OnDownloadStarted(EventArgs.Empty);
 

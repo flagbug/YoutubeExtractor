@@ -38,6 +38,7 @@ namespace YoutubeExtractor
         /// <summary>
         /// Occurs when the progress has changed.
         /// </summary>
+        [Obsolete("Use the downloader specific progress events instead.")]
         public event EventHandler<ProgressEventArgs> ProgressChanged;
 
         /// <summary>
@@ -71,6 +72,7 @@ namespace YoutubeExtractor
             }
         }
 
+        [Obsolete("Each downloader has to implement its own progress notification.")]
         protected void OnProgressChanged(ProgressEventArgs e)
         {
             if (this.ProgressChanged != null)

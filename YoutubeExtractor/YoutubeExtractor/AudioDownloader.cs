@@ -20,6 +20,16 @@ namespace YoutubeExtractor
         { }
 
         /// <summary>
+        /// Occurs when the progress of the audio extraction has changed.
+        /// </summary>
+        public event EventHandler<ProgressEventArgs> AudioExtractionProgressChanged;
+
+        /// <summary>
+        /// Occurs when the download progress of the video file has changed.
+        /// </summary>
+        public event EventHandler<ProgressEventArgs> DownloadProgressChanged;
+
+        /// <summary>
         /// Downloads the video from YouTube and then extracts the audio track out if it.
         /// </summary>
         /// <exception cref="IOException">
@@ -44,8 +54,19 @@ namespace YoutubeExtractor
         {
             var videoDownloader = new VideoDownloader(this.Video, path);
 
-            videoDownloader.ProgressChanged +=
-                (sender, args) => this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage / 2));
+            // Backwards compatibility
+            videoDownloader.ProgressChanged += (sender, args) =>
+            {
+                this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage / 2));
+            };
+
+            videoDownloader.DownloadProgressChanged += (sender, args) =>
+            {
+                if (this.DownloadProgressChanged != null)
+                {
+                    this.DownloadProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
+                }
+            };
 
             videoDownloader.Execute();
         }
@@ -54,8 +75,16 @@ namespace YoutubeExtractor
         {
             var flvFile = new FlvFile(path, this.SavePath);
 
-            flvFile.ConversionProgressChanged +=
-                (sender, args) => this.OnProgressChanged(new ProgressEventArgs(50 + args.ProgressPercentage / 2));
+            flvFile.ConversionProgressChanged += (sender, args) =>
+            {
+                // Backwards compatibility
+                this.OnProgressChanged(new ProgressEventArgs(50 + args.ProgressPercentage / 2));
+
+                if (this.AudioExtractionProgressChanged != null)
+                {
+                    this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
+                }
+            };
 
             flvFile.ExtractStreams();
         }
