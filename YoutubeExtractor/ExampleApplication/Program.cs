@@ -25,8 +25,10 @@ namespace ExampleApplication
              */
             var audioDownloader = new AudioDownloader(video, Path.Combine("D:/Downloads", video.Title + video.AudioExtension));
 
-            // Register the ProgressChanged event and print the current progress
-            audioDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+            // Register the progress events. We treat the download progress as 85% of the progress and the extraction progress only as 15% of the progress,
+            // because the download will take much longer than the audio extraction.
+            audioDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage * 0.85);
+            audioDownloader.AudioExtractionProgressChanged += (sender, args) => Console.WriteLine(85 + args.ProgressPercentage * 0.15);
 
             /*
              * Execute the audio downloader.
@@ -51,7 +53,7 @@ namespace ExampleApplication
             var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + video.VideoExtension));
 
             // Register the ProgressChanged event and print the current progress
-            videoDownloader.ProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+            videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
 
             /*
              * Execute the video downloader.
@@ -71,8 +73,7 @@ namespace ExampleApplication
              */
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 
-            DownloadAudio(videoInfos);
-
+            //DownloadAudio(videoInfos);
             //DownloadVideo(videoInfos);
         }
     }
