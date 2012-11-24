@@ -1,3 +1,21 @@
+----------------------------------- v0.4.0 -----------------------------------
+
+CHANGES:
+- The VideoDownloader and the AudioDownloader classes now implement their own 
+  progress events. This means that the old ProgressChanged event is now
+  obsolete.
+  This change was made, because the ProgressChanged event reported the first 
+  50% as download progress and the second 50% as audio extraction progress.
+
+  This was really inaccurate, as the download progress would be very slow in 
+  relation to the audio extraction progress, so the AudioDownloader has now 
+  two separate events: 
+  DownloadProgressChanged and AudioExctractionProgressChanged.
+  
+  The VideoDownloader has the ProgressChanged event replaced with the 
+  DownloadProgressChanged event, but they are basically the same, 
+  so the real change is made to the AudioDownloader class.
+
 ----------------------------------- v0.3.4 -----------------------------------
 
 BUGFIXES:
