@@ -3,13 +3,27 @@
 ## Overview
 YoutubeExtractor is a reusable library for .NET, written in C#, that allows to download videos from YouTube and/or extract their audio track (currently only for flash videos).
 
-## Credits
+*Support this project:*
 
-### - [YoutubeFisher](http://youtubefisher.codeplex.com/)
-Code for resolving the video download links
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="A8NCTU92JB4F4">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+</form>
 
-### - [FlvExtract](http://moitah.net/)
-Code for extracting MP3 and AAC audio tracks out of flash files.
+## NuGet
+
+[YoutubeExtractor at NuGet](http://nuget.org/packages/YoutubeExtractor)
+
+<script type="text/javascript">
+    (function () {
+        var nb = document.createElement('script'); nb.type = 'text/javascript'; nb.async = true;
+        nb.src = 'http://s.prabir.me/nuget-button/0.1/nuget-button.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(nb, s);
+    })();
+</script>
+<pre class="nuget-button">Install-Package YoutubeExtractor</pre>
 
 ## License
 
@@ -19,13 +33,13 @@ YouTubeExtractor is licenced under the [GNU General Public License version 2 (GP
 
 - .NET Framework 3.5
 
-## NuGet
-
-YoutubeExtractor is available on [NuGet](http://nuget.org/packages/YoutubeExtractor)!
-
 ## Projects that use this library
 
 - [Espera](http://github.com/flagbug/Espera)
+
+## Credits
+
+- [FlvExtract](http://moitah.net/) Code for extracting MP3 and AAC audio tracks out of flash files.
 
 ## Example code
 
