@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -41,12 +41,9 @@ namespace YoutubeExtractor
 
             string source = GetPageSource(requestUrl);
 
-            string decoded = HttpUtility.UrlDecode(source);
-            decoded = HttpUtility.UrlDecode(decoded);
-
             try
             {
-                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(decoded);
+                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(source);
 
                 return GetVideoInfos(downloadUrls, videoTitle);
             }
@@ -67,21 +64,60 @@ namespace YoutubeExtractor
             return null; // Will never happen, but the compiler requires it
         }
 
-        private static IEnumerable<Uri> ExtractDownloadUrls(string availableFormats)
+        private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {
-            const string argument = "url=";
-            const string endOfQueryString = "&quality";
-
-            var urlList = Regex.Split(availableFormats, argument).ToList();
-
-            // Format the URL
-            var urls = from url in urlList
-                       let index = url.IndexOf(endOfQueryString, StringComparison.Ordinal)
-                       where index > 0
-                       let finalUrl = url.Substring(0, index).Replace("&sig=", "&signature=")
-                       select new Uri(Uri.UnescapeDataString(finalUrl));
-
+            var urls = new List<Uri>();
+            var list = ParseFormEncoded(source);
+            foreach (var kv in list) {
+                if (kv[0] != "url_encoded_fmt_stream_map") continue;
+                var list2 = ParseFormEncoded(kv[1], ',');
+                foreach (var kv2 in list2) {
+                    var list3 = ParseFormEncoded(kv2[1]);
+                    string url = "";
+                    string fallbackHost = "";
+                    string sig = "";
+                    foreach (var kv3 in list3) {
+                        switch (kv3[0]) {
+                            case "url":
+                                url = kv3[1];
+                                break;
+                            case "fallback_host":
+                                fallbackHost = kv3[1];
+                                break;
+                            case "sig":
+                                sig = kv3[1];
+                                break;
+                        }
+                        //var list4 = Divide(kv3[1].Substring(kv3[1].IndexOf('?') + 1));
+                        //foreach (var kv4 in list4) {
+                        //    sb.AppendLine("\t\t\t\t" + kv4[0] + "\t" + kv4[1]);
+                        //}
+                    }
+                    if (url.IndexOf("&fallback_host=", StringComparison.Ordinal) < 0)
+                        url += "&fallback_host=" + HttpUtility.UrlEncode(fallbackHost);
+                    if (url.IndexOf("&signature=", StringComparison.Ordinal) < 0)
+                        url += "&signature=" + HttpUtility.UrlEncode(sig);
+                    urls.Add(new Uri(url));
+                }
+            }
             return urls;
+        }
+
+        private static IEnumerable<string[]> ParseFormEncoded(string qs, char split = '&')
+        {
+            var arr = qs.Split(split);
+            var list = new List<string[]>(arr.Length);
+            foreach (var kv in arr) {
+                if (split == ',') {
+                    list.Add(new[] { "\t", kv });
+                } else {
+                    var akv = kv.Split('=');
+                    var k = HttpUtility.UrlDecode(akv[0]);
+                    var v = HttpUtility.UrlDecode(akv[1]);
+                    list.Add(new[] { k, v });
+                }
+            }
+            return list;
         }
 
         private static string GetPageSource(string videoUrl)
