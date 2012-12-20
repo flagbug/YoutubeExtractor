@@ -1,3 +1,8 @@
+----------------------------------- v0.4.1 -----------------------------------
+
+BUGFIXES:
+- Fixed the parsing of the download urls, as YouTube changed their backend.
+
 ----------------------------------- v0.4.0 -----------------------------------
 
 CHANGES:
