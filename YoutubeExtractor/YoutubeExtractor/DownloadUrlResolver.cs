@@ -41,12 +41,9 @@ namespace YoutubeExtractor
 
             string source = GetPageSource(requestUrl);
 
-            string decoded = HttpUtility.UrlDecode(source);
-            decoded = HttpUtility.UrlDecode(decoded);
-
             try
             {
-                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(decoded);
+                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(source);
 
                 return GetVideoInfos(downloadUrls, videoTitle);
             }
@@ -67,21 +64,25 @@ namespace YoutubeExtractor
             return null; // Will never happen, but the compiler requires it
         }
 
-        private static IEnumerable<Uri> ExtractDownloadUrls(string availableFormats)
+        private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {
-            const string argument = "url=";
-            const string endOfQueryString = "&quality";
+            var t = HttpUtility.ParseQueryString(source);
 
-            var urlList = Regex.Split(availableFormats, argument).ToList();
+            string urlMap = t.Get("url_encoded_fmt_stream_map");
 
-            // Format the URL
-            var urls = from url in urlList
-                       let index = url.IndexOf(endOfQueryString, StringComparison.Ordinal)
-                       where index > 0
-                       let finalUrl = url.Substring(0, index).Replace("&sig=", "&signature=")
-                       select new Uri(Uri.UnescapeDataString(finalUrl));
+            string[] splitByUrls = urlMap.Split(',');
 
-            return urls;
+            foreach (string s in splitByUrls)
+            {
+                var queries = HttpUtility.ParseQueryString(s);
+
+                string url = queries.Get("url") + "&fallback_host=" + queries.Get("fallback_host") + "&signature=" + queries.Get("sig");
+
+                url = HttpUtility.UrlDecode(url);
+                url = HttpUtility.UrlDecode(url);
+
+                yield return new Uri(url);
+            }
         }
 
         private static string GetPageSource(string videoUrl)
