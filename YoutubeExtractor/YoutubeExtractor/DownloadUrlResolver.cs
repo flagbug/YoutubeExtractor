@@ -76,7 +76,7 @@ namespace YoutubeExtractor
             {
                 var queries = HttpUtility.ParseQueryString(s);
 
-                string url = queries.Get("url") + "&fallback_host=" + queries.Get("fallback_host") + "&signature=" + queries.Get("sig");
+                string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], queries["sig"]);
 
                 url = HttpUtility.UrlDecode(url);
                 url = HttpUtility.UrlDecode(url);
