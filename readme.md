@@ -1,5 +1,9 @@
 # YoutubeExtractor
 
+<a href="http://flattr.com/thing/1093085/" target="_blank">
+<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
+</a>
+
 ## Overview
 YoutubeExtractor is a reusable library for .NET, written in C#, that allows to download videos from YouTube and/or extract their audio track (currently only for flash videos).
 
