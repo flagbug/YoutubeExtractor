@@ -83,6 +83,8 @@ namespace YoutubeExtractor
         /// </summary>
         public AudioType AudioType { get; private set; }
 
+#if !NETFX_CORE
+
         /// <summary>
         /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
         /// </summary>
@@ -91,8 +93,9 @@ namespace YoutubeExtractor
         /// </value>
         public bool CanExtractAudio
         {
-            get { return this.VideoType == VideoType.Flash; }
+            get{return this.VideoType == VideoType.Flash; }
         }
+#endif
 
         /// <summary>
         /// Gets the download URL.
