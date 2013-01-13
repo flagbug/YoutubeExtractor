@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -87,15 +85,10 @@ namespace YoutubeExtractor
 
         private static string GetPageSource(string videoUrl)
         {
-            string pageSource;
-            var req = WebRequest.Create(videoUrl);
-
-            using (var resp = req.GetResponse())
+            using (var client = new WebClient())
             {
-                pageSource = new StreamReader(resp.GetResponseStream(), Encoding.UTF8).ReadToEnd();
+                return client.DownloadString(videoUrl);
             }
-
-            return pageSource;
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
