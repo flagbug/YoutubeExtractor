@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 
 #if NETFX_CORE
@@ -111,19 +109,14 @@ namespace YoutubeExtractor
 
         private static string GetPageSource(string videoUrl)
         {
-            string pageSource;
-            var req = WebRequest.Create(videoUrl);
-
+            using (var client = new WebClient())
 #if NETFX_CORE
             using (var resp = req.GetResponseAsync().Result)
 #else
-            using (var resp = req.GetResponse())
 #endif
             {
-                pageSource = new StreamReader(resp.GetResponseStream(), Encoding.UTF8).ReadToEnd();
+                return client.DownloadString(videoUrl);
             }
-
-            return pageSource;
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
