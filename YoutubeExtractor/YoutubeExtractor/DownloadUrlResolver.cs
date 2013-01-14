@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 #if NETFX_CORE
 
 using Windows.Foundation;
+using System.Net.Http;
 
 #else
 
@@ -109,14 +110,18 @@ namespace YoutubeExtractor
 
         private static string GetPageSource(string videoUrl)
         {
-            using (var client = new WebClient())
 #if NETFX_CORE
-            using (var resp = req.GetResponseAsync().Result)
+            using (var client = new HttpClient())
+            {
+                return client.GetStringAsync(videoUrl).Result;
+            }
+
 #else
-#endif
+            using (var client = new WebClient())
             {
                 return client.DownloadString(videoUrl);
             }
+#endif
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
