@@ -87,6 +87,8 @@ namespace YoutubeExtractor
             };
 
             flvFile.ExtractStreams();
+
+            flvFile.Dispose();
         }
     }
 }
