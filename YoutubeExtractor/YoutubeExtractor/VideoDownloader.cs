@@ -34,13 +34,13 @@ namespace YoutubeExtractor
         {
             // We need a handle to keep the method synchronously
             var handle = new ManualResetEvent(false);
-
             var client = new WebClient();
+            bool isCanceled = false;
 
             client.DownloadFileCompleted += (sender, args) =>
             {
                 // DownloadFileAsync passes the exception to the DownloadFileCompleted event, if one occurs
-                if (args.Error != null)
+                if (args.Error != null && !args.Cancelled)
                 {
                     throw args.Error;
                 }
@@ -59,8 +59,9 @@ namespace YoutubeExtractor
                 {
                     this.DownloadProgressChanged(this, progressArgs);
 
-                    if (progressArgs.Cancel)
+                    if (progressArgs.Cancel && !isCanceled)
                     {
+                        isCanceled = true;
                         client.CancelAsync();
                     }
                 }
