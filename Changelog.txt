@@ -1,3 +1,12 @@
+----------------------------------- v0.5.0 -----------------------------------
+
+FEATURES:
+- Added a cancel option to the ProgressEventArgs class for canceling the 
+  download.
+  
+BUGFIXES:
+- Fixed disposal of some resources.
+
 ----------------------------------- v0.4.1 -----------------------------------
 
 BUGFIXES:
