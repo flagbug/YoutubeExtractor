@@ -9,6 +9,8 @@ namespace YoutubeExtractor
     /// </summary>
     public class AudioDownloader : Downloader
     {
+        private bool isCanceled;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDownloader"/> class.
         /// </summary>
@@ -45,7 +47,10 @@ namespace YoutubeExtractor
 
             this.DownloadVideo(tempPath);
 
-            this.ExtractAudio(tempPath);
+            if (!this.isCanceled)
+            {
+                this.ExtractAudio(tempPath);
+            }
 
             this.OnDownloadFinished(EventArgs.Empty);
         }
@@ -64,7 +69,9 @@ namespace YoutubeExtractor
             {
                 if (this.DownloadProgressChanged != null)
                 {
-                    this.DownloadProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
+                    this.DownloadProgressChanged(this, args);
+
+                    this.isCanceled = args.Cancel;
                 }
             };
 
@@ -87,6 +94,8 @@ namespace YoutubeExtractor
             };
 
             flvFile.ExtractStreams();
+
+            flvFile.Dispose();
         }
     }
 }

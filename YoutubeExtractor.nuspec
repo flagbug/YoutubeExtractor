@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>YoutubeExtractor</id>
-        <version>0.4.2</version>
+        <version>0.5.0</version>
         <title>YoutubeExtractor</title>
         <authors>Dennis Daume</authors>
         <owners>Dennis Daume</owners>
@@ -10,8 +10,12 @@
         <projectUrl>http://github.com/flagbug/YoutubeExtractor</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>YoutubeExtractor is a library to extract the download link from YouTube videos, download them and/or extract their audio track.</description>
-        <releaseNotes>BUGFIXES:
-- Fixed disposal of resources.</releaseNotes>
+        <releaseNotes>FEATURES:
+- Added a cancel option to the ProgressEventArgs class for canceling the 
+  download.
+  
+BUGFIXES:
+- Fixed disposal of some resources.</releaseNotes>
         <tags>youtube download extract audio</tags>
     </metadata>
     <files>

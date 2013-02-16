@@ -7,6 +7,5 @@ mkdir ..\Release
 
 copy ..\YoutubeExtractor\YoutubeExtractor\bin\Release\YoutubeExtractor.dll ..\Release\YoutubeExtractor.dll
 copy ..\YoutubeExtractor\YoutubeExtractor\bin\Release\YoutubeExtractor.xml ..\Release\YoutubeExtractor.xml
-copy ..\Changelog.txt ..\Release\Changelog.txt
 
 pause
