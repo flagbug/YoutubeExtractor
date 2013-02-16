@@ -39,6 +39,9 @@ namespace YoutubeExtractor
 
             client.DownloadFileCompleted += (sender, args) =>
             {
+                handle.Close();
+                client.Dispose();
+
                 // DownloadFileAsync passes the exception to the DownloadFileCompleted event, if one occurs
                 if (args.Error != null && !args.Cancelled)
                 {
@@ -69,17 +72,9 @@ namespace YoutubeExtractor
 
             this.OnDownloadStarted(EventArgs.Empty);
 
-            try
-            {
-                client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
+            client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
 
-                handle.WaitOne();
-            }
-
-            finally
-            {
-                handle.Close();
-            }
+            handle.WaitOne();
 
             this.OnDownloadFinished(EventArgs.Empty);
         }
