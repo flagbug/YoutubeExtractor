@@ -64,7 +64,7 @@ namespace YoutubeExtractor
             {
                 if (this.DownloadProgressChanged != null)
                 {
-                    this.DownloadProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
+                    this.DownloadProgressChanged(this, args);
                 }
             };
 

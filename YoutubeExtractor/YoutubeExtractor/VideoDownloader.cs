@@ -58,6 +58,11 @@ namespace YoutubeExtractor
                 if (this.DownloadProgressChanged != null)
                 {
                     this.DownloadProgressChanged(this, progressArgs);
+
+                    if (progressArgs.Cancel)
+                    {
+                        client.CancelAsync();
+                    }
                 }
             };
 
