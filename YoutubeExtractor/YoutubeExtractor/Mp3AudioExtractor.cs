@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using YoutubeExtractor.Portable;
 
 namespace YoutubeExtractor
 {

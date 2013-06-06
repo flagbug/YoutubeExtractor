@@ -101,26 +101,12 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\YoutubeExtractor.Portable\YoutubeExtractor.Portable.csproj">
+      <Project>{228bcd1c-9fff-4eca-a8d8-42a96f0c6287}</Project>
+      <Name>YoutubeExtractor.Portable</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\YoutubeExtractor\AudioType.cs">
-      <Link>AudioType.cs</Link>
-    </Compile>
-    <Compile Include="..\YoutubeExtractor\DownloadUrlResolver.cs">
-      <Link>DownloadUrlResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\YoutubeExtractor\VideoInfo.cs">
-      <Link>VideoInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\YoutubeExtractor\VideoNotAvailableException.cs">
-      <Link>VideoNotAvailableException.cs</Link>
-    </Compile>
-    <Compile Include="..\YoutubeExtractor\VideoType.cs">
-      <Link>VideoType.cs</Link>
-    </Compile>
-    <Compile Include="..\YoutubeExtractor\YoutubeParseException.cs">
-      <Link>YoutubeParseException.cs</Link>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

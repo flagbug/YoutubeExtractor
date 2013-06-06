@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExtractor
+namespace YoutubeExtractor.Portable
 {
     public class ProgressEventArgs : EventArgs
     {
