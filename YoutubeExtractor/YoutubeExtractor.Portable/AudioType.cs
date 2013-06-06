@@ -1,4 +1,4 @@
-﻿namespace YoutubeExtractor
+﻿namespace YoutubeExtractor.Portable
 {
     public enum AudioType
     {

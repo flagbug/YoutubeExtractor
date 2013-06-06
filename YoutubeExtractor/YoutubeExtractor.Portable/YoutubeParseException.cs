@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExtractor
+namespace YoutubeExtractor.Portable
 {
     /// <summary>
     /// <para>

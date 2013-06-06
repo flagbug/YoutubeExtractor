@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YoutubeExtractor
+namespace YoutubeExtractor.Portable
 {
-    internal static class BitHelper
+    public static class BitHelper
     {
         public static byte[] CopyBlock(byte[] bytes, int offset, int length)
         {

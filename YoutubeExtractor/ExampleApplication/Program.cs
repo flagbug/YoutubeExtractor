@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using YoutubeExtractor;
+using YoutubeExtractor.Portable;
 
 namespace ExampleApplication
 {
@@ -71,7 +72,7 @@ namespace ExampleApplication
              * Get the available video formats.
              * We'll work with them in the video and audio download examples.
              */
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
+            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrlsAsync(link).Result;
 
             //DownloadAudio(videoInfos);
             //DownloadVideo(videoInfos);

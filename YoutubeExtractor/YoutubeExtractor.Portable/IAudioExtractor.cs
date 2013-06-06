@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YoutubeExtractor
+namespace YoutubeExtractor.Portable
 {
-    internal interface IAudioExtractor : IDisposable
+    public interface IAudioExtractor : IDisposable
     {
         string VideoPath { get; }
 

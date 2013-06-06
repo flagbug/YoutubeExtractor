@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExtractor
+namespace YoutubeExtractor.Portable
 {
     /// <summary>
     /// The exception that is thrown when an error occurs durin audio extraction.

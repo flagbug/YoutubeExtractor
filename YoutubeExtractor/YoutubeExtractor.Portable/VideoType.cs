@@ -1,4 +1,4 @@
-﻿namespace YoutubeExtractor
+﻿namespace YoutubeExtractor.Portable
 {
     /// <summary>
     /// The video type. Also known as video container.

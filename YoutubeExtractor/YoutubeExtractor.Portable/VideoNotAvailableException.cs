@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExtractor
+namespace YoutubeExtractor.Portable
 {
     /// <summary>
     /// The exception that is thrown when the video is not available for viewing.

@@ -1,6 +1,6 @@
-﻿namespace YoutubeExtractor
+﻿namespace YoutubeExtractor.Portable
 {
-    internal static class BigEndianBitConverter
+    public static class BigEndianBitConverter
     {
         public static byte[] GetBytes(ulong value)
         {
