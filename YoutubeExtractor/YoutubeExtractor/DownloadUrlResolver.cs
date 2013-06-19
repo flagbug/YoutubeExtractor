@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace YoutubeExtractor
 {
@@ -59,6 +60,15 @@ namespace YoutubeExtractor
 
             return null; // Will never happen, but the compiler requires it
         }
+
+#if PORTABLE
+
+        public static async Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl)
+        {
+            return await Task.Run(() => GetDownloadUrls(videoUrl));
+        }
+
+#endif
 
         private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {

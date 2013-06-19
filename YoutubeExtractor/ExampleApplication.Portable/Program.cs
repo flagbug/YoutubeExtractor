@@ -8,15 +8,20 @@ namespace ExampleApplication.Portable
     {
         private static void Main(string[] args)
         {
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls("http://www.youtube.com/watch?v=6bMmhKz6KXg");
+            Run();
+
+            Console.ReadLine();
+        }
+
+        private static async void Run()
+        {
+            IEnumerable<VideoInfo> videoInfos = await DownloadUrlResolver.GetDownloadUrlsAsync("http://www.youtube.com/watch?v=6bMmhKz6KXg");
 
             foreach (VideoInfo videoInfo in videoInfos)
             {
                 Console.WriteLine(videoInfo.DownloadUrl);
                 Console.WriteLine();
             }
-
-            Console.ReadLine();
         }
     }
 }
