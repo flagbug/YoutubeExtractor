@@ -4,17 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 
-#if NETFX_CORE
-
-using Windows.Foundation;
-using System.Net.Http;
-
-#else
-
-using System.Web;
-
-#endif
-
 namespace YoutubeExtractor
 {
     /// <summary>
@@ -39,18 +28,14 @@ namespace YoutubeExtractor
 
             videoUrl = NormalizeYoutubeUrl(videoUrl);
 
-            string pageSource = GetPageSource(videoUrl);
+            string pageSource = HttpHelper.DownloadString(videoUrl);
             string videoTitle = GetVideoTitle(pageSource);
 
-#if NETFX_CORE
-            string id = new WwwFormUrlDecoder(videoUrl).GetFirstValueByName("v");
-#else
-            string id = HttpUtility.ParseQueryString(new Uri(videoUrl).Query)["v"];
-#endif
+            string id = HttpHelper.ParseQueryString(videoUrl)["v"];
 
             string requestUrl = String.Format("http://www.youtube.com/get_video_info?&video_id={0}&el=detailpage&ps=default&eurl=&gl=US&hl=en", id);
 
-            string source = GetPageSource(requestUrl);
+            string source = HttpHelper.DownloadString(requestUrl);
 
             try
             {
@@ -77,52 +62,20 @@ namespace YoutubeExtractor
 
         private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {
-#if NETFX_CORE
-            string urlMap = new WwwFormUrlDecoder(source).GetFirstValueByName("url_encoded_fmt_stream_map");
-#else
-            string urlMap = HttpUtility.ParseQueryString(source).Get("url_encoded_fmt_stream_map");
-#endif
+            string urlMap = HttpHelper.ParseQueryString(source)["url_encoded_fmt_stream_map"];
 
             string[] splitByUrls = urlMap.Split(',');
 
             foreach (string s in splitByUrls)
             {
-#if NETFX_CORE
-                var decoder = new WwwFormUrlDecoder(s);
-                string url = string.Format("{0}&fallback_host={1}&signature={2}",
-                    decoder.GetFirstValueByName("url"),
-                    decoder.GetFirstValueByName("fallback_host"),
-                    decoder.GetFirstValueByName("sig"));
-
-                url = WebUtility.UrlDecode(url);
-                url = WebUtility.UrlDecode(url);
-
-#else
-                var queries = HttpUtility.ParseQueryString(s);
+                IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
                 string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], queries["sig"]);
 
-                url = HttpUtility.UrlDecode(url);
-                url = HttpUtility.UrlDecode(url);
-#endif
+                url = HttpHelper.UrlDecode(url);
+                url = HttpHelper.UrlDecode(url);
+
                 yield return new Uri(url);
             }
-        }
-
-        private static string GetPageSource(string videoUrl)
-        {
-#if NETFX_CORE
-            using (var client = new HttpClient())
-            {
-                return client.GetStringAsync(videoUrl).Result;
-            }
-
-#else
-            using (var client = new WebClient())
-            {
-                client.Encoding = System.Text.Encoding.UTF8;
-                return client.DownloadString(videoUrl);
-            }
-#endif
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
@@ -131,11 +84,7 @@ namespace YoutubeExtractor
 
             foreach (Uri url in downloadUrls)
             {
-#if NETFX_CORE
-                string itag = new WwwFormUrlDecoder(url.Query).GetFirstValueByName("itag");
-#else
-                string itag = HttpUtility.ParseQueryString(url.Query)["itag"];
-#endif
+                string itag = HttpHelper.ParseQueryString(url.Query)["itag"];
 
                 // for this version, only get the download URL
                 byte formatCode = Byte.Parse(itag);
@@ -173,11 +122,8 @@ namespace YoutubeExtractor
                 if (videoTitleMatch.Success)
                 {
                     videoTitle = videoTitleMatch.Groups["title"].Value;
-#if NETFX_CORE
-                    videoTitle = WebUtility.HtmlDecode(videoTitle);
-#else
-                    videoTitle = HttpUtility.HtmlDecode(videoTitle);
-#endif
+
+                    videoTitle = HttpHelper.HtmlDecode(videoTitle);
 
                     // Remove the invalid characters in file names
                     // In Windows they are: \ / : * ? " < > |

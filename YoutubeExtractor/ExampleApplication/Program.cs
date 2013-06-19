@@ -23,7 +23,9 @@ namespace ExampleApplication
              * The first argument is the video where the audio should be extracted from.
              * The second argument is the path to save the audio file.
              */
-            var audioDownloader = new AudioDownloader(video, Path.Combine("D:/Downloads", video.Title + video.AudioExtension));
+
+            var audioDownloader = new AudioDownloader(video,
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), video.Title + video.AudioExtension));
 
             // Register the progress events. We treat the download progress as 85% of the progress and the extraction progress only as 15% of the progress,
             // because the download will take much longer than the audio extraction.
@@ -50,7 +52,8 @@ namespace ExampleApplication
              * The first argument is the video to download.
              * The second argument is the path to save the video file.
              */
-            var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + video.VideoExtension));
+            var videoDownloader = new VideoDownloader(video,
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), video.Title + video.VideoExtension));
 
             // Register the ProgressChanged event and print the current progress
             videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
@@ -74,7 +77,7 @@ namespace ExampleApplication
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
 
             //DownloadAudio(videoInfos);
-            //DownloadVideo(videoInfos);
+            DownloadVideo(videoInfos);
         }
     }
 }
