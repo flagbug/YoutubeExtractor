@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>YoutubeExtractor</id>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
         <title>YoutubeExtractor</title>
         <authors>Dennis Daume</authors>
         <owners>Dennis Daume</owners>
@@ -11,12 +11,8 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>YoutubeExtractor is a library to extract the download link from YouTube videos, download them and/or extract their audio track.</description>
         <releaseNotes>FEATURES:
-- Added a cancel option to the ProgressEventArgs class for canceling the 
-  download.
-  
-BUGFIXES:
-- Fixed disposal of some resources.</releaseNotes>
-        <tags>youtube download extract audio WinRT WP8 NET45</tags>
+- WinRT and Windows Phone 8 support</releaseNotes>
+        <tags>youtube download extract audio WinRT WP8</tags>
     </metadata>
     <files>
         <file src="YoutubeExtractor\YoutubeExtractor\bin\Release\YoutubeExtractor.dll" target="lib\net35\YoutubeExtractor.dll" />
