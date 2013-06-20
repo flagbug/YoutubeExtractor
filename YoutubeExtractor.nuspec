@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>YoutubeExtractor</id>
-        <version>0.6.1</version>
+        <version>0.6.2</version>
         <title>YoutubeExtractor</title>
         <authors>Dennis Daume</authors>
         <owners>Dennis Daume</owners>
@@ -11,8 +11,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>YoutubeExtractor is a library to extract the download link from YouTube videos, download them and/or extract their audio track.</description>
         <releaseNotes>BUGFIXES:
-- Fixed a bug in the download url extraction code that was caused by a faulty 
-  build.</releaseNotes>
+- Fixed build yet again...</releaseNotes>
         <tags>youtube download extract audio WinRT WP8</tags>
     </metadata>
     <files>
