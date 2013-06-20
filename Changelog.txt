@@ -1,3 +1,9 @@
+----------------------------------- v0.6.1 -----------------------------------
+
+BUGFIXES:
+- Fixed a bug in the download url extraction code that was caused by a faulty 
+  build.
+
 ----------------------------------- v0.6.0 -----------------------------------
 
 FEATURES:
