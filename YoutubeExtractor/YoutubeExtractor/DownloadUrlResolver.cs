@@ -78,7 +78,9 @@ namespace YoutubeExtractor
             foreach (string s in splitByUrls)
             {
                 IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
-                string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], queries["sig"]);
+                string signature = queries.ContainsKey("sig") ? queries["sig"] : queries["s"];
+
+                string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
 
                 url = HttpHelper.UrlDecode(url);
                 url = HttpHelper.UrlDecode(url);
