@@ -37,6 +37,15 @@ namespace YoutubeExtractor
 
             string source = HttpHelper.DownloadString(requestUrl);
 
+            IDictionary<string, string> queries = HttpHelper.ParseQueryString(source);
+
+            string status;
+
+            if (queries.TryGetValue("status", out status) && status == "fail")
+            {
+                throw new VideoNotAvailableException(queries["reason"]);
+            }
+
             try
             {
                 IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(source);
