@@ -22,6 +22,17 @@ namespace YoutubeExtractor
         { }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="AudioDownloader"/> class.
+        /// </summary>
+        /// <param name="video">The video to convert.</param>
+        /// <param name="savePath">The path to save the audio.</param>
+        /// <param name="bytesToDownload">The number of bytes to download</param>
+        /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
+        public AudioDownloader(VideoInfo video, string savePath, int bytesToDownload)
+            : base(video, savePath, bytesToDownload)
+        { }
+
+        /// <summary>
         /// Occurs when the progress of the audio extraction has changed.
         /// </summary>
         public event EventHandler<ProgressEventArgs> AudioExtractionProgressChanged;
@@ -57,7 +68,7 @@ namespace YoutubeExtractor
 
         private void DownloadVideo(string path)
         {
-            var videoDownloader = new VideoDownloader(this.Video, path);
+            var videoDownloader = new VideoDownloader(this.Video, path, this.BytesToDownload);
 
             // Backwards compatibility
             videoDownloader.ProgressChanged += (sender, args) =>
