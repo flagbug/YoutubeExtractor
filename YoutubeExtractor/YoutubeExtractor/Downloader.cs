@@ -22,7 +22,7 @@ namespace YoutubeExtractor
             if (savePath == null)
                 throw new ArgumentNullException("savePath");
 
-            if (bytesToDownload < 0)
+            if (bytesToDownload < -1)
                 throw new ArgumentNullException("bytesToDownload");
 
             this.Video = video;
