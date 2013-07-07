@@ -78,6 +78,96 @@ namespace YoutubeExtractor
 
 #endif
 
+        private static string DecryptSignature(string sig)
+        {
+            switch (sig.Length)
+            {
+                case 88:
+                    {
+                        char[] sigA = sig.ToCharArray();
+
+                        sigA = sigA.Slice(2);
+                        sigA = Swap(sigA, 1);
+                        sigA = Swap(sigA, 10);
+
+                        sigA = sigA.Reverse().ToArray();
+                        sigA = sigA.Slice(2);
+                        sigA = Swap(sigA, 23);
+
+                        sigA = sigA.Slice(3);
+                        sigA = Swap(sigA, 15);
+                        sigA = Swap(sigA, 34);
+
+                        sig = new string(sigA);
+                    }
+                    break;
+
+                case 87:
+                    {
+                        var sigA = sig.Substring(44, 40).Reverse();
+                        var sigB = sig.Substring(3, 40).Reverse();
+
+                        sig = sigA.Substring(21, 1) + sigA.Substring(1, 20) + sigA[0] + sigB.Substring(22, 9) +
+                            sig[0] + sigA.Substring(32, 8) + sig[43] + sigB;
+                    }
+                    break;
+
+                case 86:
+                    {
+                        var sigA = sig.Substring(2, 40);
+                        var sigB = sig.Substring(43, 40);
+
+                        sig = sigA + sig[42] + sigB.Substring(0, 20) + sigB[39] + sigB.Substring(21, 18) + sigB[20];
+                    }
+                    break;
+
+                case 85:
+                    {
+                        var sigA = sig.Substring(44, 40).Reverse();
+                        var sigB = sig.Substring(3, 40).Reverse();
+
+                        sig = sigA[7] + sigA.Substring(1, 6) + sigA[0] + sigA.Substring(8, 15) + sig[0] +
+                            sigA.Substring(24, 9) + sig[1] + sigA.Substring(34, 6) + sig[43] + sigB;
+                    }
+                    break;
+
+                case 84:
+                    {
+                        var sigA = sig.Substring(44, 40).Reverse();
+                        var sigB = sig.Substring(3, 40).Reverse();
+
+                        sig = sigA + sig[43] + sigB.Substring(0, 6) + sig[2] + sigB.Substring(7, 9) +
+                            sigB[39] + sigB.Substring(17, 22) + sigB[16];
+                    }
+                    break;
+
+                case 83:
+                    {
+                        var sigA = sig.Substring(43, 40).Reverse();
+                        var sigB = sig.Substring(2, 40).Reverse();
+
+                        sig = sigA[30] + sigA.Substring(1, 26) + sigB[39] +
+                            sigA.Substring(28, 2) + sigA[0] + sigA.Substring(31, 9) + sig[42] +
+                            sigB.Substring(0, 5) + sigA[27] + sigB.Substring(6, 33) + sigB[5];
+                    }
+                    break;
+
+                case 82:
+                    {
+                        var sigA = sig.Substring(34, 48).Reverse();
+                        var sigB = sig.Substring(0, 33).Reverse();
+
+                        sig = sigA[45] + sigA.Substring(2, 12) + sigA[0] + sigA.Substring(15, 26) +
+                            sig[33] + sigA.Substring(42, 3) +
+                            sigA[41] + sigA[46] + sigB[32] + sigA[14] +
+                            sigB.Substring(0, 32) + sigA[47];
+                    }
+                    break;
+            }
+
+            return sig;
+        }
+
         private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {
             string urlMap = HttpHelper.ParseQueryString(source)["url_encoded_fmt_stream_map"];
@@ -87,7 +177,7 @@ namespace YoutubeExtractor
             foreach (string s in splitByUrls)
             {
                 IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
-                string signature = queries.ContainsKey("sig") ? queries["sig"] : queries["s"];
+                string signature = queries.ContainsKey("s") ? DecryptSignature(queries["s"]) : queries["sig"];
 
                 string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
 
@@ -200,6 +290,33 @@ namespace YoutubeExtractor
             }
 
             return url;
+        }
+
+        private static string Reverse(this string s)
+        {
+            return new string(s.ToCharArray().Reverse().ToArray());
+        }
+
+        private static T[] Slice<T>(this T[] source, int start)
+        {
+            int len = source.Length - start;
+
+            var res = new T[len];
+
+            for (int i = 0; i < len; i++)
+            {
+                res[i] = source[i + start];
+            }
+
+            return res;
+        }
+
+        private static char[] Swap(char[] a, int b)
+        {
+            var c = a[0];
+            a[0] = a[b % a.Length];
+            a[b] = c;
+            return a;
         }
 
         private static void ThrowYoutubeParseException(Exception innerException)
