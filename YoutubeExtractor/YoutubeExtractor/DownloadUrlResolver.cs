@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace YoutubeExtractor
 {
@@ -261,35 +262,26 @@ namespace YoutubeExtractor
         {
             url = url.Trim();
 
-            if (url.StartsWith("https://"))
-            {
-                url = "http://" + url.Substring(8);
-            }
-
-            else if (!url.StartsWith("http://"))
-            {
-                url = "http://" + url;
-            }
-
             url = url.Replace("youtu.be/", "youtube.com/watch?v=");
-            url = url.Replace("www.youtube.com", "youtube.com");
-
-            if (url.StartsWith("http://youtube.com/v/"))
+            url = url.Replace("www.youtube", "youtube");
+            
+            if(url.Contains("/v/"))
             {
-                url = url.Replace("youtube.com/v/", "youtube.com/watch?v=");
+                url = "http://youtube.com" + new Uri(url).AbsolutePath.Replace("/v/", "/watch?v=");
             }
 
-            else if (url.StartsWith("http://youtube.com/watch#"))
-            {
-                url = url.Replace("youtube.com/watch#", "youtube.com/watch?");
-            }
+            url = url.Replace("/watch#", "/watch?");
 
-            if (!url.StartsWith("http://youtube.com/watch"))
+            IDictionary<string, string> query = HttpHelper.ParseQueryString(url);
+
+            string v;
+
+            if(!query.TryGetValue("v", out v))
             {
                 throw new ArgumentException("URL is not a valid youtube URL!");
             }
 
-            return url;
+            return "http://youtube.com/watch?v=" + v;
         }
 
         private static string Reverse(this string s)
