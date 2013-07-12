@@ -146,9 +146,8 @@ namespace YoutubeExtractor
                         var sigA = sig.Substring(43, 40).Reverse();
                         var sigB = sig.Substring(2, 40).Reverse();
 
-                        sig = sigA[30] + sigA.Substring(1, 26) + sigB[39] +
-                            sigA.Substring(28, 2) + sigA[0] + sigA.Substring(31, 9) + sig[42] +
-                            sigB.Substring(0, 5) + sigA[27] + sigB.Substring(6, 33) + sigB[5];
+                        sig = sigA[30] + sigA.Substring(1, 26) + sigB[39] + sigA.Substring(28, 2) + sigA[0] + sigA.Substring(31, 9) +
+                            sig[42] + sigB.Substring(0, 5) + sigA[27] + sigB.Substring(6, 33) + sigB[5];
                     }
                     break;
 
@@ -263,8 +262,8 @@ namespace YoutubeExtractor
 
             url = url.Replace("youtu.be/", "youtube.com/watch?v=");
             url = url.Replace("www.youtube", "youtube");
-            
-            if(url.Contains("/v/"))
+
+            if (url.Contains("/v/"))
             {
                 url = "http://youtube.com" + new Uri(url).AbsolutePath.Replace("/v/", "/watch?v=");
             }
@@ -275,7 +274,7 @@ namespace YoutubeExtractor
 
             string v;
 
-            if(!query.TryGetValue("v", out v))
+            if (!query.TryGetValue("v", out v))
             {
                 throw new ArgumentException("URL is not a valid youtube URL!");
             }
