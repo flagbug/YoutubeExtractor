@@ -56,20 +56,17 @@ namespace YoutubeExtractor
 
             client.DownloadProgressChanged += (sender, args) =>
             {
-                var progressArgs = new ProgressEventArgs(args.ProgressPercentage);
-
-                // Backwards compatibility
-                this.OnProgressChanged(progressArgs);
-
                 if (this.DownloadProgressChanged != null)
                 {
-                    this.DownloadProgressChanged(this, progressArgs);
+                    var progressArgs = new ProgressEventArgs(args.ProgressPercentage);
 
                     if (progressArgs.Cancel && !isCanceled)
                     {
                         isCanceled = true;
                         client.CancelAsync();
                     }
+
+                    this.DownloadProgressChanged(this, progressArgs);
                 }
             };
 
