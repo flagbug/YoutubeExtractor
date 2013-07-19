@@ -12,8 +12,9 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to download/convert.</param>
         /// <param name="savePath">The path to save the video/audio.</param>
+        /// /// <param name="bytesToDownload">An optional value to limit the number of bytes to download.</param>
         /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
-        protected Downloader(VideoInfo video, string savePath)
+        protected Downloader(VideoInfo video, string savePath, int? bytesToDownload = null)
         {
             if (video == null)
                 throw new ArgumentNullException("video");
@@ -23,6 +24,7 @@ namespace YoutubeExtractor
 
             this.Video = video;
             this.SavePath = savePath;
+            this.BytesToDownload = bytesToDownload;
         }
 
         /// <summary>
@@ -34,6 +36,11 @@ namespace YoutubeExtractor
         /// Occurs when the download is starts.
         /// </summary>
         public event EventHandler DownloadStarted;
+
+        /// <summary>
+        /// Gets the number of bytes to download. <c>null</c>, if everything is downloaded.
+        /// </summary>
+        public int? BytesToDownload { get; private set; }
 
         /// <summary>
         /// Gets the path to save the video/audio.

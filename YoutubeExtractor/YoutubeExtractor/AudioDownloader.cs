@@ -16,9 +16,10 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to convert.</param>
         /// <param name="savePath">The path to save the audio.</param>
+        /// /// <param name="bytesToDownload">An optional value to limit the number of bytes to download.</param>
         /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
-        public AudioDownloader(VideoInfo video, string savePath)
-            : base(video, savePath)
+        public AudioDownloader(VideoInfo video, string savePath, int? bytesToDownload = null)
+            : base(video, savePath, bytesToDownload)
         { }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace YoutubeExtractor
 
         private void DownloadVideo(string path)
         {
-            var videoDownloader = new VideoDownloader(this.Video, path);
+            var videoDownloader = new VideoDownloader(this.Video, path, this.BytesToDownload);
 
             videoDownloader.DownloadProgressChanged += (sender, args) =>
             {
