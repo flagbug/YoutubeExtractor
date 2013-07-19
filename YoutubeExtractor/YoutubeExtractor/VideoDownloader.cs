@@ -17,6 +17,16 @@ namespace YoutubeExtractor
         private readonly int bufferSize = 10240;
 
         /// <summary>
+        /// A web client used in the Execute method to download the video.
+        /// </summary>
+        private WebClient webClient = null;
+
+        /// <summary>
+        /// An handle which stops the actual thread during the asynchronous webclient method.
+        /// </summary>
+        private ManualResetEvent handle = null;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="VideoDownloader"/> class.
         /// </summary>
         /// <param name="video">The video to download.</param>
@@ -50,14 +60,14 @@ namespace YoutubeExtractor
         public override void Execute()
         {
             // We need a handle to keep the method synchronously
-            var handle = new ManualResetEvent(false);
-            var client = new WebClient();
+            handle = new ManualResetEvent(false);
+            webClient = new WebClient();
             bool isCanceled = false;
 
-            client.DownloadFileCompleted += (sender, args) =>
+            webClient.DownloadFileCompleted += (sender, args) =>
             {
                 handle.Close();
-                client.Dispose();
+                webClient.Dispose();
 
                 // DownloadFileAsync passes the exception to the DownloadFileCompleted event, if one occurs
                 if (args.Error != null && !args.Cancelled)
@@ -68,61 +78,79 @@ namespace YoutubeExtractor
                 handle.Set();
             };
 
-            client.DownloadProgressChanged += (sender, args) =>
+            webClient.DownloadProgressChanged += (sender, args) =>
             {
-                var progressArgs = new ProgressEventArgs(args.ProgressPercentage);
-
-                // Backwards compatibility
-                this.OnProgressChanged(progressArgs);
-
-                if (this.DownloadProgressChanged != null)
+                if (!NotifyProgress(args.ProgressPercentage))
                 {
-                    this.DownloadProgressChanged(this, progressArgs);
-
-                    if (progressArgs.Cancel && !isCanceled)
-                    {
-                        isCanceled = true;
-                        client.CancelAsync();
-                    }
+                    isCanceled = true;
+                    webClient.CancelAsync();
                 }
             };
+
+            webClient.OpenReadCompleted += new OpenReadCompletedEventHandler(Client_OpenReadCompleted);
 
             this.OnDownloadStarted(EventArgs.Empty);
 
             if (this.BytesToDownload < 0)
-            {
-                client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
-                handle.WaitOne();
-            }
+                webClient.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
             else
-            {
-                Stream inputStream = client.OpenRead(new Uri(this.Video.DownloadUrl));
-                ReadAndWriteFromStream(inputStream);
-            }
+                webClient.OpenReadAsync(new Uri(this.Video.DownloadUrl));
+            handle.WaitOne();
 
             this.OnDownloadFinished(EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Write the stream in the specified file path.
-        /// This method is fully synchronous.
-        /// </summary>
-        /// <param name="input">The stream which contains the video downloaded</param>
-        private void ReadAndWriteFromStream(Stream input)
+        void Client_OpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
         {
-            byte[] buffer = new byte[this.bufferSize];
-            int bytesRead;
-            int totalBytesRead = 0;
-
-            FileStream writer = new FileStream(this.SavePath, FileMode.Create, FileAccess.Write);
-
-            while (totalBytesRead < this.BytesToDownload
-                && (bytesRead = input.Read(buffer, 0, Math.Min(buffer.Length, this.BytesToDownload - totalBytesRead))) > 0)
+            if (e.Error == null)
             {
-                writer.Write(buffer, 0, bytesRead);
-                totalBytesRead += bytesRead;
+                Stream input = e.Result;
+                byte[] buffer = new byte[this.bufferSize];
+                int bytesRead;
+                int totalBytesRead = 0;
+                FileStream writer = null;
+
+                try
+                {
+                    writer = new FileStream(this.SavePath, FileMode.Create, FileAccess.Write);
+
+                    while (totalBytesRead < this.BytesToDownload
+                        && (bytesRead = input.Read(buffer, 0, Math.Min(buffer.Length, this.BytesToDownload - totalBytesRead))) > 0)
+                    {
+                        writer.Write(buffer, 0, bytesRead);
+                        totalBytesRead += bytesRead;
+
+                        if (!NotifyProgress(((double)totalBytesRead / (double)this.BytesToDownload) * 100.0)) break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (writer != null)
+                        writer.Close();
+                    input.Close();
+                    this.webClient.Dispose();
+                    this.handle.Close();
+                    this.handle.Set();
+                }
             }
-            writer.Close();
+            else
+            {
+                
+            }
+        }
+
+        private bool NotifyProgress(double progress)
+        {
+            var progressArgs = new ProgressEventArgs(progress);
+
+            this.OnProgressChanged(progressArgs);
+
+            if (this.DownloadProgressChanged != null)
+            {
+                this.DownloadProgressChanged(this, progressArgs);
+            }
+
+            return !progressArgs.Cancel;
         }
     }
 }
