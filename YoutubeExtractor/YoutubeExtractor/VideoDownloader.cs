@@ -39,16 +39,19 @@ namespace YoutubeExtractor
 
             client.DownloadFileCompleted += (sender, args) =>
             {
-                handle.Close();
-                client.Dispose();
-
                 // DownloadFileAsync passes the exception to the DownloadFileCompleted event, if one occurs
                 if (args.Error != null && !args.Cancelled)
                 {
+                    handle.Close();
+                    client.Dispose();
+
                     throw args.Error;
                 }
 
                 handle.Set();
+
+                handle.Close();
+                client.Dispose();
             };
 
             client.DownloadProgressChanged += (sender, args) =>
