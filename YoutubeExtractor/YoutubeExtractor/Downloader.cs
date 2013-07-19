@@ -36,12 +36,6 @@ namespace YoutubeExtractor
         public event EventHandler DownloadStarted;
 
         /// <summary>
-        /// Occurs when the progress has changed.
-        /// </summary>
-        [Obsolete("Use the downloader specific progress events instead.")]
-        public event EventHandler<ProgressEventArgs> ProgressChanged;
-
-        /// <summary>
         /// Gets the path to save the video/audio.
         /// </summary>
         public string SavePath { get; private set; }
@@ -69,15 +63,6 @@ namespace YoutubeExtractor
             if (this.DownloadStarted != null)
             {
                 this.DownloadStarted(this, e);
-            }
-        }
-
-        [Obsolete("Each downloader has to implement its own progress notification.")]
-        protected void OnProgressChanged(ProgressEventArgs e)
-        {
-            if (this.ProgressChanged != null)
-            {
-                this.ProgressChanged(this, e);
             }
         }
     }

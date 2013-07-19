@@ -59,12 +59,6 @@ namespace YoutubeExtractor
         {
             var videoDownloader = new VideoDownloader(this.Video, path);
 
-            // Backwards compatibility
-            videoDownloader.ProgressChanged += (sender, args) =>
-            {
-                this.OnProgressChanged(new ProgressEventArgs(args.ProgressPercentage / 2));
-            };
-
             videoDownloader.DownloadProgressChanged += (sender, args) =>
             {
                 if (this.DownloadProgressChanged != null)
@@ -84,9 +78,6 @@ namespace YoutubeExtractor
             {
                 flvFile.ConversionProgressChanged += (sender, args) =>
                 {
-                    // Backwards compatibility
-                    this.OnProgressChanged(new ProgressEventArgs(50 + args.ProgressPercentage / 2));
-
                     if (this.AudioExtractionProgressChanged != null)
                     {
                         this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
