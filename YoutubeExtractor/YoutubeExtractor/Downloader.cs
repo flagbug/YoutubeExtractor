@@ -12,8 +12,9 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to download/convert.</param>
         /// <param name="savePath">The path to save the video/audio.</param>
+        /// <param name="bytesToDownload">The amount of bytes which will be downloaded</param>
         /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
-        protected Downloader(VideoInfo video, string savePath)
+        protected Downloader(VideoInfo video, string savePath, int bytesToDownload = -1)
         {
             if (video == null)
                 throw new ArgumentNullException("video");
@@ -21,8 +22,12 @@ namespace YoutubeExtractor
             if (savePath == null)
                 throw new ArgumentNullException("savePath");
 
+            if (bytesToDownload < -1)
+                throw new ArgumentNullException("bytesToDownload");
+
             this.Video = video;
             this.SavePath = savePath;
+            this.BytesToDownload = bytesToDownload;
         }
 
         /// <summary>
@@ -50,6 +55,11 @@ namespace YoutubeExtractor
         /// Gets the video to download/convert.
         /// </summary>
         public VideoInfo Video { get; private set; }
+
+        /// <summary>
+        /// Gets the number of bytes to download from a video.
+        /// </summary>
+        public int BytesToDownload { get; protected set; }
 
         /// <summary>
         /// Starts the work of the <see cref="Downloader"/>.
