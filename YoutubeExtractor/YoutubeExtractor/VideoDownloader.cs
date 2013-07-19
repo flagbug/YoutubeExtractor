@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Threading;
 
 namespace YoutubeExtractor
 {
@@ -15,9 +14,10 @@ namespace YoutubeExtractor
         /// </summary>
         /// <param name="video">The video to download.</param>
         /// <param name="savePath">The path to save the video.</param>
+        /// <param name="bytesToDownload">An optional value to limit the number of bytes to download.</param>
         /// <exception cref="ArgumentNullException"><paramref name="video"/> or <paramref name="savePath"/> is <c>null</c>.</exception>
-        public VideoDownloader(VideoInfo video, string savePath)
-            : base(video, savePath)
+        public VideoDownloader(VideoInfo video, string savePath, int? bytesToDownload = null)
+            : base(video, savePath, bytesToDownload)
         { }
 
         /// <summary>
@@ -32,49 +32,48 @@ namespace YoutubeExtractor
         /// <exception cref="WebException">An error occured while downloading the video.</exception>
         public override void Execute()
         {
-            // We need a handle to keep the method synchronously
-            var handle = new ManualResetEvent(false);
-            var client = new WebClient();
-            bool isCanceled = false;
-
-            client.DownloadFileCompleted += (sender, args) =>
-            {
-                // DownloadFileAsync passes the exception to the DownloadFileCompleted event, if one occurs
-                if (args.Error != null && !args.Cancelled)
-                {
-                    handle.Close();
-                    client.Dispose();
-
-                    throw args.Error;
-                }
-
-                handle.Set();
-
-                handle.Close();
-                client.Dispose();
-            };
-
-            client.DownloadProgressChanged += (sender, args) =>
-            {
-                if (this.DownloadProgressChanged != null)
-                {
-                    var progressArgs = new ProgressEventArgs(args.ProgressPercentage);
-
-                    if (progressArgs.Cancel && !isCanceled)
-                    {
-                        isCanceled = true;
-                        client.CancelAsync();
-                    }
-
-                    this.DownloadProgressChanged(this, progressArgs);
-                }
-            };
-
             this.OnDownloadStarted(EventArgs.Empty);
 
-            client.DownloadFileAsync(new Uri(this.Video.DownloadUrl), this.SavePath);
+            var request = (HttpWebRequest)WebRequest.Create(this.Video.DownloadUrl);
 
-            handle.WaitOne();
+            if (this.BytesToDownload.HasValue)
+            {
+                request.AddRange(0, this.BytesToDownload.Value - 1);
+            }
+
+            // the following code is alternative, you may implement the function after your needs
+            using (WebResponse response = request.GetResponse())
+            {
+                using (Stream source = response.GetResponseStream())
+                {
+                    using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
+                    {
+                        var buffer = new byte[1024];
+                        bool cancel = false;
+                        int bytes;
+                        int copiedBytes = 0;
+
+                        while (!cancel && (bytes = source.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            target.Write(buffer, 0, bytes);
+
+                            copiedBytes += bytes;
+
+                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
+
+                            if (this.DownloadProgressChanged != null)
+                            {
+                                this.DownloadProgressChanged(this, eventArgs);
+
+                                if (eventArgs.Cancel)
+                                {
+                                    cancel = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             this.OnDownloadFinished(EventArgs.Empty);
         }
