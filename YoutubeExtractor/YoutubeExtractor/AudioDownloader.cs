@@ -80,22 +80,21 @@ namespace YoutubeExtractor
 
         private void ExtractAudio(string path)
         {
-            var flvFile = new FlvFile(path, this.SavePath);
-
-            flvFile.ConversionProgressChanged += (sender, args) =>
+            using (var flvFile = new FlvFile(path, this.SavePath))
             {
-                // Backwards compatibility
-                this.OnProgressChanged(new ProgressEventArgs(50 + args.ProgressPercentage / 2));
-
-                if (this.AudioExtractionProgressChanged != null)
+                flvFile.ConversionProgressChanged += (sender, args) =>
                 {
-                    this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
-                }
-            };
+                    // Backwards compatibility
+                    this.OnProgressChanged(new ProgressEventArgs(50 + args.ProgressPercentage / 2));
 
-            flvFile.ExtractStreams();
+                    if (this.AudioExtractionProgressChanged != null)
+                    {
+                        this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
+                    }
+                };
 
-            flvFile.Dispose();
+                flvFile.ExtractStreams();
+            }
         }
     }
 }
