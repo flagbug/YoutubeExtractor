@@ -78,27 +78,56 @@ namespace YoutubeExtractor
 
 #endif
 
+        private static string Decode(string sig, IEnumerable<int> arr)
+        {
+            foreach (int i in arr)
+            {
+                sig = (i > 0) ? new String(Swap(sig.ToCharArray(), i)) : ((i == 0) ? sig.Reverse() : new String(Slice(sig.ToCharArray(), -i)));
+            }
+
+            return sig;
+        }
+
         private static string DecryptSignature(string sig)
         {
             switch (sig.Length)
             {
-                case 88:
+                case 82:
                     {
-                        char[] sigA = sig.ToCharArray();
+                        string sigA = sig.Substring(34, 48).Reverse();
+                        string sigB = sig.Substring(0, 33).Reverse();
 
-                        sigA = sigA.Slice(2);
-                        sigA = Swap(sigA, 1);
-                        sigA = Swap(sigA, 10);
+                        sig = sigA.Substring(45, 1) + sigA.Substring(2, 12) + sigA.Substring(0, 1) + sigA.Substring(15, 26) +
+                            sig.Substring(33, 1) + sigA.Substring(42, 1) + sigA.Substring(43, 1) + sigA.Substring(44, 1) +
+                            sigA.Substring(44, 1) + sigA.Substring(46, 1) + sigB.Substring(31, 1) + sigA.Substring(14, 1) +
+                            sigB.Substring(0, 32) + sigA.Substring(47, 1);
+                    }
+                    break;
 
-                        sigA = sigA.Reverse().ToArray();
-                        sigA = sigA.Slice(2);
-                        sigA = Swap(sigA, 23);
+                case 83:
+                    sig = Decode(sig, new[] { 24, 53, -2, 31, 4 });
+                    break;
 
-                        sigA = sigA.Slice(3);
-                        sigA = Swap(sigA, 15);
-                        sigA = Swap(sigA, 34);
+                case 84:
+                    {
+                        string sigA = sig.Substring(44, 40).Reverse();
+                        string sigB = sig.Substring(3, 40).Reverse();
 
-                        sig = new string(sigA);
+                        sig = sigA + sig.Substring(43, 1) + sigB.Substring(0, 6) + sig.Substring(2, 1) + sigB.Substring(7, 9) +
+                            sigB.Substring(39, 1) + sigB.Substring(17, 22) + sigB.Substring(16, 1);
+                    }
+                    break;
+
+                case 85:
+                    sig = Decode(sig, new[] { 0, -2, 17, 61, 0, -1, 7, -1 });
+                    break;
+
+                case 86:
+                    {
+                        var sigA = sig.Substring(2, 40);
+                        var sigB = sig.Substring(43, 40);
+
+                        sig = sigA + sig.Substring(42, 1) + sigB.Substring(0, 20) + sigB.Substring(39, 1) + sigB.Substring(21, 18) + sigB.Substring(20, 1);
                     }
                     break;
 
@@ -107,60 +136,17 @@ namespace YoutubeExtractor
                         var sigA = sig.Substring(44, 40).Reverse();
                         var sigB = sig.Substring(3, 40).Reverse();
 
-                        sig = sigA.Substring(21, 1) + sigA.Substring(1, 20) + sigA[0] + sigB.Substring(22, 9) +
-                            sig[0] + sigA.Substring(32, 8) + sig[43] + sigB;
+                        sig = sigA.Substring(21, 1) + sigA.Substring(1, 20) + sigA.Substring(0, 1) + sigB.Substring(22, 9) +
+                        sig.Substring(0, 1) + sigA.Substring(32, 8) + sig.Substring(43, 1) + sigB;
                     }
                     break;
 
-                case 86:
-                    {
-                        var sigA = sig.Substring(2, 40);
-                        var sigB = sig.Substring(43, 40);
-
-                        sig = sigA + sig[42] + sigB.Substring(0, 20) + sigB[39] + sigB.Substring(21, 18) + sigB[20];
-                    }
+                case 88:
+                    sig = Decode(sig, new[] { -2, 1, 10, 0, -2, 23, -3, 15, 34 });
                     break;
 
-                case 85:
-                    {
-                        var sigA = sig.Substring(44, 40).Reverse();
-                        var sigB = sig.Substring(3, 40).Reverse();
-
-                        sig = sigA[7] + sigA.Substring(1, 6) + sigA[0] + sigA.Substring(8, 15) + sig[0] +
-                            sigA.Substring(24, 9) + sig[1] + sigA.Substring(34, 6) + sig[43] + sigB;
-                    }
-                    break;
-
-                case 84:
-                    {
-                        var sigA = sig.Substring(44, 40).Reverse();
-                        var sigB = sig.Substring(3, 40).Reverse();
-
-                        sig = sigA + sig[43] + sigB.Substring(0, 6) + sig[2] + sigB.Substring(7, 9) +
-                            sigB[39] + sigB.Substring(17, 22) + sigB[16];
-                    }
-                    break;
-
-                case 83:
-                    {
-                        var sigA = sig.Substring(43, 40).Reverse();
-                        var sigB = sig.Substring(2, 40).Reverse();
-
-                        sig = sigA[30] + sigA.Substring(1, 26) + sigB[39] + sigA.Substring(28, 2) + sigA[0] + sigA.Substring(31, 9) +
-                            sig[42] + sigB.Substring(0, 5) + sigA[27] + sigB.Substring(6, 33) + sigB[5];
-                    }
-                    break;
-
-                case 82:
-                    {
-                        var sigA = sig.Substring(34, 48).Reverse();
-                        var sigB = sig.Substring(0, 33).Reverse();
-
-                        sig = sigA[45] + sigA.Substring(2, 12) + sigA[0] + sigA.Substring(15, 26) +
-                            sig[33] + sigA.Substring(42, 3) +
-                            sigA[41] + sigA[46] + sigB[32] + sigA[14] +
-                            sigB.Substring(0, 32) + sigA[47];
-                    }
+                case 92:
+                    sig = Decode(sig, new[] { -2, 0, -3, 9, -3, 43, -3, 0, 23 });
                     break;
             }
 
