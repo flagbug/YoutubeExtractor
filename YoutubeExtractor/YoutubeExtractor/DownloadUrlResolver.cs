@@ -167,6 +167,7 @@ namespace YoutubeExtractor
                 string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
 
                 url = HttpHelper.UrlDecode(url);
+                url = HttpHelper.UrlDecode(url);
 
                 yield return new Uri(url);
             }
