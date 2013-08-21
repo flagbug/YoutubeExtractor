@@ -189,8 +189,10 @@ namespace YoutubeExtractor
 
                 if (info != null)
                 {
-                    info.DownloadUrl = url.ToString();
-                    info.Title = videoTitle;
+                    info = new VideoInfo(info) {
+                        DownloadUrl = url.ToString(),
+                        Title = videoTitle
+                    };
                 }
 
                 else
