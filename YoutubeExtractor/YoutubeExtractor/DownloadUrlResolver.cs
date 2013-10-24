@@ -250,7 +250,8 @@ namespace YoutubeExtractor
 
             url = url.Replace("youtu.be/", "youtube.com/watch?v=");
             url = url.Replace("www.youtube", "youtube");
-
+            url = url.Replace("youtube.com/embed/", "youtube.com/watch?v=");
+            
             if (url.Contains("/v/"))
             {
                 url = "http://youtube.com" + new Uri(url).AbsolutePath.Replace("/v/", "/watch?v=");
