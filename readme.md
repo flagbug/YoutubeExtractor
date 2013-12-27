@@ -12,8 +12,10 @@ YoutubeExtractor is a library for .NET, written in C#, that allows to download v
 - .NET Framework 3.5 and higher
 - Windows Phone 8
 - WinRT
+- Xamarin.Android
+- Xamarin.iOS
 
-Note that Windows Phone 8 and WinRT only support the extraction of the download URLs
+Note that Windows Phone 8, WinRT, Xamarin.Android and Xamarin.iOS only support the extraction of the download URLs
 
 ## NuGet
 
