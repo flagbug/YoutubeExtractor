@@ -1,3 +1,25 @@
+----------------------------------- v0.7.0 -----------------------------------
+
+NOTES:
+- This version does NOT fix the various problems that occur because of the 
+  latest YouTube changes.
+
+FEATURES:
+- The portable version of YoutubeExtractor now supports Xamarin.Android and 
+  Xamarin.iOS
+- Better YouTube URL regognition.
+- Added an optional constructor argument to specify the exact number of bytes 
+  to download.
+
+CHANGES:
+- DownloadUrlResolver now throws the `VideoNotAvailableException` with the
+  reason for the request failure.
+- Removed the obsolete `ProgressChanged` event and `OnProgressChanged` method
+  from the `Downloader` class.
+
+BUGFIXES:
+- Fixed the resource disposal in the `VideoDownloader` class.
+
 ----------------------------------- v0.6.2 -----------------------------------
 
 BUGFIXES:

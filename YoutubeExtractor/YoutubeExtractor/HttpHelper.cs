@@ -10,7 +10,7 @@ namespace YoutubeExtractor
         public static string DownloadString(string url)
         {
 #if PORTABLE
-            HttpWebRequest request = WebRequest.CreateHttp(url);
+            var request = WebRequest.Create(url);
             request.Method = "GET";
 
             System.Threading.Tasks.Task<WebResponse> task = System.Threading.Tasks.Task.Factory.FromAsync(
