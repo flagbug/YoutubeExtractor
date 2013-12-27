@@ -78,81 +78,6 @@ namespace YoutubeExtractor
 
 #endif
 
-        private static string Decode(string sig, IEnumerable<int> arr)
-        {
-            foreach (int i in arr)
-            {
-                sig = (i > 0) ? new String(Swap(sig.ToCharArray(), i)) : ((i == 0) ? sig.Reverse() : new String(Slice(sig.ToCharArray(), -i)));
-            }
-
-            return sig;
-        }
-
-        private static string DecryptSignature(string sig)
-        {
-            switch (sig.Length)
-            {
-                case 82:
-                    {
-                        string sigA = sig.Substring(34, 48).Reverse();
-                        string sigB = sig.Substring(0, 33).Reverse();
-
-                        sig = sigA.Substring(45, 1) + sigA.Substring(2, 12) + sigA.Substring(0, 1) + sigA.Substring(15, 26) +
-                            sig.Substring(33, 1) + sigA.Substring(42, 1) + sigA.Substring(43, 1) + sigA.Substring(44, 1) +
-                            sigA.Substring(44, 1) + sigA.Substring(46, 1) + sigB.Substring(31, 1) + sigA.Substring(14, 1) +
-                            sigB.Substring(0, 32) + sigA.Substring(47, 1);
-                    }
-                    break;
-
-                case 83:
-                    sig = Decode(sig, new[] { 24, 53, -2, 31, 4 });
-                    break;
-
-                case 84:
-                    {
-                        string sigA = sig.Substring(44, 40).Reverse();
-                        string sigB = sig.Substring(3, 40).Reverse();
-
-                        sig = sigA + sig.Substring(43, 1) + sigB.Substring(0, 6) + sig.Substring(2, 1) + sigB.Substring(7, 9) +
-                            sigB.Substring(39, 1) + sigB.Substring(17, 22) + sigB.Substring(16, 1);
-                    }
-                    break;
-
-                case 85:
-                    sig = Decode(sig, new[] { 0, -2, 17, 61, 0, -1, 7, -1 });
-                    break;
-
-                case 86:
-                    {
-                        var sigA = sig.Substring(2, 40);
-                        var sigB = sig.Substring(43, 40);
-
-                        sig = sigA + sig.Substring(42, 1) + sigB.Substring(0, 20) + sigB.Substring(39, 1) + sigB.Substring(21, 18) + sigB.Substring(20, 1);
-                    }
-                    break;
-
-                case 87:
-                    {
-                        var sigA = sig.Substring(44, 40).Reverse();
-                        var sigB = sig.Substring(3, 40).Reverse();
-
-                        sig = sigA.Substring(21, 1) + sigA.Substring(1, 20) + sigA.Substring(0, 1) + sigB.Substring(22, 9) +
-                        sig.Substring(0, 1) + sigA.Substring(32, 8) + sig.Substring(43, 1) + sigB;
-                    }
-                    break;
-
-                case 88:
-                    sig = Decode(sig, new[] { -2, 1, 10, 0, -2, 23, -3, 15, 34 });
-                    break;
-
-                case 92:
-                    sig = Decode(sig, new[] { -2, 0, -3, 9, -3, 43, -3, 0, 23 });
-                    break;
-            }
-
-            return sig;
-        }
-
         private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {
             string urlMap = HttpHelper.ParseQueryString(source)["url_encoded_fmt_stream_map"];
@@ -162,7 +87,7 @@ namespace YoutubeExtractor
             foreach (string s in splitByUrls)
             {
                 IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
-                string signature = queries.ContainsKey("s") ? DecryptSignature(queries["s"]) : queries["sig"];
+                string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
 
                 string url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
 
@@ -189,7 +114,8 @@ namespace YoutubeExtractor
 
                 if (info != null)
                 {
-                    info = new VideoInfo(info) {
+                    info = new VideoInfo(info)
+                    {
                         DownloadUrl = url.ToString(),
                         Title = videoTitle
                     };
@@ -251,7 +177,7 @@ namespace YoutubeExtractor
             url = url.Replace("youtu.be/", "youtube.com/watch?v=");
             url = url.Replace("www.youtube", "youtube");
             url = url.Replace("youtube.com/embed/", "youtube.com/watch?v=");
-            
+
             if (url.Contains("/v/"))
             {
                 url = "http://youtube.com" + new Uri(url).AbsolutePath.Replace("/v/", "/watch?v=");
@@ -269,33 +195,6 @@ namespace YoutubeExtractor
             }
 
             return "http://youtube.com/watch?v=" + v;
-        }
-
-        private static string Reverse(this string s)
-        {
-            return new string(s.ToCharArray().Reverse().ToArray());
-        }
-
-        private static T[] Slice<T>(this T[] source, int start)
-        {
-            int len = source.Length - start;
-
-            var res = new T[len];
-
-            for (int i = 0; i < len; i++)
-            {
-                res[i] = source[i + start];
-            }
-
-            return res;
-        }
-
-        private static char[] Swap(char[] a, int b)
-        {
-            var c = a[0];
-            a[0] = a[b % a.Length];
-            a[b] = c;
-            return a;
         }
 
         private static void ThrowYoutubeParseException(Exception innerException)
