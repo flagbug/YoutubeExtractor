@@ -34,11 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -48,9 +43,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\YoutubeExtractor.Portable\YoutubeExtractor.Portable.csproj">
+    <ProjectReference Include="..\YoutubeExtractor\YoutubeExtractor_Portable.csproj">
       <Project>{1bb4cf4d-3617-4a23-b51a-da7711e6f8eb}</Project>
-      <Name>YoutubeExtractor.Portable</Name>
+      <Name>YoutubeExtractor_Portable</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

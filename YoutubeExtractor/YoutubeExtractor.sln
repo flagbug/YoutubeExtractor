@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\Changelog.txt = ..\Changelog.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor.Portable", "YoutubeExtractor.Portable\YoutubeExtractor.Portable.csproj", "{1BB4CF4D-3617-4A23-B51A-DA7711E6F8EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor_Portable", "YoutubeExtractor\YoutubeExtractor_Portable.csproj", "{1BB4CF4D-3617-4A23-B51A-DA7711E6F8EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication.Portable", "ExampleApplication.Portable\ExampleApplication.Portable.csproj", "{D71C979F-7F55-4AD3-854C-7F1FFF35B4F0}"
 	ProjectSection(ProjectDependencies) = postProject
