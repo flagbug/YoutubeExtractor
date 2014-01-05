@@ -39,6 +39,7 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="AdaptiveType.cs" />
     <Compile Include="AudioType.cs" />
     <Compile Include="DownloadUrlResolver.cs" />
     <Compile Include="HttpHelper.cs" />
