@@ -28,11 +28,12 @@ Note that Windows Phone 8, WinRT, Xamarin.Android and Xamarin.iOS only support t
 YoutubeExtractor has two licenses;
 
 The YouTube URL-extraction code is licensed under the [MIT License](http://opensource.org/licenses/MIT)
-The audio extraction code is originally from is licenced under the [GNU General Public License version 2 (GPLv2)](http://opensource.org/licenses/gpl-2.0)
+
+The audio extraction code that is originally from [FlvExtract](http://moitah.net/) is licenced under the [GNU General Public License version 2 (GPLv2)](http://opensource.org/licenses/gpl-2.0)
 
 ## Credits
 
-- http://opensource.org/licenses/MITCode for extracting MP3 and AAC audio tracks out of flash files.
+- [FlvExtract](http://moitah.net/) for extracting MP3 and AAC audio tracks out of flash files.
 
 ## Example code
 
