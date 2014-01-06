@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AacAudioExtractor.cs" />
-	<Compile Include="AdaptiveType.cs" />
+    <Compile Include="AdaptiveType.cs" />
     <Compile Include="AudioDownloader.cs" />
     <Compile Include="AudioExtractionException.cs" />
     <Compile Include="AudioType.cs" />

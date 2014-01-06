@@ -81,26 +81,26 @@ namespace YoutubeExtractor
         private static IEnumerable<Uri> ExtractDownloadUrls(string source)
         {
             string urlMap = HttpHelper.ParseQueryString(source)["url_encoded_fmt_stream_map"];
-			string adaptiveFmtUrlMap = HttpHelper.ParseQueryString(source)["adaptive_fmts"];
+            string adaptiveFmtUrlMap = HttpHelper.ParseQueryString(source)["adaptive_fmts"];
 
             string[] splitByUrls = urlMap.Split(',');
-			string[] adaptiveFmtSplitByUrls = adaptiveFmtUrlMap.Split(',');
-			splitByUrls = splitByUrls.Concat(adaptiveFmtSplitByUrls).ToArray();
+            string[] adaptiveFmtSplitByUrls = adaptiveFmtUrlMap.Split(',');
+            splitByUrls = splitByUrls.Concat(adaptiveFmtSplitByUrls).ToArray();
 
             foreach (string s in splitByUrls)
             {
                 IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
-				string url;
+                string url;
 				
-				if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
-				{
-					string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
-					url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
-				}
-				else
-				{
-					url = queries["url"];
-				}
+                if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
+                {
+                    string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
+                    url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
+                }
+                else
+                {
+                    url = queries["url"];
+                }
 
                 url = HttpHelper.UrlDecode(url);
                 url = HttpHelper.UrlDecode(url);

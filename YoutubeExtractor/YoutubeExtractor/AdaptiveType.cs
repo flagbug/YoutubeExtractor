@@ -3,7 +3,7 @@
     public enum AdaptiveType
     {
         None,
-		Audio,
-		Video
+        Audio,
+        Video
     }
 }
