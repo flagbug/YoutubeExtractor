@@ -6,39 +6,55 @@ namespace YoutubeExtractor
     {
         internal static IEnumerable<VideoInfo> Defaults = new List<VideoInfo>
         {
-            new VideoInfo(5, VideoType.Flash, 240, false, AudioType.Mp3, 64),
-            new VideoInfo(6, VideoType.Flash, 270, false, AudioType.Mp3, 64),
-            new VideoInfo(13, VideoType.Mobile, 0, false, AudioType.Aac, 0),
-            new VideoInfo(17, VideoType.Mobile, 144, false, AudioType.Aac, 24),
-            new VideoInfo(18, VideoType.Mp4, 360, false, AudioType.Aac, 96),
-            new VideoInfo(22, VideoType.Mp4, 720, false, AudioType.Aac, 192),
-            new VideoInfo(34, VideoType.Flash, 360, false, AudioType.Aac, 128),
-            new VideoInfo(35, VideoType.Flash, 480, false, AudioType.Aac, 128),
-            new VideoInfo(36, VideoType.Mobile, 240, false, AudioType.Aac, 38),
-            new VideoInfo(37, VideoType.Mp4, 1080, false, AudioType.Aac, 192),
-            new VideoInfo(38, VideoType.Mp4, 3072, false, AudioType.Aac, 192),
-            new VideoInfo(43, VideoType.WebM, 360, false, AudioType.Vorbis, 128),
-            new VideoInfo(44, VideoType.WebM, 480, false, AudioType.Vorbis, 128),
-            new VideoInfo(45, VideoType.WebM, 720, false, AudioType.Vorbis, 192),
-            new VideoInfo(46, VideoType.WebM, 1080, false, AudioType.Vorbis, 192),
-            new VideoInfo(82, VideoType.Mp4, 360, true, AudioType.Aac, 96),
-            new VideoInfo(83, VideoType.Mp4, 240, true, AudioType.Aac, 96),
-            new VideoInfo(84, VideoType.Mp4, 720, true, AudioType.Aac, 152),
-            new VideoInfo(85, VideoType.Mp4, 520, true, AudioType.Aac, 152),
-            new VideoInfo(100, VideoType.WebM, 360, true, AudioType.Vorbis, 128),
-            new VideoInfo(101, VideoType.WebM, 360, true, AudioType.Vorbis, 192),
-            new VideoInfo(102, VideoType.WebM, 720, true, AudioType.Vorbis, 192)
+            /* Non-adaptive */
+            new VideoInfo(5, VideoType.Flash, 240, false, AudioType.Mp3, 64, AdaptiveType.None),
+            new VideoInfo(6, VideoType.Flash, 270, false, AudioType.Mp3, 64, AdaptiveType.None),
+            new VideoInfo(13, VideoType.Mobile, 0, false, AudioType.Aac, 0, AdaptiveType.None),
+            new VideoInfo(17, VideoType.Mobile, 144, false, AudioType.Aac, 24, AdaptiveType.None),
+            new VideoInfo(18, VideoType.Mp4, 360, false, AudioType.Aac, 96, AdaptiveType.None),
+            new VideoInfo(22, VideoType.Mp4, 720, false, AudioType.Aac, 192, AdaptiveType.None),
+            new VideoInfo(34, VideoType.Flash, 360, false, AudioType.Aac, 128, AdaptiveType.None),
+            new VideoInfo(35, VideoType.Flash, 480, false, AudioType.Aac, 128, AdaptiveType.None),
+            new VideoInfo(36, VideoType.Mobile, 240, false, AudioType.Aac, 38, AdaptiveType.None),
+            new VideoInfo(37, VideoType.Mp4, 1080, false, AudioType.Aac, 192, AdaptiveType.None),
+            new VideoInfo(38, VideoType.Mp4, 3072, false, AudioType.Aac, 192, AdaptiveType.None),
+            new VideoInfo(43, VideoType.WebM, 360, false, AudioType.Vorbis, 128, AdaptiveType.None),
+            new VideoInfo(44, VideoType.WebM, 480, false, AudioType.Vorbis, 128, AdaptiveType.None),
+            new VideoInfo(45, VideoType.WebM, 720, false, AudioType.Vorbis, 192, AdaptiveType.None),
+            new VideoInfo(46, VideoType.WebM, 1080, false, AudioType.Vorbis, 192, AdaptiveType.None),
+            new VideoInfo(82, VideoType.Mp4, 360, true, AudioType.Aac, 96, AdaptiveType.None),
+            new VideoInfo(83, VideoType.Mp4, 240, true, AudioType.Aac, 96, AdaptiveType.None),
+            new VideoInfo(84, VideoType.Mp4, 720, true, AudioType.Aac, 152, AdaptiveType.None),
+            new VideoInfo(85, VideoType.Mp4, 520, true, AudioType.Aac, 152, AdaptiveType.None),
+            new VideoInfo(100, VideoType.WebM, 360, true, AudioType.Vorbis, 128, AdaptiveType.None),
+            new VideoInfo(101, VideoType.WebM, 360, true, AudioType.Vorbis, 192, AdaptiveType.None),
+            new VideoInfo(102, VideoType.WebM, 720, true, AudioType.Vorbis, 192, AdaptiveType.None),
+			
+            /* Adaptive (aka DASH) - Video */
+            new VideoInfo(133, VideoType.Mp4, 240, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(134, VideoType.Mp4, 360, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(135, VideoType.Mp4, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(136, VideoType.Mp4, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(137, VideoType.Mp4, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(160, VideoType.Mp4, 144, false, AudioType.Unknown, 0, AdaptiveType.Video),
+			
+            /* Adaptive (aka DASH) - Audio */
+            new VideoInfo(139, VideoType.Mp4, 0, false, AudioType.Aac, 48, AdaptiveType.Audio),
+            new VideoInfo(140, VideoType.Mp4, 0, false, AudioType.Aac, 128, AdaptiveType.Audio),
+            new VideoInfo(141, VideoType.Mp4, 0, false, AudioType.Aac, 256, AdaptiveType.Audio),
+            new VideoInfo(171, VideoType.WebM, 0, false, AudioType.Vorbis, 128, AdaptiveType.Audio),
+            new VideoInfo(172, VideoType.WebM, 0, false, AudioType.Vorbis, 192, AdaptiveType.Audio)
         };
 
         internal VideoInfo(int formatCode)
-            : this(formatCode, VideoType.Unknown, 0, false, AudioType.Unknown, 0)
+            : this(formatCode, VideoType.Unknown, 0, false, AudioType.Unknown, 0, AdaptiveType.None)
         { }
 
         internal VideoInfo(VideoInfo info)
-            : this(info.FormatCode, info.VideoType, info.Resolution, info.Is3D, info.AudioType, info.AudioBitrate)
+            : this(info.FormatCode, info.VideoType, info.Resolution, info.Is3D, info.AudioType, info.AudioBitrate, info.AdaptiveType)
         { }
 
-        private VideoInfo(int formatCode, VideoType videoType, int resolution, bool is3D, AudioType audioType, int audioBitrate)
+        private VideoInfo(int formatCode, VideoType videoType, int resolution, bool is3D, AudioType audioType, int audioBitrate, AdaptiveType adaptiveType)
         {
             this.FormatCode = formatCode;
             this.VideoType = videoType;
@@ -46,7 +62,16 @@ namespace YoutubeExtractor
             this.Is3D = is3D;
             this.AudioType = audioType;
             this.AudioBitrate = audioBitrate;
+            this.AdaptiveType = adaptiveType;
         }
+		
+        /// <summary>
+        /// Gets an enum indicating whether the format is adaptive or not.
+        /// </summary>
+        /// <value>
+        /// 	<c>AdaptiveType.Audio</c> or <c>AdaptiveType.Video</c> if the format is adaptive; otherwise, <c>AdaptiveType.None</c>.
+        /// </value>
+        public AdaptiveType AdaptiveType { get; private set; }
 
         /// <summary>
         /// The approximate audio bitrate in kbit/s.
