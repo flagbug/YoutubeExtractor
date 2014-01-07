@@ -91,11 +91,16 @@ namespace YoutubeExtractor
             {
                 IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
                 string url;
-				
+
                 if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
                 {
                     string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
-                    url = string.Format("{0}&fallback_host={1}&signature={2}", queries["url"], queries["fallback_host"], signature);
+
+                    url = string.Format("{0}&signature={1}", queries["url"], signature);
+
+                    string fallbackHost = queries.ContainsKey("fallback_host") ? "&fallback_host=" + queries["fallback_host"] : String.Empty;
+
+                    url += fallbackHost;
                 }
                 else
                 {
