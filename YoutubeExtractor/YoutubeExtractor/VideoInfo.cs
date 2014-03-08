@@ -29,7 +29,7 @@ namespace YoutubeExtractor
             new VideoInfo(100, VideoType.WebM, 360, true, AudioType.Vorbis, 128, AdaptiveType.None),
             new VideoInfo(101, VideoType.WebM, 360, true, AudioType.Vorbis, 192, AdaptiveType.None),
             new VideoInfo(102, VideoType.WebM, 720, true, AudioType.Vorbis, 192, AdaptiveType.None),
-			
+
             /* Adaptive (aka DASH) - Video */
             new VideoInfo(133, VideoType.Mp4, 240, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(134, VideoType.Mp4, 360, false, AudioType.Unknown, 0, AdaptiveType.Video),
@@ -37,7 +37,8 @@ namespace YoutubeExtractor
             new VideoInfo(136, VideoType.Mp4, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(137, VideoType.Mp4, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(160, VideoType.Mp4, 144, false, AudioType.Unknown, 0, AdaptiveType.Video),
-			
+            new VideoInfo(264, VideoType.Mp4, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video),
+
             /* Adaptive (aka DASH) - Audio */
             new VideoInfo(139, VideoType.Mp4, 0, false, AudioType.Aac, 48, AdaptiveType.Audio),
             new VideoInfo(140, VideoType.Mp4, 0, false, AudioType.Aac, 128, AdaptiveType.Audio),
@@ -64,29 +65,26 @@ namespace YoutubeExtractor
             this.AudioBitrate = audioBitrate;
             this.AdaptiveType = adaptiveType;
         }
-		
+
         /// <summary>
         /// Gets an enum indicating whether the format is adaptive or not.
         /// </summary>
         /// <value>
-        /// 	<c>AdaptiveType.Audio</c> or <c>AdaptiveType.Video</c> if the format is adaptive; otherwise, <c>AdaptiveType.None</c>.
+        /// <c>AdaptiveType.Audio</c> or <c>AdaptiveType.Video</c> if the format is adaptive;
+        /// otherwise, <c>AdaptiveType.None</c>.
         /// </value>
         public AdaptiveType AdaptiveType { get; private set; }
 
         /// <summary>
         /// The approximate audio bitrate in kbit/s.
         /// </summary>
-        /// <value>
-        /// The approximate audio bitrate in kbit/s, or 0 if the bitrate is unknown.
-        /// </value>
+        /// <value>The approximate audio bitrate in kbit/s, or 0 if the bitrate is unknown.</value>
         public int AudioBitrate { get; private set; }
 
         /// <summary>
         /// Gets the audio extension.
         /// </summary>
-        /// <value>
-        /// The audio extension, or <c>null</c> if the audio extension is unknown.
-        /// </value>
+        /// <value>The audio extension, or <c>null</c> if the audio extension is unknown.</value>
         public string AudioExtension
         {
             get
@@ -118,7 +116,7 @@ namespace YoutubeExtractor
         /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if the audio of this video can be extracted by YoutubeExtractor; otherwise, <c>false</c>.
+        /// <c>true</c> if the audio of this video can be extracted by YoutubeExtractor; otherwise, <c>false</c>.
         /// </value>
         public bool CanExtractAudio
         {
@@ -133,7 +131,8 @@ namespace YoutubeExtractor
         public string DownloadUrl { get; internal set; }
 
         /// <summary>
-        /// Gets the format code, that is used by YouTube internally to differentiate between quality profiles.
+        /// Gets the format code, that is used by YouTube internally to differentiate between
+        /// quality profiles.
         /// </summary>
         public int FormatCode { get; private set; }
 
@@ -142,9 +141,7 @@ namespace YoutubeExtractor
         /// <summary>
         /// Gets the resolution of the video.
         /// </summary>
-        /// <value>
-        /// The resolution of the video, or 0 if the resolution is unkown.
-        /// </value>
+        /// <value>The resolution of the video, or 0 if the resolution is unkown.</value>
         public int Resolution { get; private set; }
 
         /// <summary>
@@ -155,9 +152,7 @@ namespace YoutubeExtractor
         /// <summary>
         /// Gets the video extension.
         /// </summary>
-        /// <value>
-        /// The video extension, or <c>null</c> if the video extension is unknown.
-        /// </value>
+        /// <value>The video extension, or <c>null</c> if the video extension is unknown.</value>
         public string VideoExtension
         {
             get

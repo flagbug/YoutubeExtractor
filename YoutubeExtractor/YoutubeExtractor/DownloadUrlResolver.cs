@@ -12,14 +12,22 @@ namespace YoutubeExtractor
     public static class DownloadUrlResolver
     {
         /// <summary>
-        /// Gets a list of <see cref="VideoInfo"/>s for the specified URL.
+        /// Gets a list of <see cref="VideoInfo" />s for the specified URL.
         /// </summary>
         /// <param name="videoUrl">The URL of the YouTube video.</param>
-        /// <returns>A list of <see cref="VideoInfo"/>s that can be used to download the video.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="videoUrl"/> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">The <paramref name="videoUrl"/> parameter is not a valid YouTube URL.</exception>
+        /// <returns>
+        /// A list of <see cref="VideoInfo" />s that can be used to download the video.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// The <paramref name="videoUrl" /> parameter is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The <paramref name="videoUrl" /> parameter is not a valid YouTube URL.
+        /// </exception>
         /// <exception cref="VideoNotAvailableException">The video is not available.</exception>
-        /// <exception cref="WebException">An error occurred while downloading the YouTube page html.</exception>
+        /// <exception cref="WebException">
+        /// An error occurred while downloading the YouTube page html.
+        /// </exception>
         /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
         {
@@ -122,10 +130,8 @@ namespace YoutubeExtractor
             {
                 string itag = HttpHelper.ParseQueryString(url.Query)["itag"];
 
-                // for this version, only get the download URL
-                byte formatCode = Byte.Parse(itag);
+                int formatCode = int.Parse(itag);
 
-                // Currently based on YouTube specifications (later we'll depend on the MIME type returned from the web request)
                 VideoInfo info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
 
                 if (info != null)
@@ -164,8 +170,8 @@ namespace YoutubeExtractor
 
                     videoTitle = HttpHelper.HtmlDecode(videoTitle);
 
-                    // Remove the invalid characters in file names
-                    // In Windows they are: \ / : * ? " < > |
+                    // Remove the invalid characters in file names In Windows they are: \ / : * ? "
+                    // < > |
                     videoTitle = Regex.Replace(videoTitle, @"[:\*\?""\<\>\|]", String.Empty);
                     videoTitle = videoTitle.Replace("\\", "-").Replace("/", "-").Trim();
                 }
