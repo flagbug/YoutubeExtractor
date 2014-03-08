@@ -27,8 +27,9 @@ namespace ExampleApplication
             var audioDownloader = new AudioDownloader(video,
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), video.Title + video.AudioExtension));
 
-            // Register the progress events. We treat the download progress as 85% of the progress and the extraction progress only as 15% of the progress,
-            // because the download will take much longer than the audio extraction.
+            // Register the progress events. We treat the download progress as 85% of the progress
+            // and the extraction progress only as 15% of the progress, because the download will
+            // take much longer than the audio extraction.
             audioDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage * 0.85);
             audioDownloader.AudioExtractionProgressChanged += (sender, args) => Console.WriteLine(85 + args.ProgressPercentage * 0.15);
 
@@ -68,7 +69,7 @@ namespace ExampleApplication
         private static void Main()
         {
             // Our test youtube link
-            const string link = "http://www.youtube.com/watch?v=6bMmhKz6KXg";
+            const string link = "http://www.youtube.com/watch?v=O3UBOOZw-FE";
 
             /*
              * Get the available video formats.

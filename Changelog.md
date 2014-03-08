@@ -1,7 +1,13 @@
+# v0.8.1
+
+## Bugfixes
+- Added a missing video info.
+- Fixed a bug that caused an `OverflowException`  when parsing the itag value of a video.
+
 # v0.8.0
 
 ## Features
-- Added DASH support
+- Added DASH support.
 
 # v0.7.0
 
