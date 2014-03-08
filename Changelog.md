@@ -1,3 +1,8 @@
+# v0.7.1
+
+## Bugfixes
+- Fixed a bug that caused an exception for videos that don't have DASH
+
 # v0.7.0
 
 ## Notes
