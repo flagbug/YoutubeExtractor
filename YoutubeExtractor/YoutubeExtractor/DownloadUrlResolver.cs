@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,13 +12,13 @@ namespace YoutubeExtractor
     /// </summary>
     public static class DownloadUrlResolver
     {
+        private const int CorrectSignatureLength = 81;
+
         /// <summary>
         /// Gets a list of <see cref="VideoInfo" />s for the specified URL.
         /// </summary>
         /// <param name="videoUrl">The URL of the YouTube video.</param>
-        /// <returns>
-        /// A list of <see cref="VideoInfo" />s that can be used to download the video.
-        /// </returns>
+        /// <returns>A list of <see cref="VideoInfo" />s that can be used to download the video.</returns>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="videoUrl" /> parameter is <c>null</c>.
         /// </exception>
@@ -36,63 +37,34 @@ namespace YoutubeExtractor
 
             videoUrl = NormalizeYoutubeUrl(videoUrl);
 
-            string pageSource = HttpHelper.DownloadString(videoUrl);
-            string videoTitle = GetVideoTitle(pageSource);
-
-            string id = HttpHelper.ParseQueryString(videoUrl)["v"];
-
-            string requestUrl = String.Format("http://www.youtube.com/get_video_info?&video_id={0}&el=detailpage&ps=default&eurl=&gl=US&hl=en", id);
-
-            string source = HttpHelper.DownloadString(requestUrl);
-
-            IDictionary<string, string> queries = HttpHelper.ParseQueryString(source);
-
-            string status;
-
-            if (queries.TryGetValue("status", out status) && status == "fail")
-            {
-                throw new VideoNotAvailableException(queries["reason"]);
-            }
-
             try
             {
-                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(source);
+                var json = LoadJson(videoUrl);
+
+                string videoTitle = GetVideoTitle(json);
+
+                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(json);
 
                 return GetVideoInfos(downloadUrls, videoTitle);
             }
 
             catch (Exception ex)
             {
+                if (ex is WebException || ex is VideoNotAvailableException)
+                {
+                    throw;
+                }
+
                 ThrowYoutubeParseException(ex);
             }
-
-            if (IsVideoUnavailable(pageSource))
-            {
-                throw new VideoNotAvailableException();
-            }
-
-            // If everything else fails, throw a generic YoutubeParseException
-            ThrowYoutubeParseException(null);
 
             return null; // Will never happen, but the compiler requires it
         }
 
-#if PORTABLE
-
-        public static async System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl)
+        private static IEnumerable<Uri> ExtractDownloadUrls(JObject json)
         {
-            return await System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl));
-        }
-
-#endif
-
-        private static IEnumerable<Uri> ExtractDownloadUrls(string source)
-        {
-            string urlMap = HttpHelper.ParseQueryString(source)["url_encoded_fmt_stream_map"];
-            string adaptiveFmtUrlMap = HttpHelper.ParseQueryString(source)["adaptive_fmts"];
-
-            string[] splitByUrls = urlMap.Split(',');
-            string[] adaptiveFmtSplitByUrls = adaptiveFmtUrlMap.Split(',');
+            string[] splitByUrls = GetStreamMap(json).Split(',');
+            string[] adaptiveFmtSplitByUrls = GetAdaptiveStreamMap(json).Split(',');
             splitByUrls = splitByUrls.Concat(adaptiveFmtSplitByUrls).ToArray();
 
             foreach (string s in splitByUrls)
@@ -103,6 +75,9 @@ namespace YoutubeExtractor
                 if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
                 {
                     string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
+
+                    string htmlPlayerVersion = GetHtml5PlayerVersion(json);
+                    signature = GetDecipheredSignature(htmlPlayerVersion, signature);
 
                     url = string.Format("{0}&signature={1}", queries["url"], signature);
 
@@ -120,6 +95,46 @@ namespace YoutubeExtractor
 
                 yield return new Uri(url);
             }
+        }
+
+        private static string GetAdaptiveStreamMap(JObject json)
+        {
+            JToken streamMap = json["args"]["adaptive_fmts"];
+
+            return streamMap.ToString();
+        }
+
+        private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
+        {
+            if (signature.Length == CorrectSignatureLength)
+            {
+                return signature;
+            }
+
+            return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
+        }
+
+        private static string GetHtml5PlayerVersion(JObject json)
+        {
+            var regex = new Regex(@"html5player-(.+?)\.js");
+
+            string js = json["assets"]["js"].ToString();
+
+            return regex.Match(js).Result("$1");
+        }
+
+        private static string GetStreamMap(JObject json)
+        {
+            JToken streamMap = json["args"]["url_encoded_fmt_stream_map"];
+
+            string streamMapString = streamMap == null ? null : streamMap.ToString();
+
+            if (streamMapString == null || streamMapString.Contains("been+removed"))
+            {
+                throw new VideoNotAvailableException("Video is removed");
+            }
+
+            return streamMapString;
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
@@ -154,35 +169,9 @@ namespace YoutubeExtractor
             return downLoadInfos;
         }
 
-        private static string GetVideoTitle(string pageSource)
+        private static string GetVideoTitle(JObject json)
         {
-            string videoTitle = null;
-
-            try
-            {
-                const string videoTitlePattern = @"\<meta name=""title"" content=""(?<title>.*)""\>";
-                var videoTitleRegex = new Regex(videoTitlePattern, RegexOptions.IgnoreCase);
-                Match videoTitleMatch = videoTitleRegex.Match(pageSource);
-
-                if (videoTitleMatch.Success)
-                {
-                    videoTitle = videoTitleMatch.Groups["title"].Value;
-
-                    videoTitle = HttpHelper.HtmlDecode(videoTitle);
-
-                    // Remove the invalid characters in file names In Windows they are: \ / : * ? "
-                    // < > |
-                    videoTitle = Regex.Replace(videoTitle, @"[:\*\?""\<\>\|]", String.Empty);
-                    videoTitle = videoTitle.Replace("\\", "-").Replace("/", "-").Trim();
-                }
-            }
-
-            catch (Exception)
-            {
-                videoTitle = null;
-            }
-
-            return videoTitle;
+            return json["args"]["title"].ToString();
         }
 
         private static bool IsVideoUnavailable(string pageSource)
@@ -191,6 +180,31 @@ namespace YoutubeExtractor
 
             return pageSource.Contains(unavailableContainer);
         }
+
+        private static JObject LoadJson(string url)
+        {
+            string pageSource = HttpHelper.DownloadString(url);
+
+            if (IsVideoUnavailable(pageSource))
+            {
+                throw new VideoNotAvailableException();
+            }
+
+            var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
+
+            string extractedJson = dataRegex.Match(pageSource).Result("$1");
+
+            return JObject.Parse(extractedJson);
+        }
+
+#if PORTABLE
+
+        public static async System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl)
+        {
+            return await System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl));
+        }
+
+#endif
 
         private static string NormalizeYoutubeUrl(string url)
         {
