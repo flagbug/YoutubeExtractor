@@ -85,6 +85,7 @@ namespace YoutubeExtractor
 
                     url += fallbackHost;
                 }
+
                 else
                 {
                     url = queries["url"];
