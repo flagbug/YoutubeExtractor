@@ -13,7 +13,6 @@ namespace YoutubeExtractor
     public static class DownloadUrlResolver
     {
         private const int CorrectSignatureLength = 81;
-        private const string SignatureUrlParameter = "signature";
 
         /// <summary>
         /// Gets a list of <see cref="VideoInfo" />s for the specified URL.
@@ -38,13 +37,12 @@ namespace YoutubeExtractor
 
             videoUrl = NormalizeYoutubeUrl(videoUrl);
 
-            var json = LoadJson(videoUrl);
-
-            string videoTitle = GetVideoTitle(json);
-            string id = HttpHelper.ParseQueryString(videoUrl)["v"];
-
             try
             {
+                var json = LoadJson(videoUrl);
+
+                string videoTitle = GetVideoTitle(json);
+
                 IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(json);
 
                 return GetVideoInfos(downloadUrls, videoTitle);
@@ -52,16 +50,13 @@ namespace YoutubeExtractor
 
             catch (Exception ex)
             {
+                if (ex is WebException || ex is VideoNotAvailableException)
+                {
+                    throw;
+                }
+
                 ThrowYoutubeParseException(ex);
             }
-
-            //if (IsVideoUnavailable(pageSource))
-            {
-                throw new VideoNotAvailableException();
-            }
-
-            // If everything else fails, throw a generic YoutubeParseException
-            ThrowYoutubeParseException(null);
 
             return null; // Will never happen, but the compiler requires it
         }
@@ -132,7 +127,7 @@ namespace YoutubeExtractor
         {
             JToken streamMap = json["args"]["url_encoded_fmt_stream_map"];
 
-            if (streamMap == null)
+            if (streamMap == null || streamMap["been+removed"] != null)
             {
                 throw new VideoNotAvailableException("Video is removed");
             }
@@ -177,9 +172,21 @@ namespace YoutubeExtractor
             return json["args"]["title"].ToString();
         }
 
+        private static bool IsVideoUnavailable(string pageSource)
+        {
+            const string unavailableContainer = "<div id=\"watch-player-unavailable\">";
+
+            return pageSource.Contains(unavailableContainer);
+        }
+
         private static JObject LoadJson(string url)
         {
             string pageSource = HttpHelper.DownloadString(url);
+
+            if (IsVideoUnavailable(pageSource))
+            {
+                throw new VideoNotAvailableException();
+            }
 
             var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
 

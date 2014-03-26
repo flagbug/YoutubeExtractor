@@ -114,6 +114,11 @@ namespace YoutubeExtractor
 
             bool hasCipher = Ciphers.TryGetValue(cipherVersion, out operations);
 
+            if (!hasCipher)
+            {
+                return String.Empty;
+            }
+
             return DecipherWithOperations(cipher, operations);
         }
 
