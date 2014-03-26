@@ -1,3 +1,11 @@
+# v0.9.0
+
+## Notes
+- As of this version, Newtonsoft.Json is a dependency again.
+
+## Bugfixes
+- Fixed the deciphering of the video signature. This fixes all of the 403 errors.
+
 # v0.8.1
 
 ## Bugfixes
