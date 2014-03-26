@@ -22,7 +22,6 @@ EndProject
 Global
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 09b3acc1-9c76-4060-a18f-5b5f253925cc
-		SolutionGuid = 122b7b5c-00ae-42dd-8d57-5697582557a7
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
