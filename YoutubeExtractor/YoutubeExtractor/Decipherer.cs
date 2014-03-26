@@ -142,7 +142,7 @@ namespace YoutubeExtractor
                     }
 
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("Couldn't find cipher operation.");
             }
         }
 
