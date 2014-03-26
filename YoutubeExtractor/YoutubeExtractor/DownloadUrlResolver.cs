@@ -127,12 +127,14 @@ namespace YoutubeExtractor
         {
             JToken streamMap = json["args"]["url_encoded_fmt_stream_map"];
 
-            if (streamMap == null || streamMap["been+removed"] != null)
+            string streamMapString = streamMap == null ? null : streamMap.ToString();
+
+            if (streamMapString == null || streamMapString.Contains("been+removed"))
             {
                 throw new VideoNotAvailableException("Video is removed");
             }
 
-            return streamMap.ToString();
+            return streamMapString;
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
