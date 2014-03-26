@@ -36,11 +36,9 @@
     <DocumentationFile>bin\Release\YoutubeExtractor.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="AdaptiveType.cs" />
     <Compile Include="AudioType.cs" />
+    <Compile Include="Decipherer.cs" />
     <Compile Include="DownloadUrlResolver.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="VideoInfo.cs" />
@@ -48,6 +46,15 @@
     <Compile Include="VideoType.cs" />
     <Compile Include="YoutubeParseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\portable-net45+wp80+win8\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

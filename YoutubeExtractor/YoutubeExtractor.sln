@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExtractor", "YoutubeExtractor\YoutubeExtractor.csproj", "{ECDC127F-8DEF-4F99-8300-72C13597339D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication", "ExampleApplication\ExampleApplication.csproj", "{B894B26A-A518-4366-B31C-D90489A0F138}"
@@ -18,6 +20,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication.Portable
 	EndProjectSection
 EndProject
 Global
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = 122b7b5c-00ae-42dd-8d57-5697582557a7
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
