@@ -12,6 +12,9 @@
         <description>YoutubeExtractor is a library to extract the download link from YouTube videos, download them and/or extract their audio track.</description>
         <tags>youtube download extract audio WinRT WP8 Android iOS Xamarin</tags>
     </metadata>
+	<dependencies>
+	  <dependency id="Newtonsoft.Json" version="6.0.1" />
+	</dependencies>
     <files>
         <file src="bin\Release\Full\YoutubeExtractor.dll" target="lib\net35\YoutubeExtractor.dll" />
         <file src="bin\Release\Full\YoutubeExtractor.xml" target="lib\net35\YoutubeExtractor.xml" />
