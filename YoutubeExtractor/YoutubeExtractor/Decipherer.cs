@@ -8,7 +8,7 @@ namespace YoutubeExtractor
 {
     internal static class Decipherer
     {
-        public static Dictionary<string, string> Ciphers = new Dictionary<string, string>
+        public static IDictionary<string, string> Ciphers = new Dictionary<string, string>
         {
             {"vflNzKG7n", "s3 r s2 r s1 r w67"},
             {"vfllMCQWM", "s2 w46 r w27 s2 w43 s2 r"},
