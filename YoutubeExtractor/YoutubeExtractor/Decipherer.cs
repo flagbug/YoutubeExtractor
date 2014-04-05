@@ -107,7 +107,8 @@ namespace YoutubeExtractor
             {"en_US-vflgd5txb", "w26 s1 w15 w3 w62 w54 w22"},
             {"en_US-vflbJnZqE", "w26 s1 w15 w3 w62 w54 w22"},
             {"en_US-vflTm330y", "w26 s1 w15 w3 w62 w54 w22"},
-            {"en_US-vflnwMARr", "s3 r w24 s2"}
+            {"en_US-vflnwMARr", "s3 r w24 s2"},
+            {"en_US-vflA-1YdP", "w26 s1 w14 r s3 w8"}
         };
 
         public static string DecipherWithVersion(string cipher, string cipherVersion)
