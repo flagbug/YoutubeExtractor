@@ -1,3 +1,9 @@
+# v0.9.3
+
+## FEATURES
+- Added a method to override the ciphers.
+- Added new ciphers
+
 # v0.9.2
 
 ## Changes
