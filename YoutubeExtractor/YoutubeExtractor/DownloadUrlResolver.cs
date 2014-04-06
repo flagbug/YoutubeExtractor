@@ -241,9 +241,9 @@ namespace YoutubeExtractor
 
 #if PORTABLE
 
-        public static async System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl)
+        public static async System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
         {
-            return await System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl));
+            return await System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl, decryptSignature));
         }
 
 #endif
