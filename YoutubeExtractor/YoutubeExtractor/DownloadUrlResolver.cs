@@ -162,6 +162,9 @@ namespace YoutubeExtractor
                 else
                 {
                     info = new VideoInfo(formatCode);
+                    {
+                        DownloadUrl = url.ToString()
+                    };
                 }
 
                 downLoadInfos.Add(info);
