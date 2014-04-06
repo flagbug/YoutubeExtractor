@@ -21,6 +21,9 @@ namespace YoutubeExtractor
         /// cref="GetDownloadUrls" /> method set to false.
         /// </summary>
         /// <param name="videoInfo">The video info which's downlaod URL should be decrypted.</param>
+        /// <exception cref="YoutubeParseException">
+        /// There was an error while deciphering the signature.
+        /// </exception>
         public static void DecryptDownloadUrl(VideoInfo videoInfo)
         {
             IDictionary<string, string> queries = HttpHelper.ParseQueryString(videoInfo.DownloadUrl);
@@ -29,7 +32,17 @@ namespace YoutubeExtractor
             {
                 string encryptedSignature = queries[SignatureQuery];
 
-                string decrypted = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
+                string decrypted = null;
+
+                try
+                {
+                    decrypted = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
+                }
+
+                catch (Exception ex)
+                {
+                    throw new YoutubeParseException("Could not decipher signature", ex);
+                }
 
                 videoInfo.DownloadUrl = HttpHelper.ReplaceQueryStringParameter(videoInfo.DownloadUrl, SignatureQuery, decrypted);
             }
