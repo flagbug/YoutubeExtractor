@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
 {
@@ -59,18 +59,6 @@ namespace YoutubeExtractor
             }
 
             return null; // Will never happen, but the compiler requires it
-        }
-
-        /// <summary>
-        /// Overrides the hardcoded ciphers. This way you can retrieve updated ones from your
-        /// webservice or another source, without having to update the YoutubeExtractor dll.
-        /// </summary>
-        /// <param name="ciphers">
-        /// A collection of string keys and values that describe the decipher process.
-        /// </param>
-        public static void OverrideCiphers(IEnumerable<KeyValuePair<string, string>> ciphers)
-        {
-            Decipherer.Ciphers = ciphers.ToDictionary(x => x.Key, x => x.Value);
         }
 
         private static IEnumerable<Uri> ExtractDownloadUrls(JObject json)
