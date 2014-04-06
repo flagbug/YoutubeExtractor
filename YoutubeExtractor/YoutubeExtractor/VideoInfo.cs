@@ -110,8 +110,6 @@ namespace YoutubeExtractor
         /// </summary>
         public AudioType AudioType { get; private set; }
 
-#if !PORTABLE
-
         /// <summary>
         /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
         /// </summary>
@@ -122,8 +120,6 @@ namespace YoutubeExtractor
         {
             get { return this.VideoType == VideoType.Flash; }
         }
-
-#endif
 
         /// <summary>
         /// Gets the download URL.
@@ -180,6 +176,13 @@ namespace YoutubeExtractor
         /// Gets the video type (container).
         /// </summary>
         public VideoType VideoType { get; private set; }
+
+        /// <summary>
+        /// We use this in the <see cref="DownloadUrlResolver.DecryptDownloadUrl" /> method to
+        /// decrypt the signature
+        /// </summary>
+        /// <returns></returns>
+        internal string HtmlPlayerVersion { get; set; }
 
         public override string ToString()
         {

@@ -13,11 +13,38 @@ namespace YoutubeExtractor
     public static class DownloadUrlResolver
     {
         private const int CorrectSignatureLength = 81;
+        private const string SignatureQuery = "signature";
+
+        /// <summary>
+        /// Decrypts the signature in the <see cref="VideoInfo.DownloadUrl" /> property and sets it
+        /// to the decrypted URL. Use this method, if you have decryptSignature in the <see
+        /// cref="GetDownloadUrls" /> method set to false.
+        /// </summary>
+        /// <param name="videoInfo">The video info which's downlaod URL should be decrypted.</param>
+        public static void DecryptDownloadUrl(VideoInfo videoInfo)
+        {
+            IDictionary<string, string> queries = HttpHelper.ParseQueryString(videoInfo.DownloadUrl);
+
+            if (queries.ContainsKey(SignatureQuery))
+            {
+                string encryptedSignature = queries[SignatureQuery];
+
+                string decrypted = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
+
+                videoInfo.DownloadUrl = HttpHelper.ReplaceQueryStringParameter(videoInfo.DownloadUrl, SignatureQuery, decrypted);
+            }
+        }
 
         /// <summary>
         /// Gets a list of <see cref="VideoInfo" />s for the specified URL.
         /// </summary>
         /// <param name="videoUrl">The URL of the YouTube video.</param>
+        /// <param name="decryptSignature">
+        /// A value indicating whether the video signatures should be decrypted or not. Decrypting
+        /// consists of a HTTP request for each <see cref="VideoInfo" />, so you may want to set
+        /// this to false and call <see cref="DecryptDownloadUrl" /> on your selected <see
+        /// cref="VideoInfo" /> later.
+        /// </param>
         /// <returns>A list of <see cref="VideoInfo" />s that can be used to download the video.</returns>
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="videoUrl" /> parameter is <c>null</c>.
@@ -30,7 +57,7 @@ namespace YoutubeExtractor
         /// An error occurred while downloading the YouTube page html.
         /// </exception>
         /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
-        public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl)
+        public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl, bool decryptSignature = true)
         {
             if (videoUrl == null)
                 throw new ArgumentNullException("videoUrl");
@@ -45,7 +72,21 @@ namespace YoutubeExtractor
 
                 IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(json);
 
-                return GetVideoInfos(downloadUrls, videoTitle);
+                IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
+
+                string htmlPlayerVersion = GetHtml5PlayerVersion(json);
+
+                foreach (VideoInfo info in infos)
+                {
+                    info.HtmlPlayerVersion = htmlPlayerVersion;
+
+                    if (decryptSignature)
+                    {
+                        DecryptDownloadUrl(info);
+                    }
+                }
+
+                return infos;
             }
 
             catch (Exception ex)
@@ -76,10 +117,7 @@ namespace YoutubeExtractor
                 {
                     string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
 
-                    string htmlPlayerVersion = GetHtml5PlayerVersion(json);
-                    signature = GetDecipheredSignature(htmlPlayerVersion, signature);
-
-                    url = string.Format("{0}&signature={1}", queries["url"], signature);
+                    url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
 
                     string fallbackHost = queries.ContainsKey("fallback_host") ? "&fallback_host=" + queries["fallback_host"] : String.Empty;
 
@@ -161,7 +199,7 @@ namespace YoutubeExtractor
 
                 else
                 {
-                    info = new VideoInfo(formatCode);
+                    info = new VideoInfo(formatCode)
                     {
                         DownloadUrl = url.ToString()
                     };

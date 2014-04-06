@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace YoutubeExtractor
@@ -54,6 +56,30 @@ namespace YoutubeExtractor
             }
 
             return dictionary;
+        }
+
+        public static string ReplaceQueryStringParameter(string currentPageUrl, string paramToReplace, string newValue)
+        {
+            var query = ParseQueryString(currentPageUrl);
+
+            query[paramToReplace] = newValue;
+
+            var resultQuery = new StringBuilder();
+
+            foreach (KeyValuePair<string, string> pair in query)
+            {
+                resultQuery.Append("&");
+                resultQuery.Append(pair.Key);
+                resultQuery.Append("=");
+                resultQuery.Append(pair.Value);
+            }
+
+            var uriBuilder = new UriBuilder(currentPageUrl)
+            {
+                Query = resultQuery.ToString()
+            };
+
+            return uriBuilder.ToString();
         }
 
         public static string UrlDecode(string url)
