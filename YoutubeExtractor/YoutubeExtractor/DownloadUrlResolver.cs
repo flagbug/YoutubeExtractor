@@ -32,7 +32,7 @@ namespace YoutubeExtractor
             {
                 string encryptedSignature = queries[SignatureQuery];
 
-                string decrypted = null;
+                string decrypted;
 
                 try
                 {
