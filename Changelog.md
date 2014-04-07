@@ -1,13 +1,24 @@
+# v0.9.4
+
+## Features
+- The "GetDownloadUrls" method now has a second optional parameter class "decryptSignature" that 
+  specifies whether the signature in the download URL should be decrypted or not.
+  This behavior can be turned off, as each decryption makes a HTTP request.
+  To manually decrypt the signature, use the "DecryptDownloadUrl" method.
+
+## Bugfixes
+- Fixed a bug that caused an unknown video info not having a download URL.
+
 # v0.9.3
 
-## FEATURES
+## Features
 - Added a method to override the ciphers.
-- Added new ciphers
+- Added new ciphers.
 
 # v0.9.2
 
 ## Changes
-- Lowered the required Newtonsoft.Json version to 5.0.8
+- Lowered the required Newtonsoft.Json version to 5.0.8.
 
 # v0.9.1
 
