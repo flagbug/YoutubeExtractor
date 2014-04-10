@@ -1,6 +1,7 @@
 # v0.9.4
 
 ## Features
+- Ciphers are now automatically extracted and not hardcoded anymore.
 - The "GetDownloadUrls" method now has a second optional parameter class "decryptSignature" that 
   specifies whether the signature in the download URL should be decrypted or not.
   This behavior can be turned off, as each decryption makes a HTTP request.
