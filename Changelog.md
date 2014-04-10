@@ -1,3 +1,8 @@
+# v0.9.5
+
+## Bugfixes
+- Fixed malformed download URLs.
+
 # v0.9.4
 
 ## Features
