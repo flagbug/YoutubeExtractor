@@ -65,13 +65,20 @@ namespace YoutubeExtractor
             query[paramToReplace] = newValue;
 
             var resultQuery = new StringBuilder();
+            bool isFirst = true;
 
             foreach (KeyValuePair<string, string> pair in query)
             {
-                resultQuery.Append("&");
+                if (!isFirst)
+                {
+                    resultQuery.Append("&");
+                }
+
                 resultQuery.Append(pair.Key);
                 resultQuery.Append("=");
                 resultQuery.Append(pair.Value);
+
+                isFirst = false;
             }
 
             var uriBuilder = new UriBuilder(currentPageUrl)
