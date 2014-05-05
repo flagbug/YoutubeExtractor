@@ -226,7 +226,9 @@ namespace YoutubeExtractor
 
         private static string GetVideoTitle(JObject json)
         {
-            return json["args"]["title"].ToString();
+            JToken title = json["args"]["title"];
+
+            return title == null ? String.Empty : title.ToString();
         }
 
         private static bool IsVideoUnavailable(string pageSource)
