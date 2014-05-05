@@ -183,7 +183,7 @@ namespace YoutubeExtractor
 
             if (streamMapString == null || streamMapString.Contains("been+removed"))
             {
-                throw new VideoNotAvailableException("Video is removed");
+                throw new VideoNotAvailableException("Video is removed or has an age restriction.");
             }
 
             return streamMapString;
