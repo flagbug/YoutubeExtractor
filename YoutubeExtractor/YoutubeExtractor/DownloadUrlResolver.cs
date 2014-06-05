@@ -75,7 +75,12 @@ namespace YoutubeExtractor
             if (videoUrl == null)
                 throw new ArgumentNullException("videoUrl");
 
-            videoUrl = NormalizeYoutubeUrl(videoUrl);
+            bool isYoutubeUrl = TryNormalizeYoutubeUrl(videoUrl, out videoUrl);
+
+            if (!isYoutubeUrl)
+            {
+                throw new ArgumentException("URL is not a valid youtube URL!");
+            }
 
             try
             {
@@ -113,6 +118,54 @@ namespace YoutubeExtractor
             }
 
             return null; // Will never happen, but the compiler requires it
+        }
+
+#if PORTABLE
+
+        public static async System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
+        {
+            return await System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl, decryptSignature));
+        }
+
+#endif
+
+        /// <summary>
+        /// Normalizes the given YouTube URL to the format http://youtube.com/watch?v={youtube-id}
+        /// and returns whether the normalization was successful or not.
+        /// </summary>
+        /// <param name="url">The YouTube URL to normalize.</param>
+        /// <param name="normalizedUrl">The normalized YouTube URL.</param>
+        /// <returns>
+        /// <c>true</c>, if the normalization was successful; <c>false</c>, if the URL is invalid.
+        /// </returns>
+        public static bool TryNormalizeYoutubeUrl(string url, out string normalizedUrl)
+        {
+            url = url.Trim();
+
+            url = url.Replace("youtu.be/", "youtube.com/watch?v=");
+            url = url.Replace("www.youtube", "youtube");
+            url = url.Replace("youtube.com/embed/", "youtube.com/watch?v=");
+
+            if (url.Contains("/v/"))
+            {
+                url = "http://youtube.com" + new Uri(url).AbsolutePath.Replace("/v/", "/watch?v=");
+            }
+
+            url = url.Replace("/watch#", "/watch?");
+
+            IDictionary<string, string> query = HttpHelper.ParseQueryString(url);
+
+            string v;
+
+            if (!query.TryGetValue("v", out v))
+            {
+                normalizedUrl = null;
+                return false;
+            }
+
+            normalizedUrl = "http://youtube.com/watch?v=" + v;
+
+            return true;
         }
 
         private static IEnumerable<Uri> ExtractDownloadUrls(JObject json)
@@ -252,42 +305,6 @@ namespace YoutubeExtractor
             string extractedJson = dataRegex.Match(pageSource).Result("$1");
 
             return JObject.Parse(extractedJson);
-        }
-
-#if PORTABLE
-
-        public static async System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
-        {
-            return await System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl, decryptSignature));
-        }
-
-#endif
-
-        private static string NormalizeYoutubeUrl(string url)
-        {
-            url = url.Trim();
-
-            url = url.Replace("youtu.be/", "youtube.com/watch?v=");
-            url = url.Replace("www.youtube", "youtube");
-            url = url.Replace("youtube.com/embed/", "youtube.com/watch?v=");
-
-            if (url.Contains("/v/"))
-            {
-                url = "http://youtube.com" + new Uri(url).AbsolutePath.Replace("/v/", "/watch?v=");
-            }
-
-            url = url.Replace("/watch#", "/watch?");
-
-            IDictionary<string, string> query = HttpHelper.ParseQueryString(url);
-
-            string v;
-
-            if (!query.TryGetValue("v", out v))
-            {
-                throw new ArgumentException("URL is not a valid youtube URL!");
-            }
-
-            return "http://youtube.com/watch?v=" + v;
         }
 
         private static void ThrowYoutubeParseException(Exception innerException)
