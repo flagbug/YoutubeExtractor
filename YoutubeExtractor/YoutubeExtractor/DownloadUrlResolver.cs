@@ -140,6 +140,15 @@ namespace YoutubeExtractor
         /// </returns>
         public static bool TryNormalizeYoutubeUrl(string url, out string normalizedUrl)
         {
+            Uri uriResult;
+            bool isValidurl = Uri.TryCreate(x, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (!isValidUrl)
+            {
+                normalizedUrl = null;
+                return false;
+            }
+
             url = url.Trim();
 
             url = url.Replace("youtu.be/", "youtube.com/watch?v=");
