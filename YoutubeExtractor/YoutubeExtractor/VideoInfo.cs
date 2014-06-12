@@ -135,6 +135,14 @@ namespace YoutubeExtractor
         public bool Is3D { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether this video info requires a signature decryption before
+        /// the download URL can be used.
+        ///
+        /// This can be achieved with the <see cref="DownloadUrlResolver.DecryptDownloadUrl"/>
+        /// </summary>
+        public bool RequiresDecryption { get; internal set; }
+
+        /// <summary>
         /// Gets the resolution of the video.
         /// </summary>
         /// <value>The resolution of the video, or 0 if the resolution is unkown.</value>

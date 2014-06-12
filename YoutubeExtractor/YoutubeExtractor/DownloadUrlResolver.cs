@@ -45,6 +45,7 @@ namespace YoutubeExtractor
                 }
 
                 videoInfo.DownloadUrl = HttpHelper.ReplaceQueryStringParameter(videoInfo.DownloadUrl, SignatureQuery, decrypted);
+                videoInfo.RequiresDecryption = false;
             }
         }
 
@@ -88,7 +89,7 @@ namespace YoutubeExtractor
 
                 string videoTitle = GetVideoTitle(json);
 
-                IEnumerable<Uri> downloadUrls = ExtractDownloadUrls(json);
+                IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(json);
 
                 IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
 
@@ -98,7 +99,7 @@ namespace YoutubeExtractor
                 {
                     info.HtmlPlayerVersion = htmlPlayerVersion;
 
-                    if (decryptSignature)
+                    if (decryptSignature && info.RequiresDecryption)
                     {
                         DecryptDownloadUrl(info);
                     }
@@ -168,7 +169,7 @@ namespace YoutubeExtractor
             return true;
         }
 
-        private static IEnumerable<Uri> ExtractDownloadUrls(JObject json)
+        private static IEnumerable<ExtractionInfo> ExtractDownloadUrls(JObject json)
         {
             string[] splitByUrls = GetStreamMap(json).Split(',');
             string[] adaptiveFmtSplitByUrls = GetAdaptiveStreamMap(json).Split(',');
@@ -179,8 +180,11 @@ namespace YoutubeExtractor
                 IDictionary<string, string> queries = HttpHelper.ParseQueryString(s);
                 string url;
 
+                bool requiresDecryption = false;
+
                 if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
                 {
+                    requiresDecryption = queries.ContainsKey("s");
                     string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
 
                     url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
@@ -198,7 +202,7 @@ namespace YoutubeExtractor
                 url = HttpHelper.UrlDecode(url);
                 url = HttpHelper.UrlDecode(url);
 
-                yield return new Uri(url);
+                yield return new ExtractionInfo { RequiresDecryption = requiresDecryption, Uri = new Uri(url) };
             }
         }
 
@@ -242,13 +246,13 @@ namespace YoutubeExtractor
             return streamMapString;
         }
 
-        private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<Uri> downloadUrls, string videoTitle)
+        private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<ExtractionInfo> extractionInfos, string videoTitle)
         {
             var downLoadInfos = new List<VideoInfo>();
 
-            foreach (Uri url in downloadUrls)
+            foreach (ExtractionInfo extractionInfo in extractionInfos)
             {
-                string itag = HttpHelper.ParseQueryString(url.Query)["itag"];
+                string itag = HttpHelper.ParseQueryString(extractionInfo.Uri.Query)["itag"];
 
                 int formatCode = int.Parse(itag);
 
@@ -258,8 +262,9 @@ namespace YoutubeExtractor
                 {
                     info = new VideoInfo(info)
                     {
-                        DownloadUrl = url.ToString(),
-                        Title = videoTitle
+                        DownloadUrl = extractionInfo.Uri.ToString(),
+                        Title = videoTitle,
+                        RequiresDecryption = extractionInfo.RequiresDecryption
                     };
                 }
 
@@ -267,7 +272,7 @@ namespace YoutubeExtractor
                 {
                     info = new VideoInfo(formatCode)
                     {
-                        DownloadUrl = url.ToString()
+                        DownloadUrl = extractionInfo.Uri.ToString()
                     };
                 }
 
@@ -312,6 +317,13 @@ namespace YoutubeExtractor
             throw new YoutubeParseException("Could not parse the Youtube page.\n" +
                                             "This may be due to a change of the Youtube page structure.\n" +
                                             "Please report this bug at www.github.com/flagbug/YoutubeExtractor/issues", innerException);
+        }
+
+        private class ExtractionInfo
+        {
+            public bool RequiresDecryption { get; set; }
+
+            public Uri Uri { get; set; }
         }
     }
 }
