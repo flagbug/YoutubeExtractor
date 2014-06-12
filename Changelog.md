@@ -1,3 +1,8 @@
+# v0.10.1
+
+## Bugfixes
+- Fixed an issue with the signature deciphering.
+
 # v0.10.0
 
 ## Features
