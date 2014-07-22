@@ -115,7 +115,7 @@ namespace YoutubeExtractor
                     throw;
                 }
 
-                ThrowYoutubeParseException(ex);
+                ThrowYoutubeParseException(ex, videoUrl);
             }
 
             return null; // Will never happen, but the compiler requires it
@@ -312,9 +312,9 @@ namespace YoutubeExtractor
             return JObject.Parse(extractedJson);
         }
 
-        private static void ThrowYoutubeParseException(Exception innerException)
+        private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)
         {
-            throw new YoutubeParseException("Could not parse the Youtube page.\n" +
+            throw new YoutubeParseException("Could not parse the Youtube page for URL " + videoUrl + "\n" +
                                             "This may be due to a change of the Youtube page structure.\n" +
                                             "Please report this bug at www.github.com/flagbug/YoutubeExtractor/issues", innerException);
         }
