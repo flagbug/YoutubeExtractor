@@ -1,3 +1,8 @@
+# v0.10.2
+
+- Added some missing format codes.
+- Added a Windows Phone 8.1 target.
+
 # v0.10.1
 
 ## Bugfixes
