@@ -1,3 +1,8 @@
+# v0.10.3
+
+## Bugfixes
+- Fixed the deciphering code. Thanks @Cyano!
+
 # v0.10.2
 
 - Added some missing format codes.
