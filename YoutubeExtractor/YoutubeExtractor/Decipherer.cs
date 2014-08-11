@@ -65,7 +65,6 @@ namespace YoutubeExtractor
             }
 
             operations = operations.Trim();
-            Console.WriteLine(operations);
             return operations;
 
         }
