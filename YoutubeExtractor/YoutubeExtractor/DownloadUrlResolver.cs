@@ -24,7 +24,7 @@ namespace YoutubeExtractor
         /// <exception cref="YoutubeParseException">
         /// There was an error while deciphering the signature.
         /// </exception>
-        public static void DecryptDownloadUrl(VideoInfo videoInfo)
+        public static void DecryptDownloadUrl(VideoInfo videoInfo, string operations)
         {
             IDictionary<string, string> queries = HttpHelper.ParseQueryString(videoInfo.DownloadUrl);
 
@@ -36,7 +36,10 @@ namespace YoutubeExtractor
 
                 try
                 {
-                    decrypted = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
+                    if (encryptedSignature.Length == CorrectSignatureLength)
+                    { decrypted = encryptedSignature; } //Doesn't require decrypting
+                    else
+                    { decrypted = Decipherer.DecipherWithOperations(encryptedSignature, operations); } //Use operations get decrypted cipher
                 }
 
                 catch (Exception ex)
@@ -94,6 +97,7 @@ namespace YoutubeExtractor
                 IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
 
                 string htmlPlayerVersion = GetHtml5PlayerVersion(json);
+                string operations = ""; //Same operations for the same html5Player
 
                 foreach (VideoInfo info in infos)
                 {
@@ -101,7 +105,9 @@ namespace YoutubeExtractor
 
                     if (decryptSignature && info.RequiresDecryption)
                     {
-                        DecryptDownloadUrl(info);
+                        if (string.IsNullOrEmpty(operations)) //Get operations if we don't
+                        { operations = Decipherer.DecipherOperations(htmlPlayerVersion); }
+                        DecryptDownloadUrl(info, operations);
                     }
                 }
 
@@ -211,16 +217,6 @@ namespace YoutubeExtractor
             JToken streamMap = json["args"]["adaptive_fmts"];
 
             return streamMap.ToString();
-        }
-
-        private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
-        {
-            if (signature.Length == CorrectSignatureLength)
-            {
-                return signature;
-            }
-
-            return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
         }
 
         private static string GetHtml5PlayerVersion(JObject json)
