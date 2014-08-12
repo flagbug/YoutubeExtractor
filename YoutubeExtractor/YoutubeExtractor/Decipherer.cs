@@ -7,7 +7,7 @@ namespace YoutubeExtractor
 {
     internal static class Decipherer
     {
-        public static string DecipherOperations(string cipherVersion)
+        public static string DecipherWithVersion(string cipher, string cipherVersion)
         {
             string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/html5player-{0}.js", cipherVersion);
             string js = HttpHelper.DownloadString(jsUrl);
@@ -20,15 +20,18 @@ namespace YoutubeExtractor
             var funcBody = Regex.Match(js, funcPattern).Groups["brace"].Value; //Entire sig function
             var lines = funcBody.Split(';'); //Each line in sig function
 
-            string id_Reverse = "", id_Slice = "", id_CharSwap = ""; //Hold name for each method
+            string id_Reverse = "", id_Slice = "", id_CharSwap = ""; //Hold name for each cipher method
             string functionIdentifier = "";
             string operations = "";
 
-            //Match the code with each function. Only runs till all three are defined.
-            foreach (var line in lines.Skip(1).Take(lines.Length - 2))
+
+            foreach (var line in lines.Skip(1).Take(lines.Length - 2)) //Matchs the funcBody with each cipher method. Only runs till all three are defined.
             {
                 if (!string.IsNullOrEmpty(id_Reverse) && !string.IsNullOrEmpty(id_Slice) &&
-                 !string.IsNullOrEmpty(id_CharSwap)) { break; } //Break out if all defined.
+                 !string.IsNullOrEmpty(id_CharSwap)) 
+                { 
+                    break; //Break loop if all three cipher methods are defined
+                } 
 
                 functionIdentifier = getFunctionFromLine(line);
                 string re_Reverse = string.Format(@"{0}:\bfunction\b\(\w+\)", functionIdentifier); //Regex for reverse (one parameter)
@@ -37,13 +40,19 @@ namespace YoutubeExtractor
 
                 Match me;
                 if ((me = Regex.Match(js, re_Reverse)).Success)
-                { id_Reverse = functionIdentifier; } //If def matched the regex for reverse then the current function is a defined as the reverse cipher
+                {
+                    id_Reverse = functionIdentifier; //If def matched the regex for reverse then the current function is a defined as the reverse
+                } 
 
                 if ((me = Regex.Match(js, re_Slice)).Success)
-                { id_Slice = functionIdentifier; } //If def matched the regex for slice then the current function is defined as the slice cipher.
+                {
+                    id_Slice = functionIdentifier; //If def matched the regex for slice then the current function is defined as the slice.
+                } 
 
                 if ((me = Regex.Match(js, re_Swap)).Success)
-                { id_CharSwap = functionIdentifier; } //If def matched the regex for charSwap then the current function is defined as swap cipher.
+                { 
+                    id_CharSwap = functionIdentifier; //If def matched the regex for charSwap then the current function is defined as swap.
+                } 
 
             }
 
@@ -53,35 +62,30 @@ namespace YoutubeExtractor
                 functionIdentifier = getFunctionFromLine(line);
 
                 if ((m = Regex.Match(line, @"\(\w+,(?<index>\d+)\)")).Success && functionIdentifier == id_CharSwap)
-                { operations += "w" + m.Groups["index"].Value + " "; } //Character swap regex appears to be the same as before
+                { 
+                    operations += "w" + m.Groups["index"].Value + " "; //operation is a swap (w)
+                } 
 
                 if ((m = Regex.Match(line, @"\(\w+,(?<index>\d+)\)")).Success && functionIdentifier == id_Slice)
-                { operations += "s" + m.Groups["index"].Value + " "; } //Slice appears to have changed the index location???
-                //Could be wrong and the regex needs improving, seems to work on the latest algorithm though.
+                { 
+                    operations += "s" + m.Groups["index"].Value + " "; //operation is a slice
+                } 
 
-                if (functionIdentifier == id_Reverse)
-                { operations += "r "; } //Reverse operation, no regex required
+                if (functionIdentifier == id_Reverse) //No regex required for reverse (reverse method has no parameters) 
+                { 
+                    operations += "r "; //operation is a reverse
+                }
 
             }
 
             operations = operations.Trim();
-            return operations;
 
+            return DecipherWithOperations(cipher, operations);
         }
-
-        public static string DecipherWithOperations(string cipher, string operations)
-        {
-            if (string.IsNullOrEmpty(operations))
-            { throw new NotImplementedException("No valid cipher operations found."); }
-
-            return operations.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
-                .Aggregate(cipher, ApplyOperation);
-        }
-
 
         private static string getFunctionFromLine(string currentLine)
         {
-            Regex matchFunctionReg = new Regex(@"\w+\.(?<functionID>\w+)\("); //lc.ac(b,c) want ac.
+            Regex matchFunctionReg = new Regex(@"\w+\.(?<functionID>\w+)\("); //lc.ac(b,c) want the ac part.
             Match rgMatch = matchFunctionReg.Match(currentLine);
             string matchedFunction = rgMatch.Groups["functionID"].Value;
             return matchedFunction; //return 'ac'
@@ -111,6 +115,11 @@ namespace YoutubeExtractor
             }
         }
 
+        private static string DecipherWithOperations(string cipher, string operations)
+        {
+            return operations.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
+                .Aggregate(cipher, ApplyOperation);
+        }
 
         private static int GetOpIndex(string op)
         {
