@@ -20,75 +20,63 @@ namespace YoutubeExtractor
             var funcBody = Regex.Match(js, funcPattern).Groups["brace"].Value; //Entire sig function
             var lines = funcBody.Split(';'); //Each line in sig function
 
-            string id_Reverse = "", id_Slice = "", id_CharSwap = ""; //Hold name for each cipher method
+            string idReverse = "", idSlice = "", idCharSwap = ""; //Hold name for each cipher method
             string functionIdentifier = "";
             string operations = "";
 
-
-            foreach (var line in lines.Skip(1).Take(lines.Length - 2)) //Matchs the funcBody with each cipher method. Only runs till all three are defined.
+            foreach (var line in lines.Skip(1).Take(lines.Length - 2)) //Matches the funcBody with each cipher method. Only runs till all three are defined.
             {
-                if (!string.IsNullOrEmpty(id_Reverse) && !string.IsNullOrEmpty(id_Slice) &&
-                 !string.IsNullOrEmpty(id_CharSwap)) 
-                { 
+                if (!string.IsNullOrEmpty(idReverse) && !string.IsNullOrEmpty(idSlice) &&
+                    !string.IsNullOrEmpty(idCharSwap))
+                {
                     break; //Break loop if all three cipher methods are defined
-                } 
+                }
 
-                functionIdentifier = getFunctionFromLine(line);
-                string re_Reverse = string.Format(@"{0}:\bfunction\b\(\w+\)", functionIdentifier); //Regex for reverse (one parameter)
-                string re_Slice = string.Format(@"{0}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\.", functionIdentifier); //Regex for slice (return or not)
-                string re_Swap = string.Format(@"{0}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b", functionIdentifier); //Regex for the char swap.
+                functionIdentifier = GetFunctionFromLine(line);
+                string reReverse = string.Format(@"{0}:\bfunction\b\(\w+\)", functionIdentifier); //Regex for reverse (one parameter)
+                string reSlice = string.Format(@"{0}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\.", functionIdentifier); //Regex for slice (return or not)
+                string reSwap = string.Format(@"{0}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b", functionIdentifier); //Regex for the char swap.
 
-                Match me;
-                if ((me = Regex.Match(js, re_Reverse)).Success)
+                if (Regex.Match(js, reReverse).Success)
                 {
-                    id_Reverse = functionIdentifier; //If def matched the regex for reverse then the current function is a defined as the reverse
-                } 
+                    idReverse = functionIdentifier; //If def matched the regex for reverse then the current function is a defined as the reverse
+                }
 
-                if ((me = Regex.Match(js, re_Slice)).Success)
+                if (Regex.Match(js, reSlice).Success)
                 {
-                    id_Slice = functionIdentifier; //If def matched the regex for slice then the current function is defined as the slice.
-                } 
+                    idSlice = functionIdentifier; //If def matched the regex for slice then the current function is defined as the slice.
+                }
 
-                if ((me = Regex.Match(js, re_Swap)).Success)
-                { 
-                    id_CharSwap = functionIdentifier; //If def matched the regex for charSwap then the current function is defined as swap.
-                } 
-
+                if (Regex.Match(js, reSwap).Success)
+                {
+                    idCharSwap = functionIdentifier; //If def matched the regex for charSwap then the current function is defined as swap.
+                }
             }
 
             foreach (var line in lines.Skip(1).Take(lines.Length - 2))
             {
                 Match m;
-                functionIdentifier = getFunctionFromLine(line);
+                functionIdentifier = GetFunctionFromLine(line);
 
-                if ((m = Regex.Match(line, @"\(\w+,(?<index>\d+)\)")).Success && functionIdentifier == id_CharSwap)
-                { 
+                if ((m = Regex.Match(line, @"\(\w+,(?<index>\d+)\)")).Success && functionIdentifier == idCharSwap)
+                {
                     operations += "w" + m.Groups["index"].Value + " "; //operation is a swap (w)
-                } 
-
-                if ((m = Regex.Match(line, @"\(\w+,(?<index>\d+)\)")).Success && functionIdentifier == id_Slice)
-                { 
-                    operations += "s" + m.Groups["index"].Value + " "; //operation is a slice
-                } 
-
-                if (functionIdentifier == id_Reverse) //No regex required for reverse (reverse method has no parameters) 
-                { 
-                    operations += "r "; //operation is a reverse
                 }
 
+                if ((m = Regex.Match(line, @"\(\w+,(?<index>\d+)\)")).Success && functionIdentifier == idSlice)
+                {
+                    operations += "s" + m.Groups["index"].Value + " "; //operation is a slice
+                }
+
+                if (functionIdentifier == idReverse) //No regex required for reverse (reverse method has no parameters)
+                {
+                    operations += "r "; //operation is a reverse
+                }
             }
 
             operations = operations.Trim();
 
             return DecipherWithOperations(cipher, operations);
-        }
-
-        private static string getFunctionFromLine(string currentLine)
-        {
-            Regex matchFunctionReg = new Regex(@"\w+\.(?<functionID>\w+)\("); //lc.ac(b,c) want the ac part.
-            Match rgMatch = matchFunctionReg.Match(currentLine);
-            string matchedFunction = rgMatch.Groups["functionID"].Value;
-            return matchedFunction; //return 'ac'
         }
 
         private static string ApplyOperation(string cipher, string op)
@@ -119,6 +107,14 @@ namespace YoutubeExtractor
         {
             return operations.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                 .Aggregate(cipher, ApplyOperation);
+        }
+
+        private static string GetFunctionFromLine(string currentLine)
+        {
+            Regex matchFunctionReg = new Regex(@"\w+\.(?<functionID>\w+)\("); //lc.ac(b,c) want the ac part.
+            Match rgMatch = matchFunctionReg.Match(currentLine);
+            string matchedFunction = rgMatch.Groups["functionID"].Value;
+            return matchedFunction; //return 'ac'
         }
 
         private static int GetOpIndex(string op)
