@@ -20,6 +20,14 @@ namespace ExampleApplication
                 .First();
 
             /*
+             * If the video has a decrypted signature, decipher it
+             */
+            if (video.RequiresDecryption)
+            {
+                DownloadUrlResolver.DecryptDownloadUrl(video);
+            }
+
+            /*
              * Create the audio downloader.
              * The first argument is the video where the audio should be extracted from.
              * The second argument is the path to save the audio file.
@@ -51,6 +59,14 @@ namespace ExampleApplication
                 .First(info => info.VideoType == VideoType.Mp4 && info.Resolution == 360);
 
             /*
+             * If the video has a decrypted signature, decipher it
+             */
+            if (video.RequiresDecryption)
+            {
+                DownloadUrlResolver.DecryptDownloadUrl(video);
+            }
+
+            /*
              * Create the video downloader.
              * The first argument is the video to download.
              * The second argument is the path to save the video file.
@@ -78,7 +94,7 @@ namespace ExampleApplication
              * Get the available video formats.
              * We'll work with them in the video and audio download examples.
              */
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
+            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
 
             //DownloadAudio(videoInfos);
             DownloadVideo(videoInfos);
