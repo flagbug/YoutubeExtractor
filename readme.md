@@ -67,6 +67,14 @@ IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link);
  */
 VideoInfo video = videoInfos
     .First(info => info.VideoType == VideoType.Mp4 && info.Resolution == 360);
+    
+/*
+ * If the video has a decrypted signature, decipher it
+ */
+if (video.RequiresDecryption)
+{
+    DownloadUrlResolver.DecryptDownloadUrl(video);
+}
 
 /*
  * Create the video downloader.
@@ -97,6 +105,14 @@ VideoInfo video = videoInfos
     .Where(info => info.CanExtractAudio)
     .OrderByDescending(info => info.AudioBitrate)
     .First();
+    
+/*
+ * If the video has a decrypted signature, decipher it
+ */
+if (video.RequiresDecryption)
+{
+    DownloadUrlResolver.DecryptDownloadUrl(video);
+}
 
 /*
  * Create the audio downloader.
