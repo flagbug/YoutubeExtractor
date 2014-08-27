@@ -1,5 +1,9 @@
 # v0.10.3
 
+- Performance improvements in the deciphering code.
+
+# v0.10.3
+
 ## Bugfixes
 - Fixed the deciphering code. Thanks @Cyano!
 
