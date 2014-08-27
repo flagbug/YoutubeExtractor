@@ -1,4 +1,4 @@
-# v0.10.3
+# v0.10.4
 
 - Performance improvements in the deciphering code.
 
