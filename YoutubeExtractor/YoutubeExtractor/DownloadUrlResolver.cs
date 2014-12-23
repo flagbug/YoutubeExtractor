@@ -12,6 +12,7 @@ namespace YoutubeExtractor
     /// </summary>
     public static class DownloadUrlResolver
     {
+		private const string RateBypassFlag = "ratebypass=yes";
         private const int CorrectSignatureLength = 81;
         private const string SignatureQuery = "signature";
 
@@ -103,6 +104,9 @@ namespace YoutubeExtractor
                     {
                         DecryptDownloadUrl(info);
                     }
+
+					//Add the ratebypass parameter to the url. This is optional but greatly speeds up downloads
+					info.DownloadUrl += "&" + RateBypassFlag;
                 }
 
                 return infos;
