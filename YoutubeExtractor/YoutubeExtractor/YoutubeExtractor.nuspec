@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>YoutubeExtractor</id>
-        <version>0.10.4.1</version>
+        <version>0.10.5</version>
         <title>YoutubeExtractor</title>
         <authors>Dennis Daume</authors>
         <owners>Dennis Daume</owners>
@@ -12,17 +12,13 @@
         <description>YoutubeExtractor is a library to extract the download link from YouTube videos, download them and/or extract their audio track.</description>
         <tags>youtube download extract audio WinRT WP8 Android iOS Xamarin</tags>
 		<dependencies>
-		  <dependency id="Newtonsoft.Json" version="5.0.8" />
+		  <dependency id="Newtonsoft.Json" version="6.0.6" />
 		</dependencies>
     </metadata>
     <files>
         <file src="bin\Release\Full\YoutubeExtractor.dll" target="lib\net35\YoutubeExtractor.dll" />
         <file src="bin\Release\Full\YoutubeExtractor.xml" target="lib\net35\YoutubeExtractor.xml" />
-		<file src="bin\Release\Full\YoutubeExtractor.pdb" target="lib\net35\YoutubeExtractor.pdb" />
-		<file src="bin\Release\Full\YoutubeExtractor.pdb.srcsrv" target="lib\net35\YoutubeExtractor.pdb.srcsrv" />
         <file src="bin\Release\Portable\YoutubeExtractor.dll" target="lib\portable-wp8+wpa81+win8+monoandroid+monotouch\YoutubeExtractor.dll" />
         <file src="bin\Release\Portable\YoutubeExtractor.xml" target="lib\portable-wp8+wpa81+win8+monoandroid+monotouch\YoutubeExtractor.xml" />
-		<file src="bin\Release\Portable\YoutubeExtractor.pdb" target="lib\portable-wp8+wpa81+win8+monoandroid+monotouch\YoutubeExtractor.pdb" />
-        <file src="bin\Release\Portable\YoutubeExtractor.pdb.srcsrv" target="lib\portable-wp8+wpa81+win8+monoandroid+monotouch\YoutubeExtractor.pdb.srcsrv" />
     </files>
 </package>
