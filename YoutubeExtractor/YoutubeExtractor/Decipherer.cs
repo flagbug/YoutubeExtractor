@@ -13,7 +13,7 @@ namespace YoutubeExtractor
             string js = HttpHelper.DownloadString(jsUrl);
 
             //Find "C" in this: var A = B.sig||C (B.s)
-            string functNamePattern = @"\.sig\s*\|\|(\w+)\(";
+            string functNamePattern = @"\.sig\s*\|\|(\w+|$)\(";
             var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
             string funcBodyPattern = @"(?<brace>{([^{}]| ?(brace))*})";  //Match nested angle braces
             string funcPattern = string.Format(@"{0}\(\w+\){1}", funcName, funcBodyPattern);
