@@ -22,6 +22,7 @@
 using System;
 using System.IO;
 using System.Net;
+using NReco.VideoConverter;
 
 namespace YoutubeExtractor
 {
@@ -96,18 +97,18 @@ namespace YoutubeExtractor
 
         private void ExtractAudio(string path)
         {
-            using (var flvFile = new FlvFile(path, this.SavePath))
-            {
-                flvFile.ConversionProgressChanged += (sender, args) =>
-                {
-                    if (this.AudioExtractionProgressChanged != null)
-                    {
-                        this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
-                    }
-                };
+            FFMpegConverter converter = new FFMpegConverter();
 
-                flvFile.ExtractStreams();
-            }
+            converter.ConvertProgress += (sender, args) =>
+            {
+                if (this.AudioExtractionProgressChanged != null)
+                {
+                    double progressPercent = args.Processed.TotalSeconds / args.TotalDuration.TotalSeconds * 100;
+                    this.AudioExtractionProgressChanged(this, new ProgressEventArgs(progressPercent));
+                }
+            };
+
+            converter.ConvertMedia(path, this.SavePath, "mp3");
         }
     }
 }
