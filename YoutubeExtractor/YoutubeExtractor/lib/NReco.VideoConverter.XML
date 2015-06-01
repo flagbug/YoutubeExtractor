@@ -1,0 +1,563 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NReco.VideoConverter</name>
+    </assembly>
+    <members>
+        <member name="T:NReco.VideoConverter.ConvertLiveMediaTask">
+            <summary>
+            Represents async live media task conversion
+            </summary>
+        </member>
+        <member name="M:NReco.VideoConverter.ConvertLiveMediaTask.Start">
+            <summary>
+            Start live stream conversion
+            </summary>
+        </member>
+        <member name="M:NReco.VideoConverter.ConvertLiveMediaTask.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Write input data into conversion stream
+            </summary>
+        </member>
+        <member name="M:NReco.VideoConverter.ConvertLiveMediaTask.Stop">
+            <summary>
+            Stop live stream conversion process
+            </summary>
+        </member>
+        <member name="M:NReco.VideoConverter.ConvertLiveMediaTask.Stop(System.Boolean)">
+            <summary>
+            Stop live stream conversion process and optionally force ffmpeg to quit
+            </summary>
+            <param name="forceFFMpegQuit">force FFMpeg to quit by sending Ctrl+C signal</param>
+        </member>
+        <member name="M:NReco.VideoConverter.ConvertLiveMediaTask.Wait">
+            <summary>
+            Wait until live stream conversion is finished (input stream ended)
+            </summary>
+            <remarks>
+            Do not call "Wait" when input stream is not used and input data is provided using Write method
+            </remarks>
+        </member>
+        <member name="M:NReco.VideoConverter.ConvertLiveMediaTask.Abort">
+            <summary>
+            Abort live stream conversions process
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.ConvertSettings">
+            <summary>
+            Media conversion setting
+            </summary>
+            <inherit>NReco.VideoConverter.OutputSettings</inherit>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.AudioSampleRate">
+            <summary>
+            Explicit sample rate for audio stream. Usual rates are: 44100, 22050, 11025
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.AudioCodec">
+            <summary>
+            Audio codec (complete list of audio codecs: ffmpeg -codecs)
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.VideoFrameRate">
+            <summary>
+            Explicit video rate for video stream. Usual rates are: 30, 25
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.VideoFrameCount">
+            <summary>
+            Number of video frames to record
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.VideoFrameSize">
+            <summary>
+            Video frame size (common video sizes are listed in VideoSizes
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.VideoCodec">
+            <summary>
+            Video codec (complete list of video codecs: ffmpeg -codecs)
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.MaxDuration">
+            <summary>
+            Get or set max duration (in seconds)
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.OutputSettings.CustomOutputArgs">
+            <summary>
+            Extra custom FFMpeg parameters for 'output'
+            </summary>
+            <remarks>
+            FFMpeg command line arguments inserted after input file parameter (-i) but before output file
+            </remarks>
+        </member>
+        <member name="F:NReco.VideoConverter.ConvertSettings.AppendSilentAudioStream">
+            <summary>
+            Add silent audio stream to output
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.ConvertSettings.Seek">
+            <summary>
+            Seek to position (in seconds) before converting
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.ConvertSettings.CustomInputArgs">
+            <summary>
+            Extra custom FFMpeg parameters for 'input'
+            </summary>
+            <remarks>
+            FFMpeg command line arguments inserted before input file parameter (-i)
+            </remarks>
+        </member>
+        <member name="T:NReco.VideoConverter.ConcatSettings">
+            <summary>
+            Media concatenation setting
+            </summary>
+            <inherit>NReco.VideoConverter.OutputSettings</inherit>
+        </member>
+        <member name="F:NReco.VideoConverter.ConcatSettings.ConcatVideoStream">
+            <summary>
+            Determine whether audio stream
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.ConcatSettings.ConcatAudioStream">
+            <summary>
+            Seek to position (in seconds) before converting
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.FFMpegException">
+            <summary>
+            The exception that is thrown when FFMpeg process retruns non-zero error exit code
+            </summary>
+        </member>
+        <member name="P:NReco.VideoConverter.FFMpegException.ErrorCode">
+            <summary>
+            Get FFMpeg process error code
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.FrameSize">
+            <summary>
+            Represents common video frame sizes
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.qvga320x200">
+            <summary>
+            QVGA: 320x200
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.vga640x480">
+            <summary>
+            VGA: 640x480
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.svga800x600">
+            <summary>
+            SVGA: 640x480
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.xga1024x768">
+            <summary>
+            XGA: 1024x768
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.sxga1280x1024">
+            <summary>
+            SXGA: 1280x1024
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.wxga1366x768">
+            <summary>
+            WXGA: 1366x768
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.wsxga1600x1024">
+            <summary>
+            WSXGA: 1600x1024
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.uxga1600x1200">
+            <summary>
+            UXGA: 1600x1200
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.hd480">
+            <summary>
+            HD480: 852x480
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.hd720">
+            <summary>
+            HD720: 1280x720
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.FrameSize.hd1080">
+            <summary>
+            HD1080: 1920x1080
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.Format">
+            <summary>
+            Represents common media format strings
+            </summary>
+            <remarks>
+            Complete list of formats supported by FFMpeg: ffmpeg.exe -formats
+            </remarks>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.ac3">
+            <summary>
+            AC-3 - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.aiff">
+            <summary>
+            Audio IFF (AIFF) - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.alaw">
+            <summary>
+            raw PCM A-law - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.asf">
+            <summary>
+            ASF - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.ast">
+            <summary>
+            AST (Audio format used on the Nintendo Wii.) - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.au">
+            <summary>
+            Sun AU - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.avi">
+            <summary>
+            AVI (Audio Video Interleaved) - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.caf">
+            <summary>
+            Apple CAF (Core Audio Format) - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.dts">
+            <summary>
+            raw DTS
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.eac3">
+            <summary>
+            raw E-AC-3 - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.ffm">
+            <summary>
+            FFM (FFserver live feed) - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.flac">
+            <summary>
+            raw FLAC - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.flv">
+            <summary>
+            FLV (Flash Video) - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.h261">
+            <summary>
+            raw H.261 - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.h263">
+            <summary>
+            raw H.263 - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.h264">
+            <summary>
+            raw H.264 - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.h265">
+            <summary>
+            raw H.265 - only decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.matroska">
+            <summary>
+            Matroska - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.m4v">
+            <summary>
+            raw MPEG-4 video - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.mjpeg">
+            <summary>
+            raw MJPEG video - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.mov">
+            <summary>
+            QuickTime / MOV - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.mp4">
+            <summary>
+            MP4 (MPEG-4 Part 14) - encode and decode
+            </summary>
+            <remarks>
+            MP4 container cannot be used with live streams!
+            </remarks>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.mpeg">
+            <summary>
+            MPEG-1 Systems / MPEG program stream - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.mulaw">
+            <summary>
+            PCM mu-law - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.ogg">
+            <summary>
+            Ogg - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.oma">
+            <summary>
+            Sony OpenMG audio - encode and decode
+            </summary>
+        </member>
+        <member name="F:NReco.VideoConverter.Format.webm">
+            <summary>
+            WebM - encode and decode
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.FFMpegConverter">
+            <summary>
+            Video converter component (wrapper to FFMpeg process)
+            </summary>
+            <sort>10</sort>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.#ctor">
+            <summary>
+            Initializes a new instance of the FFMpegConverter class.
+            </summary>
+            <remarks>
+            FFMpegConverter is NOT thread-safe. Separate instance should be used for each thread.
+            </remarks>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertMedia(System.String,System.String,System.String)">
+            <summary>
+            Converts media represented by local file and writes result to specified local file
+            </summary>
+            <param name="inputFile">local path to input media file</param>
+            <param name="outputFile">local path to ouput media file</param>
+            <param name="outputFormat">desired output format (like "mp4" or "flv")</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertMedia(System.String,System.String,System.String,System.String,NReco.VideoConverter.ConvertSettings)">
+            <summary>
+            Converts media represented by local file and writes result to specified local file using explicit convert settings
+            </summary>
+            <param name="inputFile">local path to input media file</param>
+            <param name="inputFormat">input format (null for automatic format suggestion)</param>
+            <param name="outputFile">local path to output media file</param>
+            <param name="outputFormat">output media format</param>
+            <param name="settings">explicit convert settings</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertMedia(System.String,System.IO.Stream,System.String)">
+            <summary>
+            Converts media represented by local file and writes result to specified stream
+            </summary>
+            <param name="inputFile">local path to input media file</param>
+            <param name="outputStream">output stream</param>
+            <param name="outputFormat">output media format</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertMedia(System.String,System.String,System.IO.Stream,System.String,NReco.VideoConverter.ConvertSettings)">
+            <summary>
+            Converts media represented by local file and writes result to specified stream using explicit convert settings
+            </summary>
+            <param name="inputFile">local path to input media file</param>
+            <param name="inputFormat">input format (null for automatic format suggestion)</param>
+            <param name="outputStream">output stream</param>
+            <param name="outputFormat">output media format</param>
+            <param name="settings">convert settings</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertLiveMedia(System.String,System.IO.Stream,System.String,NReco.VideoConverter.ConvertSettings)">
+            <summary>
+            Create a task for live stream conversion (real-time) without input source. Input data should be passed with Write method.
+            </summary>
+            <param name="inputFormat">input stream media format</param>
+            <param name="outputStream">output media stream</param>
+            <param name="outputFormat">output media format</param>
+            <param name="settings">convert settings</param>
+            <returns>instance of <see cref="T:NReco.VideoConverter.ConvertLiveMediaTask"/></returns>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertLiveMedia(System.String,System.String,System.IO.Stream,System.String,NReco.VideoConverter.ConvertSettings)">
+            <summary>
+            Create a task for live stream conversion (real-time) that reads data from FFMpeg input source and write conversion result to output stream
+            </summary>
+            <param name="inputSource">input source string identifier (file path, UDP or TCP source, local video device name)</param>
+            <param name="inputFormat">input stream media format</param>
+            <param name="outputStream">output media stream</param>
+            <param name="outputFormat">output media format</param>
+            <param name="settings">convert settings</param>
+            <returns>instance of <see cref="T:NReco.VideoConverter.ConvertLiveMediaTask"/></returns>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertLiveMedia(System.IO.Stream,System.String,System.String,System.String,NReco.VideoConverter.ConvertSettings)">
+            <summary>
+            Create a task for live stream conversion (real-time) that reads data from stream and writes conversion result to the file
+            </summary>
+            <param name="inputStream">input live stream (null if data is provided by calling "Write" method)</param>
+            <param name="inputFormat">input stream media format</param>
+            <param name="outputFile">output file path</param>
+            <param name="outputFormat">output media format</param>
+            <param name="settings">convert settings</param>
+            <returns>instance of <see cref="T:NReco.VideoConverter.ConvertLiveMediaTask"/></returns>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConvertLiveMedia(System.IO.Stream,System.String,System.IO.Stream,System.String,NReco.VideoConverter.ConvertSettings)">
+            <summary>
+            Create a task for live stream conversion (real-time) that reads data from input stream and write conversion result to output stream
+            </summary>
+            <param name="inputStream">input live stream (null if data is provided by calling "Write" method)</param>
+            <param name="inputFormat">input stream media format</param>
+            <param name="outputStream">output media stream</param>
+            <param name="outputFormat">output media format</param>
+            <param name="settings">convert settings</param>
+            <returns>instance of <see cref="T:NReco.VideoConverter.ConvertLiveMediaTask"/></returns>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.GetVideoThumbnail(System.String,System.IO.Stream)">
+            <summary>
+            Extract video thumbnail (first frame) from local video file
+            </summary>
+            <param name="inputFile">path to local video file</param>
+            <param name="outputJpegStream">output stream for thumbnail in jpeg format</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.GetVideoThumbnail(System.String,System.String)">
+            <summary>
+            Extract video thumbnail (first frame) from local video file
+            </summary>
+            <param name="inputFile">path to local video file</param>
+            <param name="outputFile">path to thumbnail jpeg file</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.GetVideoThumbnail(System.String,System.IO.Stream,System.Nullable{System.Single})">
+            <summary>
+            Extract video frame from local video file at specified position
+            </summary>
+            <param name="inputFile">path to local video file</param>
+            <param name="outputJpegStream">output stream for thumbnail in jpeg format</param>
+            <param name="frameTime">video position (in seconds)</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.GetVideoThumbnail(System.String,System.String,System.Nullable{System.Single})">
+            <summary>
+            Extract video frame from local video file at specified position
+            </summary>
+            <param name="inputFile">path to local video file</param>
+            <param name="outputFile">path to thumbnail jpeg file</param>
+            <param name="frameTime">video position (in seconds)</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.ConcatMedia(System.String[],System.String,System.String,NReco.VideoConverter.ConcatSettings)">
+            <summary>
+            Concatenate several video files
+            </summary>
+            <param name="inputFiles">list of local video files</param>
+            <param name="outputFile">path to contactenation result file</param>
+            <param name="outputFormat">desired output format</param>
+            <param name="settings">convert settings</param>
+            <remarks>
+            Note: all video files should have the same video frame size and audio stream.
+            </remarks>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.Invoke(System.String)">
+            <summary>
+            Invoke FFMpeg process with custom command line arguments
+            </summary>
+            <param name="ffmpegArgs">string with arguments</param>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.Abort">
+            <summary>
+            Abort FFMpeg process started by ConvertMedia or ConcatMedia methods
+            </summary>
+            <remarks>This method IMMEDIATELY stops FFMpeg by killing the process. Resulting file may be inconsistent.</remarks>
+        </member>
+        <member name="M:NReco.VideoConverter.FFMpegConverter.Stop">
+            <summary>
+            Stop FFMpeg process "softly" by sending CTRL+C signal to FFMpeg console. 
+            This method doesn't stop FFMpeg process immediately and may take some time.
+            </summary>
+            <remarks>
+            Stop method implementation uses native WinAPI calls (AttachConsole, GenerateConsoleCtrlEvent, FreeConsole and SetConsoleCtrlHandler).
+            If AttachConsole fails (for console apps) special fallback is used that sends Ctrl+C by starting special SendCtrlC.exe process.
+            </remarks>
+            <returns>true if CTRL+C signal sent sucessfully and FFPeg process has exited. If this method returns false FFMpeg process should be stopped with Abort method.</returns>
+        </member>
+        <member name="P:NReco.VideoConverter.FFMpegConverter.FFMpegToolPath">
+            <summary>
+            Get or set path where FFMpeg tool is located
+            </summary>
+            <remarks>
+            By default this property points to the folder where application assemblies are located.
+            If WkHtmlToPdf tool files are not present PdfConverter expands them from DLL resources.
+            </remarks>
+        </member>
+        <member name="P:NReco.VideoConverter.FFMpegConverter.FFMpegExeName">
+            <summary>
+            Get or set FFMpeg tool EXE file name ('ffmpeg.exe' by default)
+            </summary>
+        </member>
+        <member name="P:NReco.VideoConverter.FFMpegConverter.ExecutionTimeout">
+            <summary>
+            Get or set maximum execution time for conversion process (null is by default - means no timeout)
+            </summary>
+        </member>
+        <member name="E:NReco.VideoConverter.FFMpegConverter.ConvertProgress">
+            <summary>
+            Occurs when FFMpeg outputs media info (total duration, convert progress)
+            </summary>
+        </member>
+        <member name="E:NReco.VideoConverter.FFMpegConverter.LogReceived">
+            <summary>
+            Occurs when log line is received from FFMpeg process
+            </summary>
+        </member>
+        <member name="P:NReco.VideoConverter.FFMpegConverter.FFMpegProcessPriority">
+            <summary>
+            Get or set FFMpeg process priority (Normal by default)
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.ConvertProgressEventArgs">
+            <summary>
+            Provides data for ConvertProgress event
+            </summary>
+        </member>
+        <member name="P:NReco.VideoConverter.ConvertProgressEventArgs.TotalDuration">
+            <summary>
+            Total media stream duration
+            </summary>
+        </member>
+        <member name="P:NReco.VideoConverter.ConvertProgressEventArgs.Processed">
+            <summary>
+            Processed media stream duration
+            </summary>
+        </member>
+        <member name="T:NReco.VideoConverter.FFMpegLogEventArgs">
+            <summary>
+            Provides data for log received event
+            </summary>
+        </member>
+        <member name="P:NReco.VideoConverter.FFMpegLogEventArgs.Data">
+            <summary>
+            Log line
+            </summary>
+        </member>
+    </members>
+</doc>
