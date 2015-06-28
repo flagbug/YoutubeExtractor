@@ -234,7 +234,7 @@ namespace YoutubeExtractor
 
         public override string ToString()
         {
-            return string.Format("Full Title: {0}, Type: {1}, Resolution: {2}p", this.Title + this.VideoExtension, this.VideoType, this.Resolution);
+            return string.Format("Type: {0}, Resolution: {1}p, Full Title: {2}", this.VideoType, this.Resolution, this.Title + this.VideoExtension);
         }
     }
 }

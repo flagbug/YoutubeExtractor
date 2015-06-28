@@ -261,7 +261,7 @@ namespace YoutubeExtractor {
 
                 int formatCode = int.Parse(Params["itag"]);
 
-                VideoInfo info = GetSingleVideoInfo(null, formatCode, extractionInfo.Uri.ToString(), videoTitle, extractionInfo.RequiresDecryption);
+                VideoInfo info = GetSingleVideoInfo(formatCode, extractionInfo.Uri.ToString(), videoTitle, extractionInfo.RequiresDecryption);
 
                 downLoadInfos.Add(info);
             }
@@ -269,14 +269,10 @@ namespace YoutubeExtractor {
             return downLoadInfos;
         }
 
-        public static VideoInfo GetSingleVideoInfo(List<VideoInfo> previousFormats, int formatCode, string queryUrl, string videoTitle, bool requiresDecryption) {
+        public static VideoInfo GetSingleVideoInfo(int formatCode, string queryUrl, string videoTitle, bool requiresDecryption) {
             var Params = HttpHelper.ParseQueryString(queryUrl);
 
-            VideoInfo info = null;
-            if (previousFormats != null)
-                info = previousFormats.SingleOrDefault(v => v.FormatCode == formatCode);
-            if (info == null)
-                info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
+            VideoInfo info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
 
             if (info != null) {
                 int fileSize = Params.ContainsKey("clen") ? int.Parse(Params["clen"]) : 0;
@@ -339,11 +335,15 @@ namespace YoutubeExtractor {
             foreach (XmlElement item in ManifestList) {
                 int FormatCode = int.Parse(item.GetAttribute("id"));
                 XmlNode BaseUrl = item.GetElementsByTagName("BaseURL").Item(0);
-                VideoInfo info = GetSingleVideoInfo(previousFormats, FormatCode, BaseUrl.InnerText, videoTitle, false);
+                VideoInfo info = GetSingleVideoInfo(FormatCode, BaseUrl.InnerText, videoTitle, false);
                 if (item.HasAttribute("height"))
                     info.Resolution = int.Parse(item.GetAttribute("height"));
                 if (item.HasAttribute("frameRate"))
                     info.FrameRate = int.Parse(item.GetAttribute("frameRate"));
+
+                VideoInfo DeleteItem = previousFormats.SingleOrDefault(v => v.FormatCode == FormatCode);
+                if (DeleteItem != null)
+                    previousFormats.Remove(DeleteItem);
                 previousFormats.Add(info);
             }
         }
