@@ -102,7 +102,7 @@ namespace YoutubeExtractor
                 {
                     if (this.AudioExtractionProgressChanged != null)
                     {
-                        this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
+                        this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressBytes, args.ProgressPercentage));
                     }
                 };
 
