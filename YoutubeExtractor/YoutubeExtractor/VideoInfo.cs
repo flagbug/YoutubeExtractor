@@ -180,7 +180,7 @@ namespace YoutubeExtractor
         /// <summary>
         /// Gets the size of the stream in bytes.
         /// </summary>
-        public int FileSize { get; internal set; }
+        public long FileSize { get; internal set; }
 
         /// <summary>
         /// Gets the resolution of the video.

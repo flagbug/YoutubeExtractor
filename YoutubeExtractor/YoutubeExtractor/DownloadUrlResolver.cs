@@ -230,7 +230,10 @@ namespace YoutubeExtractor {
         private static string GetAdaptiveStreamMap(JObject json) {
             JToken streamMap = json["args"]["adaptive_fmts"];
 
-            return streamMap.ToString();
+            if (streamMap != null)
+                return streamMap.ToString();
+            else
+                return string.Empty;
         }
 
         private static string GetHtml5PlayerVersion(JObject json) {
@@ -275,7 +278,7 @@ namespace YoutubeExtractor {
             VideoInfo info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
 
             if (info != null) {
-                int fileSize = Params.ContainsKey("clen") ? int.Parse(Params["clen"]) : 0;
+                long fileSize = Params.ContainsKey("clen") ? long.Parse(Params["clen"]) : 0;
                 info = new VideoInfo(info) {
                     DownloadUrl = queryUrl,
                     Title = videoTitle,
