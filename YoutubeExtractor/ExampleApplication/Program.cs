@@ -76,7 +76,11 @@ namespace ExampleApplication
                 RemoveIllegalPathCharacters(video.Title) + video.VideoExtension));
 
             // Register the ProgressChanged event and print the current progress
-            videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+            videoDownloader.DownloadProgressChanged += (sender, args) =>
+                            Console.WriteLine(string.Format("Downloaded Percentage: {0}, Bytes: {1} , Total bytes : {2}",
+                                                args.ProgressPercentage,
+                                                args.ProgressBytes,
+                                                videoDownloader.DownloadSize));
 
             /*
              * Execute the video downloader.

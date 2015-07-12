@@ -18,8 +18,8 @@ namespace YoutubeExtractor.Tests
         private Mock<VideoDownloader> _videoDownloader;
         private Mock<EventHandler<ProgressEventArgs>> _videoDownloadProgressChanged;
         private Mock<EventHandler> _videoDownloadStarted, _videoDownloadFinished;
-        private Mock<VideoInfo> _videoInfo;
-        private Mock<String> _savePath;
+        private string _mockedSavePath = @"\\somepath\file.ext";
+        private string _mockedYoutubeLink = @"https://www.youtube.com/watch?v=LY_rMXXuJp8";
         #region [Setup / TearDown]
        
 
@@ -29,8 +29,8 @@ namespace YoutubeExtractor.Tests
         [SetUp]
         public void InitializeVideoDownloader()
         {
-            IEnumerable<VideoInfo> vids = DownloadUrlResolver.GetDownloadUrls("https://www.youtube.com/watch?v=LY_rMXXuJp8");
-            _videoDownloader = new Mock<VideoDownloader>(vids.FirstOrDefault(), @"D:\somepath", null);
+            IEnumerable<VideoInfo> vids = DownloadUrlResolver.GetDownloadUrls(_mockedYoutubeLink);
+            _videoDownloader = new Mock<VideoDownloader>(vids.FirstOrDefault(), _mockedSavePath, null);
             _videoDownloadProgressChanged = new Mock<EventHandler<ProgressEventArgs>>();
             _videoDownloadStarted = new Mock<EventHandler>();
             _videoDownloadFinished = new Mock<EventHandler>();
@@ -75,6 +75,7 @@ namespace YoutubeExtractor.Tests
             _videoDownloader.Object.Execute();
             _videoDownloadFinished.Verify();
         }
+
         #endregion
     }
 }

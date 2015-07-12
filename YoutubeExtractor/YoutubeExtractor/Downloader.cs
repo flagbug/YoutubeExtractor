@@ -53,6 +53,11 @@ namespace YoutubeExtractor
         public VideoInfo Video { get; private set; }
 
         /// <summary>
+        /// Gets total size of video/audio.
+        /// </summary>
+        public long DownloadSize { get; set; }
+        
+        /// <summary>
         /// Starts the work of the <see cref="Downloader"/>.
         /// </summary>
         public abstract void Execute();
