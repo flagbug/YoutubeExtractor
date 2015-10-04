@@ -100,7 +100,7 @@ namespace YoutubeExtractorUtil
             VideoInfo selectedAudeoFile = allVideoInfos
                 .Where(info => info.CanExtractAudio)
                 .OrderByDescending(info => info.AudioBitrate)
-                .First();
+                .FirstOrDefault();
 
             // List the files that were cnsidered and highlight the ones that were chosen
             foreach (var item in items)
@@ -193,7 +193,8 @@ namespace YoutubeExtractorUtil
 
         private static string VideoInfoDisplayString(VideoInfo videoInfo)
         {
-            return string.Format("Res: {0}p{1},\tAudio: {2} {3}{4}",
+            return string.Format("VideoType: {0,-6} Res: {1}p{2},\tAudio: {3} {4}{5}",
+                videoInfo.VideoType,
                 videoInfo.Resolution,
                 videoInfo.Is3D ? " 3D" : "",
                 videoInfo.AudioType,
@@ -210,9 +211,7 @@ namespace YoutubeExtractorUtil
 
         private static string RemoveIllegalPathCharacters(string path)
         {
-            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-            var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
-            return r.Replace(path, "");
+            return Regex.Replace(path, illegalPathCharacters, "");
         }
 
         private static IEnumerable<string> ScanLinksFile()
@@ -235,5 +234,6 @@ namespace YoutubeExtractorUtil
 
         private static int cursorTop;
         private static readonly CommandLine commandLine = new CommandLine();
+        private static readonly string illegalPathCharacters = "[" + Regex.Escape(new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars())) + "]";
     }
 }
