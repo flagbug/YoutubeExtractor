@@ -29,6 +29,8 @@ namespace YoutubeExtractorUtil
                     return;
                 }
 
+                Directory.CreateDirectory(commandLine.Destination);
+
                 foreach (var link in commandLine.Links.Concat(ScanLinksFile()).Distinct(StringComparer.CurrentCultureIgnoreCase))
                 {
                     try
