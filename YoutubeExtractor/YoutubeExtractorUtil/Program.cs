@@ -191,9 +191,7 @@ namespace YoutubeExtractorUtil
 
         private static string VideoInfoDisplayString(VideoInfo videoInfo)
         {
-            return string.Format("\"{0}{1}\",\tRes: {2}p{3},\tAudio: {4} {5}{6}",
-                videoInfo.Title,
-                videoInfo.VideoExtension,
+            return string.Format("Res: {0}p{1},\tAudio: {2} {3}{4}",
                 videoInfo.Resolution,
                 videoInfo.Is3D ? " 3D" : "",
                 videoInfo.AudioType,
