@@ -1,4 +1,25 @@
-﻿using System;
+﻿// ****************************************************************************
+//
+// YoutubeExtractorUtil
+// Copyright (C) 2013-2015 Dennis Daume (daume.dennis@gmail.com)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// ****************************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,7 +42,6 @@ namespace YoutubeExtractorUtil
 
         public void ProcessArgs(IEnumerable<string> args)
         {
-            IdealResolution = -1;
             MaxResolution = int.MaxValue;
             Links = new List<string>();
 
@@ -40,7 +60,7 @@ namespace YoutubeExtractorUtil
             if (VideoTypes == null)
             {
                 // Default accepted video types in order of preference
-                VideoTypes = new[] { VideoType.Mp4, VideoType.Flash, VideoType.WebM };
+                VideoTypes = new[] { VideoType.Mp4, VideoType.Flash, VideoType.WebM, VideoType.Mobile, VideoType.Unknown };
             }
         }
 
@@ -160,15 +180,21 @@ namespace YoutubeExtractorUtil
                 sb.Append(separator);
             }
 
-            sb.Append("MinResolution: ");
-            sb.Append(MinResolution);
-            sb.Append(separator);
+            if (MinResolution > 0)
+            {
+                sb.Append("MinResolution: ");
+                sb.Append(MinResolution);
+                sb.Append(separator);
+            }
 
-            sb.Append("MaxResolution: ");
-            sb.Append(MaxResolution);
-            sb.Append(separator);
+            if (MaxResolution < int.MaxValue)
+            {
+                sb.Append("MaxResolution: ");
+                sb.Append(MaxResolution);
+                sb.Append(separator);
+            }
 
-            if (IdealResolution != -1)
+            if (IdealResolution != 0)
             {
                 sb.Append("IdealResolution: ");
                 sb.Append(IdealResolution);

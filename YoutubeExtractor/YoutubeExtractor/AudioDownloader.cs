@@ -1,7 +1,7 @@
 ﻿// ****************************************************************************
 //
 // FLV Extract
-// Copyright (C) 2013-2014 Dennis Daume (daume.dennis@gmail.com)
+// Copyright (C) 2013-2015 Dennis Daume (daume.dennis@gmail.com)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 using System;
 using System.IO;
-using System.Net;
 
 namespace YoutubeExtractor
 {
@@ -52,7 +51,7 @@ namespace YoutubeExtractor
         public event EventHandler<ProgressEventArgs> DownloadProgressChanged;
 
         /// <summary>
-        /// Downloads the video from YouTube and then extracts the audio track out if it.
+        /// Downloads the video from YouTube and then extracts the audio track out of it.
         /// </summary>
         /// <exception cref="IOException">
         /// The temporary video file could not be created.
@@ -75,6 +74,16 @@ namespace YoutubeExtractor
             }
         }
 
+        /// <summary>
+        /// Downloads the video from YouTube (without extracting audio).
+        /// </summary>
+        /// <exception cref="IOException">
+        /// The temporary video file could not be created.
+        /// - or -
+        /// The audio file could not be created.
+        /// </exception>
+        /// <exception cref="WebException">An error occured while downloading the video.</exception>
+        /// <param name="path"></param>
         public void DownloadVideo(string path)
         {
             var videoDownloader = new VideoDownloader(this.Video, path, this.BytesToDownload);
@@ -84,6 +93,16 @@ namespace YoutubeExtractor
             videoDownloader.Execute();
         }
 
+        /// <summary>
+        /// Extracts the audio track out of the downloaded video.
+        /// </summary>
+        /// <exception cref="IOException">
+        /// The temporary video file could not be created.
+        /// - or -
+        /// The audio file could not be created.
+        /// </exception>
+        /// <exception cref="AudioExtractionException">An error occured during audio extraction.</exception>
+        /// <param name="path"></param>
         public void ExtractAudio(string path)
         {
             using (var flvFile = new FlvFile(path, this.SavePath))

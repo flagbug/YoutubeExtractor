@@ -1,0 +1,57 @@
+Usage:
+======
+
+YoutubeExtractorUtil <link1> <link2> <link3...> [/LinksFile | /LinksFile=<"my links file.txt">] [/Destination=<"my download folder">] [/MinResolution=<n>] [/MaxResolution=<n>] [/IdealResolution=<n>] [/ExtractAudio | /ExtractAudio=<true | false>] [/VideoTypes=<type1,type2,type3...>]
+
+
+Optional Parameters:
+====================
+
+One or multiple links can be listed in the command line.
+
+/LinksFile
+Using this switch alone indicates to read additional source links from the default file "LinksFile.txt".
+
+/LinksFile=<"my links file.txt">
+Parameterizing the switch indicates to read additional source links from the specified file instead: "my links file.txt".
+
+/Destination=<"my download folder">
+Specifies the location where downloaded and extracted files should be placed. You can use absolute paths pr paths relative to the current directory.
+
+/MinResolution=<n>
+/MaxResolution=<n>
+These two switches allow you to specify a range of video resolutions that should be considered for download. 
+If what's available on youtube is outside of this range then no video will be selected for download.
+
+/IdealResolution=<n>
+By default the highest resolution available is selected for download. This switch allow you to specify the preferred resolution (which may or may not be lower than the highest available one).
+If the preferred resolution is not available, then the highest one will be chosen.
+Specifying an ideal resolution that's outside of the range above will simply cause it to be ignored.
+
+/ExtractAudio
+This swith alone specifies that autio should be extracted. By default, audio is not extracted.
+
+/ExtractAudio=true
+This specifies the same thing.
+
+/ExtractAudio=false
+This specifies to not extract audio, but since that's the default anyway, specifying this in the command line is redundant (although harmless).
+Sometimes it's simpler to write scripts that pass either true or false without having to consider what the default value is.
+
+/VideoTypes=<type1,type2,type3...>
+When present, this switch specifies a comma-delimited list of acceptable file formats. Any video formats not in the list are excluded in the selection process.
+It also specifies the order of preference in which the acceptable types should be considered for selection.
+Only one type will eventually be selected for download.
+The full list of video types is: Mp4,Flash,WebM,Mobile,Unknown
+The list must be compact as shown above and cannot contain any spaces (beforeor after the commas).
+Limiting the list of acceptable file formats using this switch can of course in some cases cause 0 (zero) file format to be selected and therefore the video will not be downloaded.
+
+
+Example:
+========
+
+YoutubeExtractorUtil http://www.youtube.com/watch?v=O3UBOOZw-FE /IdealResolution=1080 /ExtractAudio /Destination=.
+
+Downloads 1080p video from the specified link. The downloads .flv file, extracts .mp3 from it and deletes the .flv file. 
+Both "KOLLEGAH - Alpha (Official HD Video).mp4" and "KOLLEGAH - Alpha (Official HD Video).mp3" are placed in the current directory.
+Even though there is a 1440p download available for the same video, 1080p is chosen instead.

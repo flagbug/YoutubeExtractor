@@ -1,14 +1,30 @@
-﻿using System;
+﻿// ****************************************************************************
+//
+// YoutubeExtractorUtil
+// Copyright (C) 2013-2015 Dennis Daume (daume.dennis@gmail.com)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// ****************************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using YoutubeExtractor;
-
-//
-// Example:
-//     YoutubeExtractorUtil http://www.youtube.com/watch?v=O3UBOOZw-FE /IdealResolution=1080 /ExtractAudio /Destination=.
-//
 
 namespace YoutubeExtractorUtil
 {
@@ -20,18 +36,23 @@ namespace YoutubeExtractorUtil
             {
                 commandLine.ProcessArgs(args);
 
-                Console.WriteLine("YoutubeExtractorUtil - Sample util application\n");
+                Console.WriteLine(Properties.Resources.Header);
                 Console.WriteLine(commandLine);
 
-                if (commandLine.IsHelp)
+                if (commandLine.Destination != null)
                 {
-                    Console.WriteLine("Usage...");
+                    Directory.CreateDirectory(commandLine.Destination);
+                }
+
+                var links = commandLine.Links.Concat(ScanLinksFile()).Distinct(StringComparer.CurrentCultureIgnoreCase);
+
+                if (commandLine.IsHelp || !links.Any())
+                {
+                    Console.WriteLine(Properties.Resources.Help);
                     return;
                 }
 
-                Directory.CreateDirectory(commandLine.Destination);
-
-                foreach (var link in commandLine.Links.Concat(ScanLinksFile()).Distinct(StringComparer.CurrentCultureIgnoreCase))
+                foreach (var link in links)
                 {
                     try
                     {
@@ -51,6 +72,24 @@ namespace YoutubeExtractorUtil
             }
 
             Console.WriteLine("Done");
+        }
+
+        private static IEnumerable<string> ScanLinksFile()
+        {
+            if (string.IsNullOrEmpty(commandLine.LinksFile)) { yield break; }
+
+            using (var reader = new StreamReader(commandLine.LinksFile))
+            {
+                string line;
+                while (null != (line = reader.ReadLine()))
+                {
+                    Uri uri;
+                    if (Uri.TryCreate(line, UriKind.Absolute, out uri))
+                    {
+                        yield return line;
+                    }
+                }
+            }
         }
 
         private static void OutputError(Exception exception)
@@ -84,7 +123,7 @@ namespace YoutubeExtractorUtil
 
             VideoInfo selectedVideoFile = null;
 
-            if (commandLine.IdealResolution != -1)
+            if (commandLine.IdealResolution != 0)
             {
                 // Look for ideal resolution first (if specified)
                 selectedVideoFile = videoInfos.FirstOrDefault(info => info.Resolution == commandLine.IdealResolution);
@@ -212,24 +251,6 @@ namespace YoutubeExtractorUtil
         private static string RemoveIllegalPathCharacters(string path)
         {
             return Regex.Replace(path, illegalPathCharacters, "");
-        }
-
-        private static IEnumerable<string> ScanLinksFile()
-        {
-            if (string.IsNullOrEmpty(commandLine.LinksFile)) { yield break; }
-
-            using (var reader = new StreamReader(commandLine.LinksFile))
-            {
-                string line;
-                while (null != (line = reader.ReadLine()))
-                {
-                    Uri uri;
-                    if (Uri.TryCreate(line, UriKind.Absolute, out uri))
-                    {
-                        yield return line;
-                    }
-                }
-            }
         }
 
         private static int cursorTop;
