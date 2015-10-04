@@ -16,38 +16,51 @@ namespace YoutubeExtractorUtil
     {
         private static void Main(string[] args)
         {
-            commandLine.ProcessArgs(args);
-
-            Console.WriteLine("YoutubeExtractorUtil - Sample util application\n");
-            Console.WriteLine(commandLine);
-
-            if (commandLine.IsHelp)
+            try
             {
-                Console.WriteLine("Usage...");
-                return;
+                commandLine.ProcessArgs(args);
+
+                Console.WriteLine("YoutubeExtractorUtil - Sample util application\n");
+                Console.WriteLine(commandLine);
+
+                if (commandLine.IsHelp)
+                {
+                    Console.WriteLine("Usage...");
+                    return;
+                }
+
+                foreach (var link in commandLine.Links.Concat(ScanLinksFile()).Distinct(StringComparer.CurrentCultureIgnoreCase))
+                {
+                    try
+                    {
+                        DownloadVideo(link);
+                    }
+                    catch (Exception exception)
+                    {
+                        OutputError(exception);
+                    }
+
+                    Console.WriteLine();
+                }
             }
-
-            foreach (var link in commandLine.Links.Concat(ScanLinksFile()).Distinct(StringComparer.CurrentCultureIgnoreCase))
+            catch (Exception exception)
             {
-                try
-                {
-                    DownloadVideo(link);
-                }
-                catch (Exception exception)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(exception);
-                    Console.ResetColor();
-                }
+                OutputError(exception);
             }
 
             Console.WriteLine("Done");
         }
 
+        private static void OutputError(Exception exception)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(exception);
+            Console.ResetColor();
+        }
+
         private static void DownloadVideo(string link)
         {
             Console.WriteLine("Processing: \"{0}\":", link);
-            return;
 
             IEnumerable<VideoInfo> allVideoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
 
@@ -174,8 +187,6 @@ namespace YoutubeExtractorUtil
                     audioDownloader.ExtractAudio(videoFilePathName);
                 }
             }
-
-            Console.WriteLine();
         }
 
         private static string VideoInfoDisplayString(VideoInfo videoInfo)

@@ -146,8 +146,9 @@ namespace YoutubeExtractorUtil
 
             if (!string.IsNullOrEmpty(LinksFile))
             {
-                sb.Append("LinksFile: ");
+                sb.Append("LinksFile: \"");
                 sb.Append(LinksFile);
+                sb.Append('"');
                 sb.Append(separator);
             }
 
