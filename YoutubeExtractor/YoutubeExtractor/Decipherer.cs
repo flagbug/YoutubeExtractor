@@ -16,8 +16,8 @@ namespace YoutubeExtractor
             string functNamePattern = @"\.sig\s*\|\|([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign
 
             var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
-            
-            if (funcName.Contains("$")) 
+
+            if (funcName.Contains("$"))
             {
                 funcName = "\\" + funcName; //Due To Dollar Sign Introduction, Need To Escape
             }

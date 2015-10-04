@@ -30,8 +30,6 @@ namespace YoutubeExtractor
     /// </summary>
     public class AudioDownloader : Downloader
     {
-        private bool isCanceled;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDownloader"/> class.
         /// </summary>
@@ -66,48 +64,36 @@ namespace YoutubeExtractor
         public override void Execute()
         {
             string tempPath = Path.GetTempFileName();
-
-            this.DownloadVideo(tempPath);
-
-            if (!this.isCanceled)
+            try
             {
+                this.DownloadVideo(tempPath);
                 this.ExtractAudio(tempPath);
             }
-
-            this.OnDownloadFinished(EventArgs.Empty);
+            finally
+            {
+                File.Delete(tempPath);
+            }
         }
 
-        private void DownloadVideo(string path)
+        public void DownloadVideo(string path)
         {
             var videoDownloader = new VideoDownloader(this.Video, path, this.BytesToDownload);
 
-            videoDownloader.DownloadProgressChanged += (sender, args) =>
-            {
-                if (this.DownloadProgressChanged != null)
-                {
-                    this.DownloadProgressChanged(this, args);
-
-                    this.isCanceled = args.Cancel;
-                }
-            };
+            videoDownloader.DownloadProgressChanged += DownloadProgressChanged;
 
             videoDownloader.Execute();
         }
 
-        private void ExtractAudio(string path)
+        public void ExtractAudio(string path)
         {
             using (var flvFile = new FlvFile(path, this.SavePath))
             {
-                flvFile.ConversionProgressChanged += (sender, args) =>
-                {
-                    if (this.AudioExtractionProgressChanged != null)
-                    {
-                        this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
-                    }
-                };
+                flvFile.ConversionProgressChanged += AudioExtractionProgressChanged;
 
                 flvFile.ExtractStreams();
             }
+
+            this.OnDownloadFinished(EventArgs.Empty);
         }
     }
 }

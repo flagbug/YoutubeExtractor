@@ -49,17 +49,16 @@ namespace YoutubeExtractor
                     using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
                     {
                         var buffer = new byte[1024];
-                        bool cancel = false;
                         int bytes;
-                        int copiedBytes = 0;
+                        double copiedBytes = 0d;
 
-                        while (!cancel && (bytes = source.Read(buffer, 0, buffer.Length)) > 0)
+                        while ((bytes = source.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             target.Write(buffer, 0, bytes);
 
                             copiedBytes += bytes;
 
-                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
+                            var eventArgs = new ProgressEventArgs((copiedBytes * 100) / response.ContentLength);
 
                             if (this.DownloadProgressChanged != null)
                             {
@@ -67,7 +66,7 @@ namespace YoutubeExtractor
 
                                 if (eventArgs.Cancel)
                                 {
-                                    cancel = true;
+                                    break;
                                 }
                             }
                         }
