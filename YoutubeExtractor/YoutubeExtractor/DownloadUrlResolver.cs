@@ -173,8 +173,6 @@ namespace YoutubeExtractor
         private static IEnumerable<ExtractionInfo> ExtractDownloadUrls(JObject json)
         {
             string[] splitByUrls = GetStreamMap(json).Split(',');
-            string[] adaptiveFmtSplitByUrls = GetAdaptiveStreamMap(json).Split(',');
-            splitByUrls = splitByUrls.Concat(adaptiveFmtSplitByUrls).ToArray();
 
             foreach (string s in splitByUrls)
             {
@@ -209,13 +207,6 @@ namespace YoutubeExtractor
 
                 yield return new ExtractionInfo { RequiresDecryption = requiresDecryption, Uri = new Uri(url) };
             }
-        }
-
-        private static string GetAdaptiveStreamMap(JObject json)
-        {
-            JToken streamMap = json["args"]["adaptive_fmts"];
-
-            return streamMap.ToString();
         }
 
         private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
@@ -265,8 +256,7 @@ namespace YoutubeExtractor
 
                 if (info != null)
                 {
-                    info = new VideoInfo(info)
-                    {
+                    info = new VideoInfo(info) {
                         DownloadUrl = extractionInfo.Uri.ToString(),
                         Title = videoTitle,
                         RequiresDecryption = extractionInfo.RequiresDecryption
@@ -275,8 +265,7 @@ namespace YoutubeExtractor
 
                 else
                 {
-                    info = new VideoInfo(formatCode)
-                    {
+                    info = new VideoInfo(formatCode) {
                         DownloadUrl = extractionInfo.Uri.ToString()
                     };
                 }
