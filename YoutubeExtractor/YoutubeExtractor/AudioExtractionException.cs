@@ -1,7 +1,7 @@
 ﻿// ****************************************************************************
 //
 // FLV Extract
-// Copyright (C) 2013-2014 Dennis Daume (daume.dennis@gmail.com)
+// Copyright (C) 2013-2015 Dennis Daume (daume.dennis@gmail.com)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

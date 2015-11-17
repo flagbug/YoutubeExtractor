@@ -1,7 +1,7 @@
 ﻿// ****************************************************************************
 //
 // FLV Extract
-// Copyright (C) 2013-2014 Dennis Daume (daume.dennis@gmail.com)
+// Copyright (C) 2013-2015 Dennis Daume (daume.dennis@gmail.com)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 using System;
 using System.IO;
-using System.Net;
 
 namespace YoutubeExtractor
 {
@@ -30,8 +29,6 @@ namespace YoutubeExtractor
     /// </summary>
     public class AudioDownloader : Downloader
     {
-        private bool isCanceled;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDownloader"/> class.
         /// </summary>
@@ -54,7 +51,7 @@ namespace YoutubeExtractor
         public event EventHandler<ProgressEventArgs> DownloadProgressChanged;
 
         /// <summary>
-        /// Downloads the video from YouTube and then extracts the audio track out if it.
+        /// Downloads the video from YouTube and then extracts the audio track out of it.
         /// </summary>
         /// <exception cref="IOException">
         /// The temporary video file could not be created.
@@ -66,48 +63,56 @@ namespace YoutubeExtractor
         public override void Execute()
         {
             string tempPath = Path.GetTempFileName();
-
-            this.DownloadVideo(tempPath);
-
-            if (!this.isCanceled)
+            try
             {
+                this.DownloadVideo(tempPath);
                 this.ExtractAudio(tempPath);
             }
-
-            this.OnDownloadFinished(EventArgs.Empty);
+            finally
+            {
+                File.Delete(tempPath);
+            }
         }
 
-        private void DownloadVideo(string path)
+        /// <summary>
+        /// Downloads the video from YouTube (without extracting audio).
+        /// </summary>
+        /// <exception cref="IOException">
+        /// The temporary video file could not be created.
+        /// - or -
+        /// The audio file could not be created.
+        /// </exception>
+        /// <exception cref="WebException">An error occured while downloading the video.</exception>
+        /// <param name="path"></param>
+        public void DownloadVideo(string path)
         {
             var videoDownloader = new VideoDownloader(this.Video, path, this.BytesToDownload);
 
-            videoDownloader.DownloadProgressChanged += (sender, args) =>
-            {
-                if (this.DownloadProgressChanged != null)
-                {
-                    this.DownloadProgressChanged(this, args);
-
-                    this.isCanceled = args.Cancel;
-                }
-            };
+            videoDownloader.DownloadProgressChanged += DownloadProgressChanged;
 
             videoDownloader.Execute();
         }
 
-        private void ExtractAudio(string path)
+        /// <summary>
+        /// Extracts the audio track out of the downloaded video.
+        /// </summary>
+        /// <exception cref="IOException">
+        /// The temporary video file could not be created.
+        /// - or -
+        /// The audio file could not be created.
+        /// </exception>
+        /// <exception cref="AudioExtractionException">An error occured during audio extraction.</exception>
+        /// <param name="path"></param>
+        public void ExtractAudio(string path)
         {
             using (var flvFile = new FlvFile(path, this.SavePath))
             {
-                flvFile.ConversionProgressChanged += (sender, args) =>
-                {
-                    if (this.AudioExtractionProgressChanged != null)
-                    {
-                        this.AudioExtractionProgressChanged(this, new ProgressEventArgs(args.ProgressPercentage));
-                    }
-                };
+                flvFile.ConversionProgressChanged += AudioExtractionProgressChanged;
 
                 flvFile.ExtractStreams();
             }
+
+            this.OnDownloadFinished(EventArgs.Empty);
         }
     }
 }

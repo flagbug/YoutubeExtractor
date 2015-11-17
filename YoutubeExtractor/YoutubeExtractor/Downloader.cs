@@ -57,7 +57,7 @@ namespace YoutubeExtractor
         /// </summary>
         public abstract void Execute();
 
-        protected void OnDownloadFinished(EventArgs e)
+        protected virtual void OnDownloadFinished(EventArgs e)
         {
             if (this.DownloadFinished != null)
             {
@@ -65,7 +65,7 @@ namespace YoutubeExtractor
             }
         }
 
-        protected void OnDownloadStarted(EventArgs e)
+        protected virtual void OnDownloadStarted(EventArgs e)
         {
             if (this.DownloadStarted != null)
             {
