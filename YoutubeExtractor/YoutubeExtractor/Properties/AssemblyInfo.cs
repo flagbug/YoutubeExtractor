@@ -10,5 +10,5 @@
 [assembly: AssemblyCopyright("Copyright © 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("0.10.7")]
-[assembly: AssemblyFileVersion("0.10.7")]
+[assembly: AssemblyVersion("0.10.8")]
+[assembly: AssemblyFileVersion("0.10.8")]
