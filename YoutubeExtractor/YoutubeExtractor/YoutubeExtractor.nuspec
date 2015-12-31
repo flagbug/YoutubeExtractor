@@ -18,7 +18,7 @@
     <files>
         <file src="bin\Release\Full\YoutubeExtractor.dll" target="lib\net35\YoutubeExtractor.dll" />
         <file src="bin\Release\Full\YoutubeExtractor.xml" target="lib\net35\YoutubeExtractor.xml" />
-        <file src="bin\Release\Portable\YoutubeExtractor.dll" target="lib\portable-wp8+wpa81+win8+monoandroid+monotouch\YoutubeExtractor.dll" />
-        <file src="bin\Release\Portable\YoutubeExtractor.xml" target="lib\portable-wp8+wpa81+win8+monoandroid+monotouch\YoutubeExtractor.xml" />
+        <file src="bin\Release\Portable\YoutubeExtractor.dll" target="lib\portable-net45+win8+wpa81+wp8\YoutubeExtractor.dll" />
+        <file src="bin\Release\Portable\YoutubeExtractor.xml" target="lib\portable-net45+win8+wpa81+wp8\YoutubeExtractor.xml" />
     </files>
 </package>
