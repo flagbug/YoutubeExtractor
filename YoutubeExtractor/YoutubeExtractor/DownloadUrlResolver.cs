@@ -220,7 +220,7 @@ namespace YoutubeExtractor
               streamMap = json["args"]["url_encoded_fmt_stream_map"];
             }
 
-			return streamMap.ToString();
+            return streamMap.ToString();
         }
 
         private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
