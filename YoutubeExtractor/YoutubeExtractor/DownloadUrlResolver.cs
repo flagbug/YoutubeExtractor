@@ -5,6 +5,10 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
+#if PORTABLE
+using System.Threading.Tasks;
+#endif
+
 namespace YoutubeExtractor
 {
     /// <summary>
@@ -33,11 +37,38 @@ namespace YoutubeExtractor
             {
                 string encryptedSignature = queries[SignatureQuery];
 
-                string decrypted;
+        string decrypted;
 
                 try
                 {
                     decrypted = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
+    }
+
+                catch (Exception ex)
+                {
+                    throw new YoutubeParseException("Could not decipher signature", ex);
+}
+
+videoInfo.DownloadUrl = HttpHelper.ReplaceQueryStringParameter(videoInfo.DownloadUrl, SignatureQuery, decrypted);
+                videoInfo.RequiresDecryption = false;
+            }
+        }
+
+#if PORTABLE
+        public static async Task DecryptDownloadUrlAsyn(VideoInfo videoInfo)
+
+        {
+            IDictionary<string, string> queries = HttpHelper.ParseQueryString(videoInfo.DownloadUrl);
+
+            if (queries.ContainsKey(SignatureQuery))
+            {
+                string encryptedSignature = queries[SignatureQuery];
+
+                string decrypted;
+
+                try
+                {
+                    decrypted = await GetDecipheredSignatureAync(videoInfo.HtmlPlayerVersion, encryptedSignature);
                 }
 
                 catch (Exception ex)
@@ -49,6 +80,7 @@ namespace YoutubeExtractor
                 videoInfo.RequiresDecryption = false;
             }
         }
+#endif
 
         /// <summary>
         /// Gets a list of <see cref="VideoInfo" />s for the specified URL.
@@ -72,18 +104,8 @@ namespace YoutubeExtractor
         /// An error occurred while downloading the YouTube page html.
         /// </exception>
         /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
-        public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl, bool decryptSignature = true)
+        private static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl, bool decryptSignature = true)
         {
-            if (videoUrl == null)
-                throw new ArgumentNullException("videoUrl");
-
-            bool isYoutubeUrl = TryNormalizeYoutubeUrl(videoUrl, out videoUrl);
-
-            if (!isYoutubeUrl)
-            {
-                throw new ArgumentException("URL is not a valid youtube URL!");
-            }
-
             try
             {
                 var json = LoadJson(videoUrl);
@@ -123,14 +145,65 @@ namespace YoutubeExtractor
         }
 
 #if PORTABLE
-
-        public static System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
+        private static async Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
         {
-            return System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl, decryptSignature));
+            try
+            {
+                var json = await LoadJsonAync(videoUrl);
+
+                string videoTitle = GetVideoTitle(json);
+
+                IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(json);
+
+                IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
+
+                string htmlPlayerVersion = GetHtml5PlayerVersion(json);
+
+                foreach (VideoInfo info in infos)
+                {
+                    info.HtmlPlayerVersion = htmlPlayerVersion;
+
+                    if (decryptSignature && info.RequiresDecryption)
+                    {
+                        await DecryptDownloadUrlAync(info);
+                    }
+                }
+
+                return infos;
+            }
+
+            catch (Exception ex)
+            {
+                if (ex is WebException || ex is VideoNotAvailableException)
+                {
+                    throw;
+                }
+
+                ThrowYoutubeParseException(ex, videoUrl);
+            }
+
+            return null; // Will never happen, but the compiler requires it
         }
 
-#endif
+        public static async Task<Uri> GetVideoUriAsync(string videoId)
+        {
+            var videoUrl = "http://www.youtube.com/watch?v=" + videoId;
 
+            var videoInfos = await GetDownloadUrlsAsync(videoUrl, false);
+
+            // TODO - parameterize video resolution
+            VideoInfo video = videoInfos
+                 .First(info => info.VideoType == VideoType.Mp4 && info.Resolution == 360);
+
+            // If the video has an encrypted signature, decipher it
+            if (video.RequiresDecryption)
+            {
+                await DownloadUrlResolver.DecryptDownloadUrlAsync(video);
+            }
+
+            return new Uri(video.DownloadUrl);
+        }
+#endif
         /// <summary>
         /// Normalizes the given YouTube URL to the format http://youtube.com/watch?v={youtube-id}
         /// and returns whether the normalization was successful or not.
@@ -218,16 +291,17 @@ namespace YoutubeExtractor
             return streamMap.ToString();
         }
 
-        private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
+#if PORTABLE
+        private static async Task<string> GetDecipheredSignatureAsync(string htmlPlayerVersion, string signature)
         {
             if (signature.Length == CorrectSignatureLength)
             {
                 return signature;
             }
 
-            return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
+            return await Decipherer.DecipherWithVersionAsync(signature, htmlPlayerVersion);
         }
-
+#endif
         private static string GetHtml5PlayerVersion(JObject json)
         {
             var regex = new Regex(@"player-(.+?).js");
@@ -301,10 +375,21 @@ namespace YoutubeExtractor
             return pageSource.Contains(unavailableContainer);
         }
 
+#if PORTABLE
+        private static async Task<JObject> LoadJsonAsync(string url)
+        {
+            string pageSource = await HttpHelper.DownloadStringAsync(url);
+            return ParseJson(pageSource);
+        }
+#endif
         private static JObject LoadJson(string url)
         {
             string pageSource = HttpHelper.DownloadString(url);
+            return ParseJson(pageSource);
+        }
 
+        private static JObject ParseJson(string pageSource)
+        {
             if (IsVideoUnavailable(pageSource))
             {
                 throw new VideoNotAvailableException();

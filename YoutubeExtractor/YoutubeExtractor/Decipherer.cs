@@ -3,14 +3,33 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#if PORTABLE
+using System.Threading.Tasks;
+#endif
+
 namespace YoutubeExtractor
 {
     internal static class Decipherer
     {
+
+#if PORTABLE
+        public static async Task<string> DecipherWithVersionAsync(string cipher, string cipherVersion)
+        {
+            string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player-{0}.js", cipherVersion);
+            string js = await HttpHelper.DownloadString(jsUrl);
+            return DecipherJson(js, cipher);
+        }
+#endif
+
         public static string DecipherWithVersion(string cipher, string cipherVersion)
         {
             string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player-{0}.js", cipherVersion);
             string js = HttpHelper.DownloadString(jsUrl);
+            return DecipherJson(js, cipher);
+        }
+
+        private static string DecipherJson(string js, string cipher)
+        {
 
             //Find "C" in this: var A = B.sig||C (B.s)
             string functNamePattern = @"\.sig\s*\|\|([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign

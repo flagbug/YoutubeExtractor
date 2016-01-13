@@ -9,6 +9,21 @@ namespace YoutubeExtractor
 {
     internal static class HttpHelper
     {
+
+#if PORTABLE
+        public static async System.Threading.Tasks.Task<string> DownloadStringAsync(string url)
+        {
+            var request = WebRequest.Create(url);
+            request.Method = "GET";
+
+            var response = await System.Threading.Tasks.Task.Factory.FromAsync(
+                request.BeginGetResponse,
+                asyncResult => request.EndGetResponse(asyncResult),
+                null);
+
+            return await ReadStreamFromResponseAsync(response);
+#endif
+        }
         public static string DownloadString(string url)
         {
 #if PORTABLE
@@ -108,5 +123,19 @@ namespace YoutubeExtractor
                 }
             }
         }
+
+#if PORTABLE
+        private static async System.Threading.Tasks.Task<string> ReadStreamFromResponseAsync(WebResponse response)
+        {
+            using (Stream responseStream = response.GetResponseStream())
+            {
+                using (var sr = new StreamReader(responseStream))
+                {
+                    return await sr.ReadToEndAsync();
+                }
+            }
+        }
     }
+#endif
+
 }
