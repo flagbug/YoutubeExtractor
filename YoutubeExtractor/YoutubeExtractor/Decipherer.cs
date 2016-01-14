@@ -16,7 +16,7 @@ namespace YoutubeExtractor
         public static async Task<string> DecipherWithVersionAsync(string cipher, string cipherVersion)
         {
             string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player-{0}.js", cipherVersion);
-            string js = await HttpHelper.DownloadString(jsUrl);
+            string js = await HttpHelper.DownloadStringAsync(jsUrl);
             return DecipherJson(js, cipher);
         }
 #endif

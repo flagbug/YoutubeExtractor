@@ -22,8 +22,9 @@ namespace YoutubeExtractor
                 null);
 
             return await ReadStreamFromResponseAsync(response);
-#endif
+
         }
+#endif
         public static string DownloadString(string url)
         {
 #if PORTABLE
@@ -135,7 +136,7 @@ namespace YoutubeExtractor
                 }
             }
         }
-    }
 #endif
-
+    }
 }
+
