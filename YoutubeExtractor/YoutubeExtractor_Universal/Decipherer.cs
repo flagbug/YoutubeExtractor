@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-#if PORTABLE
+#if PORTABLE || WINDOWS_UWP
 using System.Threading.Tasks;
 #endif
 

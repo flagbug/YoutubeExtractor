@@ -5,7 +5,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
-#if PORTABLE
+
+#if PORTABLE || WINDOWS_UWP
 using System.Threading.Tasks;
 #endif
 
@@ -54,7 +55,7 @@ namespace YoutubeExtractor
             }
         }
 
-#if PORTABLE
+#if PORTABLE || WINDOWS_UWP
         public static async Task DecryptDownloadUrlAsync(VideoInfo videoInfo)
 
         {
@@ -144,7 +145,7 @@ namespace YoutubeExtractor
             return null; // Will never happen, but the compiler requires it
         }
 
-#if PORTABLE
+#if PORTABLE || WINDOWS_UWP
         public static async Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
         {
             try
@@ -385,7 +386,7 @@ namespace YoutubeExtractor
             return pageSource.Contains(unavailableContainer);
         }
 
-#if PORTABLE
+#if PORTABLE || WINDOWS_UWP
         private static async Task<JObject> LoadJsonAsync(string url)
         {
             string pageSource = await HttpHelper.DownloadStringAsync(url);
