@@ -46,11 +46,11 @@ namespace ExampleApplication_Universal
         private void PlayVideo()
         {
             var currentVideo = videoEnumerator.Current;
-            this.info.Text = currentVideo.ToString();
-            System.Diagnostics.Debug.WriteLine(currentVideo);
-
+           
             if (currentVideo != null)
             {
+                this.info.Text = currentVideo.ToString();
+                System.Diagnostics.Debug.WriteLine(currentVideo);
                 this.player.Source = new Uri(currentVideo.DownloadUrl);
             }
         }
