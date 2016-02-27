@@ -22,12 +22,18 @@ namespace YoutubeExtractor
                 null);
 
             return await ReadStreamFromResponseAsync(response);
-
+        }
+#elif WINDOWS_UWP
+        public static async System.Threading.Tasks.Task<string> DownloadStringAsync(string url)
+        { 
+            var client = new System.Net.Http.HttpClient();
+            var downloaded = await client.GetStringAsync(url);
+            return downloaded;
         }
 #endif
         public static string DownloadString(string url)
         {
-#if PORTABLE
+#if PORTABLE || WINDOWS_UWP
             var request = WebRequest.Create(url);
             request.Method = "GET";
 
@@ -50,10 +56,12 @@ namespace YoutubeExtractor
         {
 #if PORTABLE
             return System.Net.WebUtility.HtmlDecode(value);
+#elif WINDOWS_UWP
+            return Windows.Data.Html.HtmlUtilities.ConvertToText(value);
 #else
             return System.Web.HttpUtility.HtmlDecode(value);
 #endif
-        }
+    }
 
         public static IDictionary<string, string> ParseQueryString(string s)
         {
@@ -109,6 +117,8 @@ namespace YoutubeExtractor
         {
 #if PORTABLE
             return System.Net.WebUtility.UrlDecode(url);
+#elif WINDOWS_UWP
+            return Uri.UnescapeDataString(url);
 #else
             return System.Web.HttpUtility.UrlDecode(url);
 #endif

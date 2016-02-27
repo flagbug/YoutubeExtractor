@@ -15,7 +15,7 @@ namespace ExampleApplication.Portable
 
         private static async void Run()
         {
-            IEnumerable<VideoInfo> videoInfos = await DownloadUrlResolver.GetDownloadUrlsAsync("http://www.youtube.com/watch?v=6bMmhKz6KXg");
+            IEnumerable<VideoInfo> videoInfos = await DownloadUrlResolver.GetDownloadUrlsAsync("http://www.youtube.com/watch?v=fRh_vgS2dFE");
 
             foreach (VideoInfo videoInfo in videoInfos)
             {
