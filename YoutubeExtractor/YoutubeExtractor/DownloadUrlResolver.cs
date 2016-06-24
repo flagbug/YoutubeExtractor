@@ -13,7 +13,6 @@ namespace YoutubeExtractor
     public static class DownloadUrlResolver
     {
         private const string RateBypassFlag = "ratebypass";
-        private const int CorrectSignatureLength = 81;
         private const string SignatureQuery = "signature";
 
         /// <summary>
@@ -226,11 +225,6 @@ namespace YoutubeExtractor
 
         private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
         {
-            if (signature.Length == CorrectSignatureLength)
-            {
-                return signature;
-            }
-
             return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
         }
 

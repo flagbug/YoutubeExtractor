@@ -22,7 +22,7 @@ namespace YoutubeExtractor
                 funcName = "\\" + funcName; //Due To Dollar Sign Introduction, Need To Escape
             }
 
-            string funcPattern = @funcName + @"=function\(\w+\)\{.*?\},"; //Escape funcName string
+            string funcPattern = @"(?!h\.)" + @funcName + @"=function\(\w+\)\{.*?\}"; //Escape funcName string
             var funcBody = Regex.Match(js, funcPattern, RegexOptions.Singleline).Value; //Entire sig function
             var lines = funcBody.Split(';'); //Each line in sig function
 
