@@ -51,6 +51,7 @@ namespace YoutubeExtractor
             {
                 using (Stream source = response.GetResponseStream())
                 {
+                    DownloadSize = (int)response.ContentLength;
                     using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
                     {
                         var buffer = new byte[1024];
