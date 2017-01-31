@@ -49,24 +49,39 @@ namespace YoutubeExtractor
             new VideoInfo(271, VideoType.WebM, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(272, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(278, VideoType.WebM, 144, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(302, VideoType.WebM, 720, false, AudioType.Unknown, 0, AdaptiveType.Video, 60),
+            new VideoInfo(303, VideoType.WebM, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video, 60),
+            new VideoInfo(308, VideoType.WebM, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video, 60),
+            new VideoInfo(313, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(315, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video, 60),
+            new VideoInfo(298, VideoType.Mp4, 720, false, AudioType.Unknown, 0, AdaptiveType.Video, 60),
+            new VideoInfo(299, VideoType.Mp4, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video, 60),
+            new VideoInfo(266, VideoType.Mp4, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
 
             /* Adaptive (aka DASH) - Audio */
             new VideoInfo(139, VideoType.Mp4, 0, false, AudioType.Aac, 48, AdaptiveType.Audio),
             new VideoInfo(140, VideoType.Mp4, 0, false, AudioType.Aac, 128, AdaptiveType.Audio),
             new VideoInfo(141, VideoType.Mp4, 0, false, AudioType.Aac, 256, AdaptiveType.Audio),
             new VideoInfo(171, VideoType.WebM, 0, false, AudioType.Vorbis, 128, AdaptiveType.Audio),
-            new VideoInfo(172, VideoType.WebM, 0, false, AudioType.Vorbis, 192, AdaptiveType.Audio)
+            new VideoInfo(172, VideoType.WebM, 0, false, AudioType.Vorbis, 192, AdaptiveType.Audio),
+            new VideoInfo(249, VideoType.WebM, 0, false, AudioType.Opus, 50, AdaptiveType.Audio),
+            new VideoInfo(250, VideoType.WebM, 0, false, AudioType.Opus, 70, AdaptiveType.Audio),
+            new VideoInfo(251, VideoType.WebM, 0, false, AudioType.Opus, 160, AdaptiveType.Audio),
         };
 
         internal VideoInfo(int formatCode)
-            : this(formatCode, VideoType.Unknown, 0, false, AudioType.Unknown, 0, AdaptiveType.None)
+            : this(formatCode, VideoType.Unknown, 0, false, AudioType.Unknown, 0, AdaptiveType.None, 0)
         { }
 
         internal VideoInfo(VideoInfo info)
-            : this(info.FormatCode, info.VideoType, info.Resolution, info.Is3D, info.AudioType, info.AudioBitrate, info.AdaptiveType)
+            : this(info.FormatCode, info.VideoType, info.Resolution, info.Is3D, info.AudioType, info.AudioBitrate, info.AdaptiveType, info.FrameRate)
         { }
 
         private VideoInfo(int formatCode, VideoType videoType, int resolution, bool is3D, AudioType audioType, int audioBitrate, AdaptiveType adaptiveType)
+            : this(formatCode, videoType, resolution, is3D, audioType, audioBitrate, adaptiveType, 0)
+        { }
+
+        private VideoInfo(int formatCode, VideoType videoType, int resolution, bool is3D, AudioType audioType, int audioBitrate, AdaptiveType adaptiveType, int frameRate)
         {
             this.FormatCode = formatCode;
             this.VideoType = videoType;
@@ -75,6 +90,7 @@ namespace YoutubeExtractor
             this.AudioType = audioType;
             this.AudioBitrate = audioBitrate;
             this.AdaptiveType = adaptiveType;
+            this.FrameRate = frameRate;
         }
 
         /// <summary>
@@ -91,6 +107,11 @@ namespace YoutubeExtractor
         /// </summary>
         /// <value>The approximate audio bitrate in kbit/s, or 0 if the bitrate is unknown.</value>
         public int AudioBitrate { get; private set; }
+
+        /// <summary>
+        /// The frame rate of the video, usually 60 or 0 for unspecified.
+        /// </summary>
+        public int FrameRate { get; internal set; }
 
         /// <summary>
         /// Gets the audio extension.
@@ -154,10 +175,15 @@ namespace YoutubeExtractor
         public bool RequiresDecryption { get; internal set; }
 
         /// <summary>
+        /// Gets the size of the stream in bytes.
+        /// </summary>
+        public long FileSize { get; internal set; }
+
+        /// <summary>
         /// Gets the resolution of the video.
         /// </summary>
         /// <value>The resolution of the video, or 0 if the resolution is unkown.</value>
-        public int Resolution { get; private set; }
+        public int Resolution { get; internal set; }
 
         /// <summary>
         /// Gets the video title.

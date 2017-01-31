@@ -26,6 +26,11 @@ namespace YoutubeExtractor
         public event EventHandler<ProgressEventArgs> DownloadProgressChanged;
 
         /// <summary>
+        /// Returns the size of the current download in bytes.
+        /// </summary>
+        public int DownloadSize { get; private set; }
+
+        /// <summary>
         /// Starts the video download.
         /// </summary>
         /// <exception cref="IOException">The video file could not be saved.</exception>
@@ -46,6 +51,7 @@ namespace YoutubeExtractor
             {
                 using (Stream source = response.GetResponseStream())
                 {
+                    DownloadSize = (int)response.ContentLength;
                     using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
                     {
                         var buffer = new byte[1024];
@@ -59,7 +65,7 @@ namespace YoutubeExtractor
 
                             copiedBytes += bytes;
 
-                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
+                            var eventArgs = new ProgressEventArgs(copiedBytes, (copiedBytes * 1.0 / response.ContentLength) * 100);
 
                             if (this.DownloadProgressChanged != null)
                             {
