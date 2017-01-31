@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Xml;
 using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
@@ -91,9 +92,21 @@ namespace YoutubeExtractor
 
                 IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(json);
 
-                IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
+                List<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
+
+                string dashManifestUrl = GetDashManifest(json);
 
                 string htmlPlayerVersion = GetHtml5PlayerVersion(json);
+
+                // Query dash manifest URL for additional formats
+                if (!string.IsNullOrEmpty(dashManifestUrl)) {
+                    string signature = ExtractSignatureFromManifest(dashManifestUrl);
+                    if (!string.IsNullOrEmpty(signature)) {
+                        string decrypt = GetDecipheredSignature(signature, htmlPlayerVersion);
+                        dashManifestUrl = dashManifestUrl.Replace(signature, decrypt).Replace("/s/", "/signature/");
+                    }
+                    ParseDashManifest(dashManifestUrl, infos, videoTitle);
+                }
 
                 foreach (VideoInfo info in infos)
                 {
@@ -228,6 +241,20 @@ namespace YoutubeExtractor
             return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
         }
 
+        /// <summary>
+        /// Extracts the signature from the DASH Manifest which is located after /s/.
+        /// </summary>
+        /// <param name="manifestUrl">The DASH Manifest URL to extract from.</param>
+        /// <returns>The extracted signature.</returns>
+        private static string ExtractSignatureFromManifest(string manifestUrl) {
+            string[] Params = manifestUrl.Split('/');
+            for (int i = 0; i < Params.Length; i++) {
+                if (Params[i] == "s" && i < Params.Length - 1)
+                    return Params[i + 1];
+            }
+            return string.Empty;
+        }
+
         private static string GetHtml5PlayerVersion(JObject json)
         {
             var regex = new Regex(@"player-(.+?).js");
@@ -287,11 +314,39 @@ namespace YoutubeExtractor
             return downLoadInfos;
         }
 
+        public static VideoInfo GetSingleVideoInfo(int formatCode, string queryUrl, string videoTitle, bool requiresDecryption) {
+            var Params = HttpHelper.ParseQueryString(queryUrl);
+
+            VideoInfo info = VideoInfo.Defaults.SingleOrDefault(videoInfo => videoInfo.FormatCode == formatCode);
+
+            if (info != null) {
+                long fileSize = Params.ContainsKey("clen") ? long.Parse(Params["clen"]) : 0;
+                info = new VideoInfo(info) {
+                    DownloadUrl = queryUrl,
+                    Title = videoTitle,
+                    RequiresDecryption = requiresDecryption,
+                    FileSize = fileSize
+                };
+            } else {
+                info = new VideoInfo(formatCode) {
+                    DownloadUrl = queryUrl
+                };
+            }
+
+            return info;
+        }
+
         private static string GetVideoTitle(JObject json)
         {
             JToken title = json["args"]["title"];
 
             return title == null ? String.Empty : title.ToString();
+        }
+
+        private static string GetDashManifest(JObject json) {
+            JToken manifest = json["args"]["dashmpd"];
+
+            return manifest == null ? String.Empty : manifest.ToString();
         }
 
         private static bool IsVideoUnavailable(string pageSource)
@@ -315,6 +370,46 @@ namespace YoutubeExtractor
             string extractedJson = dataRegex.Match(pageSource).Result("$1");
 
             return JObject.Parse(extractedJson);
+        }
+
+        private static void ParseDashManifest(string dashManifestUrl, List<VideoInfo> previousFormats, string videoTitle) {
+            string pageSource = HttpHelper.DownloadString(dashManifestUrl);
+
+            XmlDocument doc = new XmlDocument();
+            XmlNamespaceManager docNamespace = new XmlNamespaceManager(doc.NameTable);
+            docNamespace.AddNamespace("urn", "urn:mpeg:DASH:schema:MPD:2011");
+            docNamespace.AddNamespace("yd", "http://youtube.com/yt/2012/10/10");
+            doc.LoadXml(pageSource);
+            XmlNodeList ManifestList = doc.SelectNodes("//urn:Representation", docNamespace);
+            foreach (XmlElement item in ManifestList) {
+                int FormatCode = int.Parse(item.GetAttribute("id"));
+                XmlNode BaseUrl = item.GetElementsByTagName("BaseURL").Item(0);
+                VideoInfo info = GetSingleVideoInfo(FormatCode, BaseUrl.InnerText, videoTitle, false);
+                if (item.HasAttribute("height"))
+                    info.Resolution = int.Parse(item.GetAttribute("height"));
+                if (item.HasAttribute("frameRate"))
+                    info.FrameRate = int.Parse(item.GetAttribute("frameRate"));
+
+                VideoInfo DeleteItem = previousFormats.SingleOrDefault(v => v.FormatCode == FormatCode);
+                if (DeleteItem != null)
+                    previousFormats.Remove(DeleteItem);
+                previousFormats.Add(info);
+            }
+        }
+
+        /// <summary>
+        /// Non-DASH videos don't provide file size. Queries the server to know the stream size.
+        /// </summary>
+        /// <param name="info">The information of the stream to get the size for.</param>
+        /// <returns>The stream size in bytes.</returns>
+        public static void QueryStreamSize(VideoInfo info) {
+            if (info.RequiresDecryption)
+                DecryptDownloadUrl(info);
+
+            var request = (HttpWebRequest)WebRequest.Create(info.DownloadUrl);
+            using (WebResponse response = request.GetResponse()) {
+                info.FileSize = (int)response.ContentLength;
+            }
         }
 
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)
