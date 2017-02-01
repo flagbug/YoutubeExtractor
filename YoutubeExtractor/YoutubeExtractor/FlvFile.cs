@@ -93,7 +93,7 @@ namespace YoutubeExtractor
 
                 if (this.ConversionProgressChanged != null)
                 {
-                    this.ConversionProgressChanged(this, new ProgressEventArgs(progress));
+                    this.ConversionProgressChanged(this, new ProgressEventArgs(progress, (int)this.fileOffset));
                 }
             }
 

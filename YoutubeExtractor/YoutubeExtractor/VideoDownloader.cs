@@ -52,6 +52,7 @@ namespace YoutubeExtractor
                         bool cancel = false;
                         int bytes;
                         int copiedBytes = 0;
+                        this.DownloadSize = response.ContentLength;
 
                         while (!cancel && (bytes = source.Read(buffer, 0, buffer.Length)) > 0)
                         {
@@ -59,7 +60,7 @@ namespace YoutubeExtractor
 
                             copiedBytes += bytes;
 
-                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
+                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100, copiedBytes);
 
                             if (this.DownloadProgressChanged != null)
                             {

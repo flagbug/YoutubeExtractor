@@ -1,5 +1,9 @@
 # YoutubeExtractor
 
+<img src="https://ci.appveyor.com/api/projects/status/github/flagbug/youtubeextractor?branch=master&svg=true" alt="build status" />
+[![Nuget](https://img.shields.io/nuget/dt/YoutubeExtractor.svg)](https://www.nuget.org/packages/YoutubeExtractor)
+[![Nuget](https://img.shields.io/nuget/v/YoutubeExtractor.svg)](https://www.nuget.org/packages/YoutubeExtractor)
+
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=daume%2edennis%40gmail%2ecom&lc=US&item_name=YoutubeExtractor&no_note=0&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHostedGuest">
   <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" title="Donate via Paypal" />
 </a>
