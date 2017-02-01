@@ -58,6 +58,7 @@ namespace YoutubeExtractor
                             target.Write(buffer, 0, bytes);
 
                             copiedBytes += bytes;
+                            BytesToDownload = response.ContentLength - copiedBytes;
 
                             var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
 
