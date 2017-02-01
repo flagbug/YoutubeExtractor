@@ -97,7 +97,7 @@ namespace ExampleApplication
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
 
             //DownloadAudio(videoInfos);
-            DownloadVideo(videoInfos);
+            DownloadAudio(videoInfos);
         }
 
         private static string RemoveIllegalPathCharacters(string path)
