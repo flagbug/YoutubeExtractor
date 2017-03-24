@@ -73,6 +73,11 @@ namespace YoutubeExtractor
         /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
         public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl, bool decryptSignature = true)
         {
+            string html;
+            return GetDownloadUrls(videoUrl, out html, decryptSignature);
+        }
+        public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl, out string html, bool decryptSignature = true)
+        {
             if (videoUrl == null)
                 throw new ArgumentNullException("videoUrl");
 
@@ -85,7 +90,7 @@ namespace YoutubeExtractor
 
             try
             {
-                var json = LoadJson(videoUrl);
+                var json = LoadJson(videoUrl, out html);
 
                 string videoTitle = GetVideoTitle(json);
 
@@ -118,6 +123,7 @@ namespace YoutubeExtractor
                 ThrowYoutubeParseException(ex, videoUrl);
             }
 
+            html = null;
             return null; // Will never happen, but the compiler requires it
         }
 
@@ -301,7 +307,7 @@ namespace YoutubeExtractor
             return pageSource.Contains(unavailableContainer);
         }
 
-        private static JObject LoadJson(string url)
+        private static JObject LoadJson(string url, out string html)
         {
             string pageSource = HttpHelper.DownloadString(url);
 
@@ -310,6 +316,7 @@ namespace YoutubeExtractor
                 throw new VideoNotAvailableException();
             }
 
+            html = pageSource;
             var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
 
             string extractedJson = dataRegex.Match(pageSource).Result("$1");
