@@ -195,6 +195,7 @@ namespace YoutubeExtractor
         /// Gets the video type (container).
         /// </summary>
         public VideoType VideoType { get; private set; }
+        public string ThumbnailUrl { get; internal set; }
 
         /// <summary>
         /// We use this in the <see cref="DownloadUrlResolver.DecryptDownloadUrl" /> method to
