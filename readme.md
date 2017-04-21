@@ -117,7 +117,7 @@ if (video.RequiresDecryption)
  * The first argument is the video where the audio should be extracted from.
  * The second argument is the path to save the audio file.
  */
-var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + ".mp3"));
+var videoDownloader = new VideoDownloader(video, Path.Combine("D:/Downloads", video.Title + ".m4a"));
 
 // Register the progress events. We treat the download progress as 85% of the progress and the extraction progress only as 15% of the progress,
 // because the download will take much longer than the audio extraction.
