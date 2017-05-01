@@ -5,13 +5,23 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
+
 namespace YoutubeExtractor
 {
     internal static class HttpHelper
     {
         public static string DownloadString(string url)
         {
-#if PORTABLE
+#if WINDOWS_PHONE
+            var request = new Windows.Web.Http.HttpMethod("GET");
+            var w = new Windows.Web.Http.HttpClient();
+            
+            var r = await w.GetAsync(new Uri(url));
+            r.RequestMessage.Method = request;
+            r.EnsureSuccessStatusCode();
+            var returno = await r.Content.ReadAsStringAsync();
+            return returno;
+#elif PORTABLE
             var request = WebRequest.Create(url);
             request.Method = "GET";
 
@@ -21,7 +31,7 @@ namespace YoutubeExtractor
                 null);
 
             return task.ContinueWith(t => ReadStreamFromResponse(t.Result)).Result;
-#else
+#else 
             using (var client = new WebClient())
             {
                 client.Encoding = System.Text.Encoding.UTF8;
@@ -32,7 +42,7 @@ namespace YoutubeExtractor
 
         public static string HtmlDecode(string value)
         {
-#if PORTABLE
+#if PORTABLE 
             return System.Net.WebUtility.HtmlDecode(value);
 #else
             return System.Web.HttpUtility.HtmlDecode(value);
