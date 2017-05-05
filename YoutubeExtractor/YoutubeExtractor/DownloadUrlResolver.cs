@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
@@ -24,7 +25,7 @@ namespace YoutubeExtractor
         /// <exception cref="YoutubeParseException">
         /// There was an error while deciphering the signature.
         /// </exception>
-        public static void DecryptDownloadUrl(VideoInfo videoInfo)
+        public static async Task DecryptDownloadUrl(VideoInfo videoInfo)
         {
             IDictionary<string, string> queries = HttpHelper.ParseQueryString(videoInfo.DownloadUrl);
 
@@ -36,7 +37,7 @@ namespace YoutubeExtractor
 
                 try
                 {
-                    decrypted = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
+                    decrypted = await GetDecipheredSignature(videoInfo.HtmlPlayerVersion, encryptedSignature);
                 }
 
                 catch (Exception ex)
@@ -71,7 +72,7 @@ namespace YoutubeExtractor
         /// An error occurred while downloading the YouTube page html.
         /// </exception>
         /// <exception cref="YoutubeParseException">The Youtube page could not be parsed.</exception>
-        public static IEnumerable<VideoInfo> GetDownloadUrls(string videoUrl, bool decryptSignature = true)
+        public static async Task<IEnumerable<VideoInfo>> GetDownloadUrls(string videoUrl, bool decryptSignature = true)
         {
             if (videoUrl == null)
                 throw new ArgumentNullException("videoUrl");
@@ -85,7 +86,7 @@ namespace YoutubeExtractor
 
             try
             {
-                var json = LoadJson(videoUrl);
+                var json = await LoadJson(videoUrl);
 
                 string videoTitle = GetVideoTitle(json);
 
@@ -101,7 +102,7 @@ namespace YoutubeExtractor
 
                     if (decryptSignature && info.RequiresDecryption)
                     {
-                        DecryptDownloadUrl(info);
+                        await DecryptDownloadUrl(info);
                     }
                 }
 
@@ -216,7 +217,7 @@ namespace YoutubeExtractor
             return streamMap.ToString();
         }
 
-        private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
+        private static Task<string> GetDecipheredSignature(string htmlPlayerVersion, string signature)
         {
             return Decipherer.DecipherWithVersion(signature, htmlPlayerVersion);
         }
@@ -294,9 +295,9 @@ namespace YoutubeExtractor
             return pageSource.Contains(unavailableContainer);
         }
 
-        private static JObject LoadJson(string url)
+        private static async Task<JObject> LoadJson(string url)
         {
-            string pageSource = HttpHelper.DownloadString(url);
+            string pageSource = await HttpHelper.DownloadString(url);
 
             if (IsVideoUnavailable(pageSource))
             {

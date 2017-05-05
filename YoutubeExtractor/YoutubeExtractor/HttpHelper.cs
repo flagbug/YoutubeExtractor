@@ -5,17 +5,18 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace YoutubeExtractor
 {
     internal static class HttpHelper
     {
-        public static string DownloadString(string url)
+        public static async Task<string> DownloadString(string url)
         {
 
             using (var client = new HttpClient())
             {
-                return client.GetStringAsync(url).GetAwaiter().GetResult();
+                return await client.GetStringAsync(url).ConfigureAwait(false);
             }
 
         }

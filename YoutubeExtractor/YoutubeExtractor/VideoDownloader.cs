@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace YoutubeExtractor
 {
@@ -31,15 +32,15 @@ namespace YoutubeExtractor
         /// </summary>
         /// <exception cref="IOException">The video file could not be saved.</exception>
         /// <exception cref="WebException">An error occured while downloading the video.</exception>
-        public override void Execute()
+        public override async Task Execute()
         {
             this.OnDownloadStarted(EventArgs.Empty);
             using (var client = new HttpClient())
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, this.Video.DownloadUrl);
 
-                using (var response = client.SendAsync(request).GetAwaiter().GetResult())
-                using (var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult())
+                using (var response = await client.SendAsync(request).ConfigureAwait(false))
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 {
                     using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
                     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using YoutubeExtractor;
 
 namespace ExampleApplication
@@ -11,17 +12,22 @@ namespace ExampleApplication
     {
         private static void Main()
         {
+            Program.AsyncMain().Wait();
+        }
+
+        private static async Task AsyncMain()
+        {
             // Our test youtube link
-            const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
+            const string link = "https://www.youtube.com/watch?v=hss7GO27eUU&index=53&list=PLiqEOT8VBHnOf0n9RMBUlTTV6YD3y2B82";
 
             /*
              * Get the available video formats.
              * We'll work with them in the video and audio download examples.
              */
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
+            IEnumerable<VideoInfo> videoInfos = await DownloadUrlResolver.GetDownloadUrls(link, false);
 
             //DownloadAudio(videoInfos);
-            DownloadVideo(videoInfos);
+            await DownloadVideo(videoInfos);
         }
 
 
@@ -31,7 +37,7 @@ namespace ExampleApplication
             var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
             return r.Replace(path, "");
         }
-        private static void DownloadAudio(IEnumerable<VideoInfo> videoInfos)
+        private static async Task DownloadAudio(IEnumerable<VideoInfo> videoInfos)
         {
             /*
              * We want the first extractable video with the highest audio quality.
@@ -46,7 +52,7 @@ namespace ExampleApplication
              */
             if (video.RequiresDecryption)
             {
-                DownloadUrlResolver.DecryptDownloadUrl(video);
+                await DownloadUrlResolver.DecryptDownloadUrl(video);
             }
 
             /*
@@ -69,23 +75,22 @@ namespace ExampleApplication
              * Execute the audio downloader.
              * For GUI applications note, that this method runs synchronously.
              */
-            audioDownloader.Execute();
+            await audioDownloader.Execute();
         }
 
-        private static void DownloadVideo(IEnumerable<VideoInfo> videoInfos)
+        private static async Task DownloadVideo(IEnumerable<VideoInfo> videoInfos)
         {
-            /*
-             * Select the first .mp4 video with 360p resolution
-             */
-            VideoInfo video = videoInfos
-                .First(info => info.VideoType == VideoType.Mp4 && (info.Resolution == 1080 || info.Resolution == 720));
 
-            /*
-             * If the video has a decrypted signature, decipher it
-             */
+            var video = videoInfos.OrderByDescending(x => x.Resolution).FirstOrDefault(info => info.VideoType == VideoType.Mp4);
+
+            if (video is null)
+            {
+                Console.WriteLine("Not Found");
+            }
+
             if (video.RequiresDecryption)
             {
-                DownloadUrlResolver.DecryptDownloadUrl(video);
+                await DownloadUrlResolver.DecryptDownloadUrl(video);
             }
 
             /*
@@ -104,7 +109,7 @@ namespace ExampleApplication
              * Execute the video downloader.
              * For GUI applications note, that this method runs synchronously.
              */
-            videoDownloader.Execute();
+            await videoDownloader.Execute();
         }
     }
 }

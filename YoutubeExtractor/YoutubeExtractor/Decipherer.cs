@@ -2,22 +2,23 @@
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace YoutubeExtractor
 {
     internal static class Decipherer
     {
-        public static string DecipherWithVersion(string cipher, string cipherVersion)
+        public static async Task<string> DecipherWithVersion(string cipher, string cipherVersion)
         {
             string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player-{0}.js", cipherVersion);
-            string js = HttpHelper.DownloadString(jsUrl);
+            string js = await HttpHelper.DownloadString(jsUrl);
 
             //Find "C" in this: var A = B.sig||C (B.s)
             string functNamePattern = @"\""signature"",\s?([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign
 
             var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
-            
-            if (funcName.Contains("$")) 
+
+            if (funcName.Contains("$"))
             {
                 funcName = "\\" + funcName; //Due To Dollar Sign Introduction, Need To Escape
             }
