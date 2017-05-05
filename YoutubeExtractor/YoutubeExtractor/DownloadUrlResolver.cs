@@ -110,7 +110,7 @@ namespace YoutubeExtractor
 
             catch (Exception ex)
             {
-                if (ex is WebException || ex is VideoNotAvailableException)
+                if (ex is VideoNotAvailableException)
                 {
                     throw;
                 }
@@ -121,14 +121,7 @@ namespace YoutubeExtractor
             return null; // Will never happen, but the compiler requires it
         }
 
-#if PORTABLE
 
-        public static System.Threading.Tasks.Task<IEnumerable<VideoInfo>> GetDownloadUrlsAsync(string videoUrl, bool decryptSignature = true)
-        {
-            return System.Threading.Tasks.Task.Run(() => GetDownloadUrls(videoUrl, decryptSignature));
-        }
-
-#endif
 
         /// <summary>
         /// Normalizes the given YouTube URL to the format http://youtube.com/watch?v={youtube-id}
@@ -217,7 +210,7 @@ namespace YoutubeExtractor
             // bugfix: adaptive_fmts is missing in some videos, use url_encoded_fmt_stream_map instead
             if (streamMap == null)
             {
-              streamMap = json["args"]["url_encoded_fmt_stream_map"];
+                streamMap = json["args"]["url_encoded_fmt_stream_map"];
             }
 
             return streamMap.ToString();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 
 namespace YoutubeExtractor
 {
@@ -33,18 +34,12 @@ namespace YoutubeExtractor
         public override void Execute()
         {
             this.OnDownloadStarted(EventArgs.Empty);
-
-            var request = (HttpWebRequest)WebRequest.Create(this.Video.DownloadUrl);
-
-            if (this.BytesToDownload.HasValue)
+            using (var client = new HttpClient())
             {
-                request.AddRange(0, this.BytesToDownload.Value - 1);
-            }
+                var request = new HttpRequestMessage(HttpMethod.Get, this.Video.DownloadUrl);
 
-            // the following code is alternative, you may implement the function after your needs
-            using (WebResponse response = request.GetResponse())
-            {
-                using (Stream source = response.GetResponseStream())
+                using (var response = client.SendAsync(request).GetAwaiter().GetResult())
+                using (var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult())
                 {
                     using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
                     {
@@ -53,13 +48,13 @@ namespace YoutubeExtractor
                         int bytes;
                         int copiedBytes = 0;
 
-                        while (!cancel && (bytes = source.Read(buffer, 0, buffer.Length)) > 0)
+                        while (!cancel && (bytes = stream.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             target.Write(buffer, 0, bytes);
 
                             copiedBytes += bytes;
 
-                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
+                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.Content.Headers.ContentLength.Value) * 100);
 
                             if (this.DownloadProgressChanged != null)
                             {

@@ -124,7 +124,7 @@ namespace YoutubeExtractor
             {
                 if (this.fileStream != null)
                 {
-                    this.fileStream.Close();
+                    this.fileStream.Dispose();
                     this.fileStream = null;
                 }
 

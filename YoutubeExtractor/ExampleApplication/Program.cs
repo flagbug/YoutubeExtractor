@@ -7,8 +7,30 @@ using YoutubeExtractor;
 
 namespace ExampleApplication
 {
-    internal class Program
+    class Program
     {
+        private static void Main()
+        {
+            // Our test youtube link
+            const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
+
+            /*
+             * Get the available video formats.
+             * We'll work with them in the video and audio download examples.
+             */
+            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
+
+            //DownloadAudio(videoInfos);
+            DownloadVideo(videoInfos);
+        }
+
+
+        private static string RemoveIllegalPathCharacters(string path)
+        {
+            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+            return r.Replace(path, "");
+        }
         private static void DownloadAudio(IEnumerable<VideoInfo> videoInfos)
         {
             /*
@@ -34,8 +56,8 @@ namespace ExampleApplication
              */
 
             var audioDownloader = new AudioDownloader(video,
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                RemoveIllegalPathCharacters(video.Title) + video.AudioExtension));
+                "/Users/nicolasgonzalez/Desktop/youtub/download/" +
+                RemoveIllegalPathCharacters(video.Title) + video.AudioExtension);
 
             // Register the progress events. We treat the download progress as 85% of the progress
             // and the extraction progress only as 15% of the progress, because the download will
@@ -56,7 +78,7 @@ namespace ExampleApplication
              * Select the first .mp4 video with 360p resolution
              */
             VideoInfo video = videoInfos
-                .First(info => info.VideoType == VideoType.Mp4 && info.Resolution == 360);
+                .First(info => info.VideoType == VideoType.Mp4 && (info.Resolution == 1080 || info.Resolution == 720));
 
             /*
              * If the video has a decrypted signature, decipher it
@@ -72,8 +94,8 @@ namespace ExampleApplication
              * The second argument is the path to save the video file.
              */
             var videoDownloader = new VideoDownloader(video,
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                RemoveIllegalPathCharacters(video.Title) + video.VideoExtension));
+                "/Users/nicolasgonzalez/Desktop/youtub/download/" +
+                RemoveIllegalPathCharacters(video.Title) + video.VideoExtension);
 
             // Register the ProgressChanged event and print the current progress
             videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
@@ -83,28 +105,6 @@ namespace ExampleApplication
              * For GUI applications note, that this method runs synchronously.
              */
             videoDownloader.Execute();
-        }
-
-        private static void Main()
-        {
-            // Our test youtube link
-            const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
-
-            /*
-             * Get the available video formats.
-             * We'll work with them in the video and audio download examples.
-             */
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
-
-            //DownloadAudio(videoInfos);
-            DownloadVideo(videoInfos);
-        }
-
-        private static string RemoveIllegalPathCharacters(string path)
-        {
-            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-            var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
-            return r.Replace(path, "");
         }
     }
 }
