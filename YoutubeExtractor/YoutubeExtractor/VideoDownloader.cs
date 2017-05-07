@@ -37,6 +37,8 @@ namespace YoutubeExtractor
             this.OnDownloadStarted(EventArgs.Empty);
             using (var client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromMinutes(5);
+
                 var request = new HttpRequestMessage(HttpMethod.Get, this.Video.DownloadUrl);
 
                 using (var response = await client.SendAsync(request).ConfigureAwait(false))

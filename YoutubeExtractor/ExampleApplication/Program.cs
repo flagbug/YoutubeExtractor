@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExtractor;
@@ -10,6 +11,7 @@ namespace ExampleApplication
 {
     class Program
     {
+        private static string downloadPath;
         private static void Main()
         {
             Program.AsyncMain().Wait();
@@ -17,17 +19,30 @@ namespace ExampleApplication
 
         private static async Task AsyncMain()
         {
-            // Our test youtube link
-            const string link = "https://www.youtube.com/watch?v=hss7GO27eUU&index=53&list=PLiqEOT8VBHnOf0n9RMBUlTTV6YD3y2B82";
+            downloadPath = $"{Environment.GetEnvironmentVariable(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "LocalAppData" : "HOME")}/Movies/"; //Tested in OSX
+            Console.WriteLine($"Download Path:{downloadPath}");
 
-            /*
-             * Get the available video formats.
-             * We'll work with them in the video and audio download examples.
-             */
-            IEnumerable<VideoInfo> videoInfos = await DownloadUrlResolver.GetDownloadUrls(link, false);
+            string option = "n";
+            List<string> url = new List<string>();
+            List<Task> tasks = new List<Task>();
+            do
+            {
+                Console.WriteLine("Add Url");
+                url.Add(Console.ReadLine());
+                Console.WriteLine("Add More? y or n");
+                option = Console.ReadLine().ToLower();
 
-            //DownloadAudio(videoInfos);
-            await DownloadVideo(videoInfos);
+            } while (option != "n");
+
+            foreach (var item in url)
+            {
+                tasks.Add(Task.Run(async () =>
+                    {
+                        IEnumerable<VideoInfo> videoInfos = await DownloadUrlResolver.GetDownloadUrls(item, false);
+                        await DownloadVideo(videoInfos);
+                    }));
+            }
+            await Task.WhenAll(tasks);
         }
 
 
@@ -61,15 +76,13 @@ namespace ExampleApplication
              * The second argument is the path to save the audio file.
              */
 
-            var audioDownloader = new AudioDownloader(video,
-                "/Users/nicolasgonzalez/Desktop/youtub/download/" +
-                RemoveIllegalPathCharacters(video.Title) + video.AudioExtension);
+            var audioDownloader = new AudioDownloader(video, $"{downloadPath}{RemoveIllegalPathCharacters(video.Title)} {video.AudioExtension}");
 
             // Register the progress events. We treat the download progress as 85% of the progress
             // and the extraction progress only as 15% of the progress, because the download will
             // take much longer than the audio extraction.
             audioDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage * 0.85);
-            audioDownloader.AudioExtractionProgressChanged += (sender, args) => Console.WriteLine(85 + args.ProgressPercentage * 0.15);
+            audioDownloader.AudioExtractionProgressChanged += (sender, args) => Console.WriteLine(85 + args.ProgressPercentage);
 
             /*
              * Execute the audio downloader.
@@ -88,6 +101,8 @@ namespace ExampleApplication
                 Console.WriteLine("Not Found");
             }
 
+            Console.WriteLine($"Video: {video.Title}{video.VideoExtension} -> Resolution: {video.Resolution}");
+
             if (video.RequiresDecryption)
             {
                 await DownloadUrlResolver.DecryptDownloadUrl(video);
@@ -98,12 +113,10 @@ namespace ExampleApplication
              * The first argument is the video to download.
              * The second argument is the path to save the video file.
              */
-            var videoDownloader = new VideoDownloader(video,
-                "/Users/nicolasgonzalez/Desktop/youtub/download/" +
-                RemoveIllegalPathCharacters(video.Title) + video.VideoExtension);
+            var videoDownloader = new VideoDownloader(video, $"{downloadPath}{RemoveIllegalPathCharacters(video.Title)}{video.VideoExtension}");
 
             // Register the ProgressChanged event and print the current progress
-            videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+            videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine($"{video.Title} -> {(int)args.ProgressPercentage}");
 
             /*
              * Execute the video downloader.

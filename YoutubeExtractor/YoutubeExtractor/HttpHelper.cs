@@ -16,6 +16,7 @@ namespace YoutubeExtractor
 
             using (var client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromMinutes(5);
                 return await client.GetStringAsync(url).ConfigureAwait(false);
             }
 
