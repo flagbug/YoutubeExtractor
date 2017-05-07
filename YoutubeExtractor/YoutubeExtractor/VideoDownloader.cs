@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace YoutubeExtractor
 {
@@ -30,21 +32,17 @@ namespace YoutubeExtractor
         /// </summary>
         /// <exception cref="IOException">The video file could not be saved.</exception>
         /// <exception cref="WebException">An error occured while downloading the video.</exception>
-        public override void Execute()
+        public override async Task Execute()
         {
             this.OnDownloadStarted(EventArgs.Empty);
-
-            var request = (HttpWebRequest)WebRequest.Create(this.Video.DownloadUrl);
-
-            if (this.BytesToDownload.HasValue)
+            using (var client = new HttpClient())
             {
-                request.AddRange(0, this.BytesToDownload.Value - 1);
-            }
+                client.Timeout = TimeSpan.FromMinutes(5);
 
-            // the following code is alternative, you may implement the function after your needs
-            using (WebResponse response = request.GetResponse())
-            {
-                using (Stream source = response.GetResponseStream())
+                var request = new HttpRequestMessage(HttpMethod.Get, this.Video.DownloadUrl);
+
+                using (var response = await client.SendAsync(request).ConfigureAwait(false))
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 {
                     using (FileStream target = File.Open(this.SavePath, FileMode.Create, FileAccess.Write))
                     {
@@ -53,13 +51,13 @@ namespace YoutubeExtractor
                         int bytes;
                         int copiedBytes = 0;
 
-                        while (!cancel && (bytes = source.Read(buffer, 0, buffer.Length)) > 0)
+                        while (!cancel && (bytes = stream.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             target.Write(buffer, 0, bytes);
 
                             copiedBytes += bytes;
 
-                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.ContentLength) * 100);
+                            var eventArgs = new ProgressEventArgs((copiedBytes * 1.0 / response.Content.Headers.ContentLength.Value) * 100);
 
                             if (this.DownloadProgressChanged != null)
                             {

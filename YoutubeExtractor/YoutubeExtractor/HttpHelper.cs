@@ -2,41 +2,29 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace YoutubeExtractor
 {
     internal static class HttpHelper
     {
-        public static string DownloadString(string url)
+        public static async Task<string> DownloadString(string url)
         {
-#if PORTABLE
-            var request = WebRequest.Create(url);
-            request.Method = "GET";
 
-            System.Threading.Tasks.Task<WebResponse> task = System.Threading.Tasks.Task.Factory.FromAsync(
-                request.BeginGetResponse,
-                asyncResult => request.EndGetResponse(asyncResult),
-                null);
-
-            return task.ContinueWith(t => ReadStreamFromResponse(t.Result)).Result;
-#else
-            using (var client = new WebClient())
+            using (var client = new HttpClient())
             {
-                client.Encoding = System.Text.Encoding.UTF8;
-                return client.DownloadString(url);
+                client.Timeout = TimeSpan.FromMinutes(5);
+                return await client.GetStringAsync(url).ConfigureAwait(false);
             }
-#endif
+
         }
 
         public static string HtmlDecode(string value)
         {
-#if PORTABLE
             return System.Net.WebUtility.HtmlDecode(value);
-#else
-            return System.Web.HttpUtility.HtmlDecode(value);
-#endif
         }
 
         public static IDictionary<string, string> ParseQueryString(string s)
@@ -91,22 +79,8 @@ namespace YoutubeExtractor
 
         public static string UrlDecode(string url)
         {
-#if PORTABLE
             return System.Net.WebUtility.UrlDecode(url);
-#else
-            return System.Web.HttpUtility.UrlDecode(url);
-#endif
         }
 
-        private static string ReadStreamFromResponse(WebResponse response)
-        {
-            using (Stream responseStream = response.GetResponseStream())
-            {
-                using (var sr = new StreamReader(responseStream))
-                {
-                    return sr.ReadToEnd();
-                }
-            }
-        }
     }
 }
