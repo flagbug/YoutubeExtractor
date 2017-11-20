@@ -33,9 +33,8 @@ YoutubeExtractor has two licenses;
 
 The YouTube URL-extraction code is licensed under the [MIT License](http://opensource.org/licenses/MIT)
 
-The audio extraction code that is originally from [FlvExtract](http://moitah.net/) is licenced under the [GNU General Public License version 2 (GPLv2)](http://opensource.org/licenses/gpl-2.0)
+The audio extraction code that is originally from [FlvExtract](http://moitah.net/) is licenced under the [MIT License](http://opensource.org/licenses/MIT)
 
-Files that are GPLv2 licensed are explicitly marked with the GPLv2 header at the top of the file. All other files are implicitly MIT licensed.
 
 ## Credits
 
