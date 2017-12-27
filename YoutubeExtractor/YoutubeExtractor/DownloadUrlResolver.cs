@@ -20,7 +20,7 @@ namespace YoutubeExtractor
         /// to the decrypted URL. Use this method, if you have decryptSignature in the <see
         /// cref="GetDownloadUrls" /> method set to false.
         /// </summary>
-        /// <param name="videoInfo">The video info which's downlaod URL should be decrypted.</param>
+        /// <param name="videoInfo">The video info which's download URL should be decrypted.</param>
         /// <exception cref="YoutubeParseException">
         /// There was an error while deciphering the signature.
         /// </exception>
