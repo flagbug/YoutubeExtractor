@@ -21,7 +21,7 @@ namespace YoutubeExtractor
         { }
 
         /// <summary>
-        /// Occurs when the downlaod progress of the video file has changed.
+        /// Occurs when the download progress of the video file has changed.
         /// </summary>
         public event EventHandler<ProgressEventArgs> DownloadProgressChanged;
 
