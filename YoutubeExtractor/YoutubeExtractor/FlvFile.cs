@@ -62,12 +62,6 @@ namespace YoutubeExtractor
         {
             this.Seek(0);
 
-            if (this.ReadUInt32() != 0x464C5601)
-            {
-                // not a FLV file
-                throw new AudioExtractionException("Invalid input file. Impossible to extract audio track.");
-            }
-
             this.ReadUInt8();
             uint dataOffset = this.ReadUInt32();
 
@@ -141,9 +135,6 @@ namespace YoutubeExtractor
                 case 14:
                 case 2:
                     return new Mp3AudioExtractor(this.outputPath);
-
-                case 10:
-                    return new AacAudioExtractor(this.outputPath);
             }
 
             string typeStr;
@@ -165,7 +156,7 @@ namespace YoutubeExtractor
                     break;
             }
 
-            throw new AudioExtractionException("Unable to extract audio (" + typeStr + " is unsupported).");
+            throw new Exception("Unable to extract audio (" + typeStr + " is unsupported).");
         }
 
         private byte[] ReadBytes(int length)

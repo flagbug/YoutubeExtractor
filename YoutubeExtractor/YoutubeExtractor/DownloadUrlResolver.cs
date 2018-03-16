@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
@@ -85,13 +86,14 @@ namespace YoutubeExtractor
 
             try
             {
+                string strThumbnail = LocateThumbnail(videoUrl);
                 var json = LoadJson(videoUrl);
 
                 string videoTitle = GetVideoTitle(json);
 
                 IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(json);
 
-                IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
+                IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle, strThumbnail).ToList();
 
                 string htmlPlayerVersion = GetHtml5PlayerVersion(json);
 
@@ -119,6 +121,24 @@ namespace YoutubeExtractor
             }
 
             return null; // Will never happen, but the compiler requires it
+        }
+
+        private static string LocateThumbnail(string videoUrl)
+        {
+            string pageSource = HttpHelper.DownloadString(videoUrl);
+            int start = pageSource.IndexOf("og:image");
+            if (start > 0)
+            {
+                string t = pageSource.Substring(start + 10);
+                int eind = t.IndexOf(">");
+                t = t.Substring(0, eind);
+                t = t.Trim().Replace("content=\"", "").Replace("\"", "");
+                return t;
+                //
+            }
+            else {
+                return "";
+            }
         }
 
 #if PORTABLE
@@ -251,7 +271,7 @@ namespace YoutubeExtractor
             return streamMapString;
         }
 
-        private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<ExtractionInfo> extractionInfos, string videoTitle)
+        private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<ExtractionInfo> extractionInfos, string videoTitle, string thumbnail)
         {
             var downLoadInfos = new List<VideoInfo>();
 
@@ -269,7 +289,8 @@ namespace YoutubeExtractor
                     {
                         DownloadUrl = extractionInfo.Uri.ToString(),
                         Title = videoTitle,
-                        RequiresDecryption = extractionInfo.RequiresDecryption
+                        RequiresDecryption = extractionInfo.RequiresDecryption,
+                        ThumbnailUrl = thumbnail
                     };
                 }
 
@@ -296,7 +317,7 @@ namespace YoutubeExtractor
 
         private static bool IsVideoUnavailable(string pageSource)
         {
-            const string unavailableContainer = "<div id=\"watch-player-unavailable\">";
+            const string unavailableContainer = "<div id=\"player-unavailable\">";
 
             return pageSource.Contains(unavailableContainer);
         }
