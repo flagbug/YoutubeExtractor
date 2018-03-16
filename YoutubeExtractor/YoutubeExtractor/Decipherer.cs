@@ -122,7 +122,7 @@ namespace YoutubeExtractor
             Regex rgx = new Regex(regexp);
             var matches = rgx.Matches(text);
 
-            return matches[0].Groups[1].Value;
+            return matches.Count > 0 ? matches[0].Groups[1].Value : string.Empty;
         }
     }
 }
