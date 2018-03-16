@@ -117,12 +117,16 @@ namespace YoutubeExtractor
             Array.Reverse(charArray);
             return new string(charArray);
         }
+
         private static string FindMatch(string text, string regexp)
         {
             Regex rgx = new Regex(regexp);
             var matches = rgx.Matches(text);
 
-            return matches[0].Groups[1].Value;
+            if (matches.Count > 0)
+                return matches[0].Groups[1].Value;
+            else
+                return string.Empty;
         }
     }
 }

@@ -317,7 +317,7 @@ namespace YoutubeExtractor
 
         private static bool IsVideoUnavailable(string pageSource)
         {
-            const string unavailableContainer = "<div id=\"watch-player-unavailable\">";
+            const string unavailableContainer = "<div id=\"player-unavailable\">";
 
             return pageSource.Contains(unavailableContainer);
         }
