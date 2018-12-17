@@ -182,10 +182,10 @@ namespace YoutubeExtractor
 
                 bool requiresDecryption = false;
 
-                if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
+                if (queries.ContainsKey("s") || queries.ContainsKey("signature"))
                 {
                     requiresDecryption = queries.ContainsKey("s");
-                    string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
+                    string signature = queries.ContainsKey("s") ? queries["s"] : queries["signature"];
 
                     url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
 
@@ -230,7 +230,7 @@ namespace YoutubeExtractor
 
         private static string GetHtml5PlayerVersion(JObject json)
         {
-            var regex = new Regex(@"player-(.+?).js");
+            var regex = new Regex(@"player_(.+?).js");
 
             string js = json["assets"]["js"].ToString();
 
