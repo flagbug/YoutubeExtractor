@@ -14,16 +14,12 @@ environment:
   matrix:
   - YoutubeExtractor: YoutubeExtractor\YoutubeExtractor.sln
 
-before_build:
-- cmd: >-
-    rem Change Project Directory to install nuget dependencies
-    cd %YoutubeExtractor%
-    nuget restore
-
 artifacts:
   - path: YoutubeExtractor\YoutubeExtractor\YouTubeDownloader\bin\$(configuration)
     name: YouTubeDownloader
 
 build_script:
 - cmd: >-
-    msbuild %YoutubeExtractor% /verbosity:detailed /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    cd %YoutubeExtractor%
+    nuget restore
+    msbuild %YoutubeExtractor% /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
