@@ -15,7 +15,10 @@ environment:
   - YoutubeExtractor: YoutubeExtractor\YoutubeExtractor.sln
 
 before_build:
-  - nuget restore
+- cmd: >-
+    rem Change Project Directory to install nuget dependencies
+    cd %YoutubeExtractor%
+    nuget restore
 
 artifacts:
   - path: YoutubeExtractor\YoutubeExtractor\YouTubeDownloader\bin\$(configuration)
