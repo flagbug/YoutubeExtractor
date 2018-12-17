@@ -12,14 +12,14 @@ build:
 
 environment:
   matrix:
-  - YoutubeExtractor: YoutubeExtractor\YoutubeExtractor.sln
+  - YoutubeExtractor: YoutubeExtractor.sln
 
 before_build:
   - cmd: cd YoutubeExtractor
   - cmd: nuget restore
 
 artifacts:
-  - path: YoutubeExtractor\YoutubeExtractor\YouTubeDownloader\bin\$(configuration)
+  - path: YoutubeExtractor\YouTubeDownloader\bin\$(configuration)
     name: YouTubeDownloader
 
 build_script:
