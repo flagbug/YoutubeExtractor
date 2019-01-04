@@ -1,0 +1,27 @@
+version: 1.0.{build}
+configuration:
+- Debug
+- Release
+platform:
+- Any CPU
+
+build:
+  project: YoutubeExtractor\YoutubeExtractor.sln
+  parallel: true
+  verbosity: minimal
+
+environment:
+  matrix:
+  - YoutubeExtractor: YoutubeExtractor.sln
+
+before_build:
+  - cmd: cd YoutubeExtractor
+  - cmd: nuget restore
+
+artifacts:
+  - path: YoutubeExtractor\YouTubeDownloader\bin\$(configuration)
+    name: YouTubeDownloader
+
+build_script:
+- cmd: >-
+    msbuild %YoutubeExtractor% /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"

@@ -8,6 +8,15 @@
 <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
 </a>
 
+<a href="https://ci.appveyor.com/project/anilgit90/youtubeextractor" target="_blank">
+<img src="https://ci.appveyor.com/api/projects/status/f9pc5r5j2tmxobdd?svg=true" title="AppVeyor" border="0" />
+</a>
+
+<a>
+<img src='https://bettercodehub.com/edge/badge/anilgit90/YoutubeExtractor?branch=master' title="BetterCode" border="0" />
+</a>
+
+
 ## Overview
 YoutubeExtractor is a library for .NET, written in C#, that allows to download videos from YouTube and/or extract their audio track (audio extraction currently only for flash videos).
 
@@ -40,6 +49,20 @@ Files that are GPLv2 licensed are explicitly marked with the GPLv2 header at the
 ## Credits
 
 - [FlvExtract](http://moitah.net/) for extracting MP3 and AAC audio tracks out of flash files.
+
+## Example GUI Application
+
+Built a sample GUI application to Download videos from Youtube at default 360 settings.
+Features added:
+1.Progress bar to denote the status of video being downloaded.
+
+## Build from Appveyor
+
+Added support for running tests and builds from Appveyor.
+
+## Analysis by BetterCode
+
+Added Support for analysis by BetterCode Organization (https://bettercodehub.com)
 
 ## Example code
 

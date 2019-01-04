@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\Full</OutputPath>
+    <OutputPath>..\YouTubeDownloader\bin\Debug\</OutputPath>
     <IntermediateOutputPath>obj\Debug\Full</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -26,12 +26,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\Full</OutputPath>
+    <OutputPath>..\YouTubeDownloader\bin\Release\</OutputPath>
     <IntermediateOutputPath>obj\Release\Full</IntermediateOutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Full\YoutubeExtractor.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\Anil\Documents\github_projects\YoutubeExtractor\YoutubeExtractor\YouTubeDownloader\bin\Release\YoutubeExtractor.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
