@@ -12,6 +12,14 @@
 <img src="https://ci.appveyor.com/api/projects/status/f9pc5r5j2tmxobdd?svg=true" title="AppVeyor" border="0" />
 </a>
 
+<a href="https://ci.appveyor.com/project/anilgit90/youtubeextractor" target="_blank">
+<img src='https://bettercodehub.com/edge/badge/anilgit90/YoutubeExtractor?branch=master' title="BetterCode" border="0" />
+</a>
+
+<a>
+<img src='https://bettercodehub.com/edge/badge/anilgit90/YoutubeExtractor?branch=master' title="BetterCode" border="0" />
+</a>
+
 
 ## Overview
 YoutubeExtractor is a library for .NET, written in C#, that allows to download videos from YouTube and/or extract their audio track (audio extraction currently only for flash videos).
@@ -55,6 +63,10 @@ Features added:
 ## Build from Appveyor
 
 Added support for running tests and builds from Appveyor.
+
+## Analysis by BetterCode
+
+Added Support for analysis by BetterCode Organization (https://bettercodehub.com)
 
 ## Example code
 
