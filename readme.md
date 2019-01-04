@@ -12,10 +12,6 @@
 <img src="https://ci.appveyor.com/api/projects/status/f9pc5r5j2tmxobdd?svg=true" title="AppVeyor" border="0" />
 </a>
 
-<a href="https://ci.appveyor.com/project/anilgit90/youtubeextractor" target="_blank">
-<img src='https://bettercodehub.com/edge/badge/anilgit90/YoutubeExtractor?branch=master' title="BetterCode" border="0" />
-</a>
-
 <a>
 <img src='https://bettercodehub.com/edge/badge/anilgit90/YoutubeExtractor?branch=master' title="BetterCode" border="0" />
 </a>
