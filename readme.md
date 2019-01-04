@@ -8,7 +8,9 @@
 <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
 </a>
 
-[![Build status](https://ci.appveyor.com/api/projects/status/f9pc5r5j2tmxobdd?svg=true)](https://ci.appveyor.com/project/anilgit90/youtubeextractor)
+<a href="https://ci.appveyor.com/project/anilgit90/youtubeextractor" target="_blank">
+<img src="https://ci.appveyor.com/api/projects/status/f9pc5r5j2tmxobdd?svg=true" title="AppVeyor" border="0" />
+</a>
 
 
 ## Overview
