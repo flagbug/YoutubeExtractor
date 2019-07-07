@@ -66,25 +66,24 @@ namespace ExampleApplication
             {
                 DownloadUrlResolver.DecryptDownloadUrl(video);
             }
-            Console.WriteLine(video.DownloadUrl);
-            Console.ReadLine();
+
             /*
              * Create the video downloader.
              * The first argument is the video to download.
              * The second argument is the path to save the video file.
              */
-            /* var videoDownloader = new VideoDownloader(video,
+            var videoDownloader = new VideoDownloader(video,
                  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                  RemoveIllegalPathCharacters(video.Title) + video.VideoExtension));
 
-             // Register the ProgressChanged event and print the current progress
-             videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
-             */
+            // Register the ProgressChanged event and print the current progress
+            videoDownloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+
             /*
              * Execute the video downloader.
              * For GUI applications note, that this method runs synchronously.
              */
-            // videoDownloader.Execute();
+            videoDownloader.Execute();
         }
 
         private static void Main()
