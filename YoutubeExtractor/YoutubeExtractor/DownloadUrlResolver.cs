@@ -13,7 +13,7 @@ namespace YoutubeExtractor
     public static class DownloadUrlResolver
     {
         private const string RateBypassFlag = "ratebypass";
-        private const string SignatureQuery = "signature";
+        private const string SignatureQuery = "sig";
 
         /// <summary>
         /// Decrypts the signature in the <see cref="VideoInfo.DownloadUrl" /> property and sets it
@@ -99,10 +99,11 @@ namespace YoutubeExtractor
                 {
                     info.HtmlPlayerVersion = htmlPlayerVersion;
 
-                    if (decryptSignature && info.RequiresDecryption)
+                    //It takes a long time to decrypt all of item.
+                    /*if (decryptSignature && info.RequiresDecryption)
                     {
                         DecryptDownloadUrl(info);
-                    }
+                    }*/
                 }
 
                 return infos;
@@ -217,7 +218,7 @@ namespace YoutubeExtractor
             // bugfix: adaptive_fmts is missing in some videos, use url_encoded_fmt_stream_map instead
             if (streamMap == null)
             {
-              streamMap = json["args"]["url_encoded_fmt_stream_map"];
+                streamMap = json["args"]["url_encoded_fmt_stream_map"];
             }
 
             return streamMap.ToString();
@@ -230,7 +231,7 @@ namespace YoutubeExtractor
 
         private static string GetHtml5PlayerVersion(JObject json)
         {
-            var regex = new Regex(@"player-(.+?).js");
+            var regex = new Regex(@"player(.+?).js");
 
             string js = json["assets"]["js"].ToString();
 
