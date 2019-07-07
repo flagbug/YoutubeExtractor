@@ -12,7 +12,7 @@ namespace YoutubeExtractor
             string jsUrl = string.Format("http://s.ytimg.com/yts/jsbin/player{0}.js", cipherVersion);
             string js = HttpHelper.DownloadString(jsUrl);
 
-            //Find "C" in this: var A = B.sig||C (B.s)
+            //Find "yv" in this: c&&a.set(b,encodeURIComponent(yv(
             string functNamePattern = @"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*([\w$]+)\("; //Regex Formed To Find Word or DollarSign
 
             var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
