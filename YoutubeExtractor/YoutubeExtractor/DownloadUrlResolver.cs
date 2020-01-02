@@ -220,13 +220,14 @@ namespace YoutubeExtractor
 
             foreach (JObject format in streamMap)
             {
-                if (format.ContainsKey("url"))
+                JToken value;
+                if (format.TryGetValue("url", out value))
                 {
-                    streamMapString.Add($@"url={format["url"].ToString()}");
+                    streamMapString.Add($@"url={value.ToString()}");
                 }
-                else if (format.ContainsKey("cipher"))
+                else if (format.TryGetValue("cipher", out value))
                 {
-                    streamMapString.Add(format["cipher"].ToString());
+                    streamMapString.Add(value.ToString());
                 }
             }
 
@@ -255,13 +256,14 @@ namespace YoutubeExtractor
 
             foreach (JObject format in streamMap)
             {
-                if (format.ContainsKey("url"))
+                JToken value;
+                if (format.TryGetValue("url", out value))
                 {
-                    streamMapString.Add($@"url={format["url"].ToString()}");
+                    streamMapString.Add($@"url={value.ToString()}");
                 }
-                else if (format.ContainsKey("cipher"))
+                else if (format.TryGetValue("cipher", out value))
                 {
-                    streamMapString.Add(format["cipher"].ToString());
+                    streamMapString.Add(value.ToString());
                 }
             }
 
