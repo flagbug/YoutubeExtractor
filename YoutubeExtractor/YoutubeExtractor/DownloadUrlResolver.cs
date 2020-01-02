@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 
 namespace YoutubeExtractor
 {
@@ -87,9 +87,11 @@ namespace YoutubeExtractor
             {
                 var json = LoadJson(videoUrl);
 
-                string videoTitle = GetVideoTitle(json);
+                var player_response = JObject.Parse(json["args"]["player_response"].ToString());
 
-                IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(json);
+                string videoTitle = GetVideoTitle(player_response);
+
+                IEnumerable<ExtractionInfo> downloadUrls = ExtractDownloadUrls(player_response);
 
                 IEnumerable<VideoInfo> infos = GetVideoInfos(downloadUrls, videoTitle).ToList();
 
@@ -187,7 +189,7 @@ namespace YoutubeExtractor
                     requiresDecryption = queries.ContainsKey("s");
                     string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
 
-                    url = s.Replace("&s=", "&sig=");
+                    url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
 
                     string fallbackHost = queries.ContainsKey("fallback_host") ? "&fallback_host=" + queries["fallback_host"] : String.Empty;
 
@@ -196,7 +198,7 @@ namespace YoutubeExtractor
 
                 else
                 {
-                    url = s;
+                    url = queries["url"];
                 }
 
                 url = HttpHelper.UrlDecode(url);
@@ -212,21 +214,19 @@ namespace YoutubeExtractor
 
         private static string[] GetAdaptiveStreamMap(JObject json)
         {
-            JToken streamMap = json["streamingData"]["adaptiveFormats"];
+            var streamMap = json["streamingData"]["adaptiveFormats"];
 
             var streamMapString = new List<string>();
 
-            foreach (var format in streamMap)
+            foreach (JObject format in streamMap)
             {
-                if (format.Contains("url"))
+                if (format.ContainsKey("url"))
                 {
-                    streamMapString.Add(format["url"].ToString());
+                    streamMapString.Add($@"url={format["url"].ToString()}");
                 }
-                else if (format.Contains("cipher"))
+                else if (format.ContainsKey("cipher"))
                 {
-                    var cipher = format["cipher"].ToString();
-                    var dic = HttpHelper.ParseQueryString(cipher);
-                    streamMapString.Add($"{HttpHelper.UrlDecode(dic["url"])}&s={HttpHelper.UrlDecode(dic["s"])}");
+                    streamMapString.Add(format["cipher"].ToString());
                 }
             }
 
@@ -253,22 +253,15 @@ namespace YoutubeExtractor
 
             var streamMapString = new List<string>();
 
-            foreach (var format in streamMap)
+            foreach (JObject format in streamMap)
             {
-                Console.WriteLine(format.ToString());
-                if (format.Contains("url"))
+                if (format.ContainsKey("url"))
                 {
-                    streamMapString.Add(format["url"].ToString());
+                    streamMapString.Add($@"url={format["url"].ToString()}");
                 }
-                else if (format.Contains("cipher"))
+                else if (format.ContainsKey("cipher"))
                 {
-                    var cipher = format["cipher"].ToString();
-                    var dic = HttpHelper.ParseQueryString(cipher);
-                    streamMapString.Add($"{HttpHelper.UrlDecode(dic["url"])}&s={HttpHelper.UrlDecode(dic["s"])}");
-                }
-                else
-                {
-                    throw new VideoNotAvailableException("Video is removed or has an age restriction.");
+                    streamMapString.Add(format["cipher"].ToString());
                 }
             }
 
@@ -338,9 +331,7 @@ namespace YoutubeExtractor
 
             string extractedJson = dataRegex.Match(pageSource).Result("$1");
 
-            var player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
-
-            return JObject.Parse(player_response);
+            return JObject.Parse(extractedJson);
         }
 
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)
