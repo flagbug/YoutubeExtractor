@@ -157,9 +157,8 @@ namespace YoutubeExtractor
 
             IDictionary<string, string> query = HttpHelper.ParseQueryString(url);
 
-            string v;
 
-            if (!query.TryGetValue("v", out v))
+            if (!query.TryGetValue("v", out string v))
             {
                 normalizedUrl = null;
                 return false;
@@ -172,8 +171,8 @@ namespace YoutubeExtractor
 
         private static IEnumerable<ExtractionInfo> ExtractDownloadUrls(JObject json)
         {
-            string[] splitByUrls = GetStreamMap(json).Split(',');
-            string[] adaptiveFmtSplitByUrls = GetAdaptiveStreamMap(json).Split(',');
+            string[] splitByUrls = GetStreamMap(json);
+            string[] adaptiveFmtSplitByUrls = GetAdaptiveStreamMap(json);
             splitByUrls = splitByUrls.Concat(adaptiveFmtSplitByUrls).ToArray();
 
             foreach (string s in splitByUrls)
@@ -188,7 +187,7 @@ namespace YoutubeExtractor
                     requiresDecryption = queries.ContainsKey("s");
                     string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
 
-                    url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
+                    url = s.Replace("&s=", "&sig=");
 
                     string fallbackHost = queries.ContainsKey("fallback_host") ? "&fallback_host=" + queries["fallback_host"] : String.Empty;
 
@@ -197,7 +196,7 @@ namespace YoutubeExtractor
 
                 else
                 {
-                    url = queries["url"];
+                    url = s;
                 }
 
                 url = HttpHelper.UrlDecode(url);
@@ -211,17 +210,27 @@ namespace YoutubeExtractor
             }
         }
 
-        private static string GetAdaptiveStreamMap(JObject json)
+        private static string[] GetAdaptiveStreamMap(JObject json)
         {
-            JToken streamMap = json["args"]["adaptive_fmts"];
+            JToken streamMap = json["streamingData"]["adaptiveFormats"];
 
-            // bugfix: adaptive_fmts is missing in some videos, use url_encoded_fmt_stream_map instead
-            if (streamMap == null)
+            var streamMapString = new List<string>();
+
+            foreach (var format in streamMap)
             {
-                streamMap = json["args"]["url_encoded_fmt_stream_map"];
+                if (format.Contains("url"))
+                {
+                    streamMapString.Add(format["url"].ToString());
+                }
+                else if (format.Contains("cipher"))
+                {
+                    var cipher = format["cipher"].ToString();
+                    var dic = HttpHelper.ParseQueryString(cipher);
+                    streamMapString.Add($"{HttpHelper.UrlDecode(dic["url"])}&s={HttpHelper.UrlDecode(dic["s"])}");
+                }
             }
 
-            return streamMap.ToString();
+            return streamMapString.ToArray();
         }
 
         private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
@@ -238,18 +247,32 @@ namespace YoutubeExtractor
             return regex.Match(js).Result("$1");
         }
 
-        private static string GetStreamMap(JObject json)
+        private static string[] GetStreamMap(JObject json)
         {
-            JToken streamMap = json["args"]["url_encoded_fmt_stream_map"];
+            JToken streamMap = json["streamingData"]["formats"];
 
-            string streamMapString = streamMap == null ? null : streamMap.ToString();
+            var streamMapString = new List<string>();
 
-            if (streamMapString == null || streamMapString.Contains("been+removed"))
+            foreach (var format in streamMap)
             {
-                throw new VideoNotAvailableException("Video is removed or has an age restriction.");
+                Console.WriteLine(format.ToString());
+                if (format.Contains("url"))
+                {
+                    streamMapString.Add(format["url"].ToString());
+                }
+                else if (format.Contains("cipher"))
+                {
+                    var cipher = format["cipher"].ToString();
+                    var dic = HttpHelper.ParseQueryString(cipher);
+                    streamMapString.Add($"{HttpHelper.UrlDecode(dic["url"])}&s={HttpHelper.UrlDecode(dic["s"])}");
+                }
+                else
+                {
+                    throw new VideoNotAvailableException("Video is removed or has an age restriction.");
+                }
             }
 
-            return streamMapString;
+            return streamMapString.ToArray();
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(IEnumerable<ExtractionInfo> extractionInfos, string videoTitle)
@@ -290,7 +313,7 @@ namespace YoutubeExtractor
 
         private static string GetVideoTitle(JObject json)
         {
-            JToken title = json["args"]["title"];
+            JToken title = json["videoDetails"]["title"];
 
             return title == null ? String.Empty : title.ToString();
         }
@@ -315,7 +338,9 @@ namespace YoutubeExtractor
 
             string extractedJson = dataRegex.Match(pageSource).Result("$1");
 
-            return JObject.Parse(extractedJson);
+            var player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
+
+            return JObject.Parse(player_response);
         }
 
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)

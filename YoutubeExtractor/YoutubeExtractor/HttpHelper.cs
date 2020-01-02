@@ -60,7 +60,7 @@ namespace YoutubeExtractor
                 if (strings.Length == 2)
                     value = strings[1];
                 else if (strings.Length > 2)
-                    value = string.Join("=", strings.Skip(1).Take(strings.Length).ToArray());
+                    value = string.Join("=", strings.Skip(1).ToArray());
 
                 dictionary.Add(key, value);
             }
