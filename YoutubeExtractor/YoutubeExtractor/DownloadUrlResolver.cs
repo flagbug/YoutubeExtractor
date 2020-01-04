@@ -222,7 +222,7 @@ namespace YoutubeExtractor
             {
                 if (format.ContainsKey("url"))
                 {
-                    streamMapString.Add($@"url={format["url"].ToString()}");
+                    streamMapString.Add($@"url={HttpHelper.UrlEncode(format["url"].ToString())}");
                 }
                 else if (format.ContainsKey("cipher"))
                 {
@@ -257,7 +257,7 @@ namespace YoutubeExtractor
             {
                 if (format.ContainsKey("url"))
                 {
-                    streamMapString.Add($@"url={format["url"].ToString()}");
+                    streamMapString.Add($@"url={HttpHelper.UrlEncode(format["url"].ToString())}");
                 }
                 else if (format.ContainsKey("cipher"))
                 {

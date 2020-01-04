@@ -108,6 +108,15 @@ namespace YoutubeExtractor
 #endif
         }
 
+        public static string UrlEncode(string url)
+        {
+#if PORTABLE
+            return System.Net.WebUtility.UrlEncode(url);
+#else
+            return System.Web.HttpUtility.UrlEncode(url);
+#endif
+        }
+
         private static string ReadStreamFromResponse(WebResponse response)
         {
             using (Stream responseStream = response.GetResponseStream())
