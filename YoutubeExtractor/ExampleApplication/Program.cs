@@ -89,13 +89,18 @@ namespace ExampleApplication
         private static void Main()
         {
             // Our test youtube link
-            const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
+            const string link = "https://www.youtube.com/watch?v=D92-DmVmB8Y";
 
             /*
              * Get the available video formats.
              * We'll work with them in the video and audio download examples.
              */
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(link, false);
+
+            foreach (var x in videoInfos)
+            {
+                Console.WriteLine(x.DownloadUrl);
+            }
 
             //DownloadAudio(videoInfos);
             DownloadVideo(videoInfos);
