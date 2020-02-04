@@ -13,7 +13,7 @@ namespace YoutubeExtractor
             string js = HttpHelper.DownloadString(jsUrl);
 
             //Find "yv" in this: c&&a.set(b,encodeURIComponent(yv(
-            string functNamePattern = @"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*([\w$]+)\("; //Regex Formed To Find Word or DollarSign
+            string functNamePattern = @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}"; //Regex Formed To Find Word or DollarSign
 
             var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
 
@@ -22,7 +22,7 @@ namespace YoutubeExtractor
                 funcName = "\\" + funcName; //Due To Dollar Sign Introduction, Need To Escape
             }
 
-            string funcPattern = @"(?!h\.)" + @funcName + @"=function\(\w+\)\{.*?\}"; //Escape funcName string
+            string funcPattern = @"(?!h\.)" + @funcName + @"=function\(\w+\)\{(.*?)\}"; //Escape funcName string
             var funcBody = Regex.Match(js, funcPattern, RegexOptions.Singleline).Value; //Entire sig function
             var lines = funcBody.Split(';'); //Each line in sig function
 
