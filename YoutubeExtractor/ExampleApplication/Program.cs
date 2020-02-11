@@ -89,7 +89,9 @@ namespace ExampleApplication
         private static void Main()
         {
             // Our test youtube link
-            const string link = "https://www.youtube.com/watch?v=YQHsXMglC9A";
+            //const string link = "https://www.youtube.com/watch?v=D92-DmVmB8Y"; // -> needs deciphering
+
+            const string link = "https://www.youtube.com/watch?v=2a4Uxdy9TQY"; // -> needs no deciphering
 
             /*
              * Get the available video formats.
