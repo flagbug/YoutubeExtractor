@@ -187,21 +187,13 @@ namespace YoutubeExtractor
                 if (queries.ContainsKey("s") || queries.ContainsKey("sig"))
                 {
                     requiresDecryption = queries.ContainsKey("s");
+                    string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
 
-                    if (requiresDecryption)
-                    {
-                        string signature = queries.ContainsKey("s") ? queries["s"] : queries["sig"];
+                    url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
 
-                        url = string.Format("{0}&{1}={2}", queries["url"], SignatureQuery, signature);
+                    string fallbackHost = queries.ContainsKey("fallback_host") ? "&fallback_host=" + queries["fallback_host"] : String.Empty;
 
-                        string fallbackHost = queries.ContainsKey("fallback_host") ? "&fallback_host=" + queries["fallback_host"] : String.Empty;
-
-                        url += fallbackHost;
-                    }
-                    else
-                    {
-                        url = NormalizeUrl(s);
-                    }
+                    url += fallbackHost;
                 }
 
                 else
@@ -354,11 +346,6 @@ namespace YoutubeExtractor
             public bool RequiresDecryption { get; set; }
 
             public Uri Uri { get; set; }
-        }
-        
-        private static string NormalizeUrl(string url)
-        {
-            return url.Replace("\"", "").Replace("url=", "");
         }
     }
 }
