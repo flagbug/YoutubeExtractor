@@ -84,13 +84,13 @@ namespace YoutubeExtractor
         /// <c>AdaptiveType.Audio</c> or <c>AdaptiveType.Video</c> if the format is adaptive;
         /// otherwise, <c>AdaptiveType.None</c>.
         /// </value>
-        public AdaptiveType AdaptiveType { get; private set; }
+        public AdaptiveType AdaptiveType { get; set; }
 
         /// <summary>
         /// The approximate audio bitrate in kbit/s.
         /// </summary>
         /// <value>The approximate audio bitrate in kbit/s, or 0 if the bitrate is unknown.</value>
-        public int AudioBitrate { get; private set; }
+        public int AudioBitrate { get; set; }
 
         /// <summary>
         /// Gets the audio extension.
@@ -119,7 +119,7 @@ namespace YoutubeExtractor
         /// <summary>
         /// Gets the audio type (encoding).
         /// </summary>
-        public AudioType AudioType { get; private set; }
+        public AudioType AudioType { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the audio of this video can be extracted by YoutubeExtractor.
@@ -141,9 +141,9 @@ namespace YoutubeExtractor
         /// Gets the format code, that is used by YouTube internally to differentiate between
         /// quality profiles.
         /// </summary>
-        public int FormatCode { get; private set; }
+        public int FormatCode { get; set; }
 
-        public bool Is3D { get; private set; }
+        public bool Is3D { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this video info requires a signature decryption before
@@ -157,7 +157,7 @@ namespace YoutubeExtractor
         /// Gets the resolution of the video.
         /// </summary>
         /// <value>The resolution of the video, or 0 if the resolution is unkown.</value>
-        public int Resolution { get; private set; }
+        public int Resolution { get; set; }
 
         /// <summary>
         /// Gets the video title.
@@ -194,14 +194,32 @@ namespace YoutubeExtractor
         /// <summary>
         /// Gets the video type (container).
         /// </summary>
-        public VideoType VideoType { get; private set; }
+        public VideoType VideoType { get; set; }
 
         /// <summary>
         /// We use this in the <see cref="DownloadUrlResolver.DecryptDownloadUrl" /> method to
         /// decrypt the signature
         /// </summary>
         /// <returns></returns>
-        internal string HtmlPlayerVersion { get; set; }
+        public string HtmlPlayerVersion { get; set; }
+
+        /// <summary>
+        /// FizeSize
+        /// </summary>
+        public int FileSize { get; set; }
+
+        /// <summary>
+        /// Quality Label
+        /// </summary>
+        public string FormatNote { get; set; }
+
+        public int FPS { get; set; }
+
+        public int Height { get; set; }
+
+        public int Width { get; set; }
+
+        public float AverageBitrate { get; set; }
 
         public override string ToString()
         {

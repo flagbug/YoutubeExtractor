@@ -63,6 +63,7 @@
     <Compile Include="VideoInfo.cs" />
     <Compile Include="VideoNotAvailableException.cs" />
     <Compile Include="VideoType.cs" />
+    <Compile Include="YoutubeModel.cs" />
     <Compile Include="YoutubeParseException.cs" />
   </ItemGroup>
   <ItemGroup>
