@@ -169,7 +169,7 @@ namespace YoutubeExtractor
         private static string GetHtml5PlayerVersion(string url)
         {
             string str = HttpHelper.DownloadString(url);
-            Regex regex = new Regex("\"assets\":.+?\"js\":\\s*\"([^\"]+)\"");
+            Regex regex = new Regex(@"""jsUrl""\s*:\s*""([^""]+)""");
             return regex.Match(str).Result("$1").Replace("\\/", "/");
         }
 
