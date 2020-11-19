@@ -172,7 +172,7 @@ namespace YoutubeExtractor
         public bool? IsSubscribe { get; set; }
 
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
-        public Guid? Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("videoDuration", NullValueHandling = NullValueHandling.Ignore)]
         public Description VideoDuration { get; set; }

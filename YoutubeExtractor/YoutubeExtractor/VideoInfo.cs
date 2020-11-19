@@ -4,6 +4,9 @@ namespace YoutubeExtractor
 {
     public class VideoInfo
     {
+        /// <summary>
+        /// Update from Youtube-dl
+        /// </summary>
         internal static IEnumerable<VideoInfo> Defaults = new List<VideoInfo>
         {
             /* Non-adaptive */
@@ -22,6 +25,8 @@ namespace YoutubeExtractor
             new VideoInfo(44, VideoType.WebM, 480, false, AudioType.Vorbis, 128, AdaptiveType.None),
             new VideoInfo(45, VideoType.WebM, 720, false, AudioType.Vorbis, 192, AdaptiveType.None),
             new VideoInfo(46, VideoType.WebM, 1080, false, AudioType.Vorbis, 192, AdaptiveType.None),
+            new VideoInfo(59, VideoType.Mp4, 480, false, AudioType.Aac, 128, AdaptiveType.None),
+            new VideoInfo(78, VideoType.Mp4, 480, false, AudioType.Aac, 128, AdaptiveType.None),
 
             /* 3d */
             new VideoInfo(82, VideoType.Mp4, 360, true, AudioType.Aac, 96, AdaptiveType.None),
@@ -32,7 +37,17 @@ namespace YoutubeExtractor
             new VideoInfo(101, VideoType.WebM, 360, true, AudioType.Vorbis, 192, AdaptiveType.None),
             new VideoInfo(102, VideoType.WebM, 720, true, AudioType.Vorbis, 192, AdaptiveType.None),
 
-            /* Adaptive (aka DASH) - Video */
+            /* Apple HTTP Live Streaming */
+            new VideoInfo(91, VideoType.Mp4, 144, false, AudioType.Aac, 48, AdaptiveType.None),
+            new VideoInfo(92, VideoType.Mp4, 240, false, AudioType.Aac, 48, AdaptiveType.None),
+            new VideoInfo(93, VideoType.Mp4, 360, false, AudioType.Aac, 128, AdaptiveType.None),
+            new VideoInfo(94, VideoType.Mp4, 480, false, AudioType.Aac, 128, AdaptiveType.None),
+            new VideoInfo(95, VideoType.Mp4, 720, false, AudioType.Aac, 256, AdaptiveType.None),
+            new VideoInfo(96, VideoType.Mp4, 1080, false, AudioType.Aac, 256, AdaptiveType.None),
+            new VideoInfo(132, VideoType.Mp4, 240, false, AudioType.Aac, 48, AdaptiveType.None),
+            new VideoInfo(151, VideoType.Mp4, 72, false, AudioType.Aac, 24, AdaptiveType.None),
+
+            /* Adaptive (aka DASH) - MP4 Video */
             new VideoInfo(133, VideoType.Mp4, 240, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(134, VideoType.Mp4, 360, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(135, VideoType.Mp4, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
@@ -40,20 +55,48 @@ namespace YoutubeExtractor
             new VideoInfo(137, VideoType.Mp4, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(138, VideoType.Mp4, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
             new VideoInfo(160, VideoType.Mp4, 144, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(242, VideoType.WebM, 240, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(243, VideoType.WebM, 360, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(244, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(247, VideoType.WebM, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(248, VideoType.WebM, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(212, VideoType.Mp4, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),            
             new VideoInfo(264, VideoType.Mp4, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(271, VideoType.WebM, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(272, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
-            new VideoInfo(278, VideoType.WebM, 144, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(298, VideoType.Mp4, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(299, VideoType.Mp4, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(266, VideoType.Mp4, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),            
 
             /* Adaptive (aka DASH) - Audio */
             new VideoInfo(139, VideoType.Mp4, 0, false, AudioType.Aac, 48, AdaptiveType.Audio),
             new VideoInfo(140, VideoType.Mp4, 0, false, AudioType.Aac, 128, AdaptiveType.Audio),
             new VideoInfo(141, VideoType.Mp4, 0, false, AudioType.Aac, 256, AdaptiveType.Audio),
+            new VideoInfo(256, VideoType.Mp4, 0, false, AudioType.Aac, 0, AdaptiveType.Audio),
+            new VideoInfo(258, VideoType.Mp4, 0, false, AudioType.Aac, 0, AdaptiveType.Audio),
+            new VideoInfo(325, VideoType.Mp4, 0, false, AudioType.Aac, 0, AdaptiveType.Audio),
+            new VideoInfo(328, VideoType.Mp4, 0, false, AudioType.Aac, 0, AdaptiveType.Audio),
+
+            /* Adaptive (aka DASH) - WebM Video Height > Width */
+            new VideoInfo(167, VideoType.WebM, 360, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(168, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(169, VideoType.WebM, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(170, VideoType.WebM, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(218, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(219, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+
+            /* Adaptive (aka DASH) - WebM Video */
+            new VideoInfo(278, VideoType.WebM, 144, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(242, VideoType.WebM, 240, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(243, VideoType.WebM, 360, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(244, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(245, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(246, VideoType.WebM, 480, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(247, VideoType.WebM, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(248, VideoType.WebM, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(271, VideoType.WebM, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            // itag 272 videos are either 3840x2160 or 7680x4320
+            new VideoInfo(272, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(302, VideoType.WebM, 720, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(303, VideoType.WebM, 1080, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(308, VideoType.WebM, 1440, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(313, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            new VideoInfo(315, VideoType.WebM, 2160, false, AudioType.Unknown, 0, AdaptiveType.Video),
+            
+            /* Adaptive (aka DASH) - WebM Audio */
             new VideoInfo(171, VideoType.WebM, 0, false, AudioType.Vorbis, 128, AdaptiveType.Audio),
             new VideoInfo(172, VideoType.WebM, 0, false, AudioType.Vorbis, 192, AdaptiveType.Audio)
         };
