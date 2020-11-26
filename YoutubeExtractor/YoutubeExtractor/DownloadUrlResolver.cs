@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -25,14 +26,17 @@ namespace YoutubeExtractor
         /// </exception>
         public static void DecryptDownloadUrl(VideoInfo videoInfo)
         {
-            string decipheredSignature;
+            string decipheredSignature = string.Empty;
             IDictionary<string, string> strs = HttpHelper.ParseQueryString(videoInfo.DownloadUrl);
             if (strs.ContainsKey(SignatureQuery))
             {
                 string item = strs[SignatureQuery];
                 try
                 {
-                    decipheredSignature = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, item);
+                    if (!string.IsNullOrEmpty(videoInfo.HtmlPlayerVersion))
+                        decipheredSignature = GetDecipheredSignature(videoInfo.HtmlPlayerVersion, item);
+                    else
+                        decipheredSignature = item;
                 }
                 catch (Exception exception)
                 {
@@ -85,7 +89,7 @@ namespace YoutubeExtractor
 
                 IEnumerable<VideoInfo> infos = GetVideoInfos(model).ToList();
 
-                string html5PlayerVersion = GetHtml5PlayerVersion(model.Microformat.PlayerMicroformatRenderer.Embed.IframeUrl);
+                string html5PlayerVersion = GetHtml5PlayerVersion(model.Microformat?.PlayerMicroformatRenderer?.Embed?.IframeUrl);
 
                 foreach (VideoInfo videoInfo in infos)
                 {
@@ -158,7 +162,7 @@ namespace YoutubeExtractor
 
         private static List<Format> GetAdaptiveStreamMap(YoutubeModel model)
         {
-            return model.StreamingData.AdaptiveFormats.ToList();
+            return model.StreamingData?.AdaptiveFormats.ToList();
         }
 
         private static string GetDecipheredSignature(string htmlPlayerVersion, string signature)
@@ -168,6 +172,9 @@ namespace YoutubeExtractor
 
         private static string GetHtml5PlayerVersion(string url)
         {
+            if (string.IsNullOrEmpty(url))
+                return null;
+
             string str = HttpHelper.DownloadString(url);
             Regex regex = new Regex(@"""jsUrl""\s*:\s*""([^""]+)""");
             return regex.Match(str).Result("$1").Replace("\\/", "/");
@@ -175,13 +182,18 @@ namespace YoutubeExtractor
 
         private static List<Format> GetStreamMap(YoutubeModel model)
         {
-            return model.StreamingData.Formats.ToList();
+            return model.StreamingData?.Formats.ToList();
         }
 
         private static IEnumerable<VideoInfo> GetVideoInfos(YoutubeModel model)
         {
             var streamingFormats = GetStreamMap(model);
-            streamingFormats.AddRange(GetAdaptiveStreamMap(model));
+            if (streamingFormats == null)
+                streamingFormats = new List<Format>();
+
+            var adaptiveStream = GetAdaptiveStreamMap(model);
+            if (adaptiveStream != null)
+                streamingFormats.AddRange(adaptiveStream);
 
             foreach (var fmt in streamingFormats)
             {
@@ -279,9 +291,29 @@ namespace YoutubeExtractor
         private static YoutubeModel LoadModel(string videoUrl)
         {
             var videoId = videoUrl.Replace("https://youtube.com/watch?v=", "");
-            var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&eurl=https://youtube.googleapis.com/v/{videoId}";
 
-            return YoutubeModel.FromJson(HttpHelper.UrlDecode(HttpHelper.ParseQueryString(HttpHelper.DownloadString(url))["player_response"]));
+            var url = $"https://www.youtube.com/watch?v={videoId}&gl=US&hl=en&has_verified=1&bpctr=9999999999";
+
+            var pageSource = HttpHelper.DownloadString(url);
+            var player_response = string.Empty;
+
+            if (Regex.IsMatch(pageSource, "restrictions:age")
+                || Regex.IsMatch(pageSource, "player-age-gate-content\">"))
+            {
+                url = $"https://www.youtube.com/get_video_info?video_id={videoId}&eurl=https://youtube.googleapis.com/v/{videoId}";
+                pageSource = HttpHelper.DownloadString(url);
+                player_response = HttpHelper.ParseQueryString(pageSource)["player_response"];
+                player_response = HttpHelper.UrlDecode(player_response);
+            }
+            else
+            {
+                var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
+
+                string extractedJson = dataRegex.Match(pageSource).Result("$1");
+                player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
+            }
+
+            return YoutubeModel.FromJson(player_response);
         }
 
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)

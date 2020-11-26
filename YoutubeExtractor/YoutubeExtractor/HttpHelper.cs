@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace YoutubeExtractor
 {
@@ -43,7 +44,7 @@ namespace YoutubeExtractor
         public static IDictionary<string, string> ParseQueryString(string s)
         {
             // remove anything other than query string from url
-            if (s.Contains("?"))
+            if (s.StartsWith("http") && s.Contains("?"))
             {
                 s = s.Substring(s.IndexOf('?') + 1);
             }
