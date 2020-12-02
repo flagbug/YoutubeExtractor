@@ -320,9 +320,8 @@ namespace YoutubeExtractor
             dataMatch = dataRegex.Match(pageSource);
             if (dataMatch.Success)
             {
-                string extractedJson = dataMatch.Result("$1");
-                player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
-
+                player_response = dataMatch.Result("$1");
+                
                 return YoutubeModel.FromJson(player_response);
             }
 
@@ -330,9 +329,8 @@ namespace YoutubeExtractor
             dataMatch = dataRegex.Match(pageSource);
             if (dataMatch.Success)
             {
-                string extractedJson = dataMatch.Result("$1");
-                player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
-
+                player_response = dataMatch.Result("$1");
+                
                 return YoutubeModel.FromJson(player_response);
             }
 
