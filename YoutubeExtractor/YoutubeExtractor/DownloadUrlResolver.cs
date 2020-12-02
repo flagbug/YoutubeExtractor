@@ -297,24 +297,49 @@ namespace YoutubeExtractor
             var pageSource = HttpHelper.DownloadString(url);
             var player_response = string.Empty;
 
-            if (Regex.IsMatch(pageSource, "restrictions:age")
-                || Regex.IsMatch(pageSource, "player-age-gate-content\">"))
+            if (Regex.IsMatch(pageSource, @"[""\']status[""\']\s*:\s*[""\']LOGIN_REQUIRED"))
             {
                 url = $"https://www.youtube.com/get_video_info?video_id={videoId}&eurl=https://youtube.googleapis.com/v/{videoId}";
                 pageSource = HttpHelper.DownloadString(url);
                 player_response = HttpHelper.ParseQueryString(pageSource)["player_response"];
                 player_response = HttpHelper.UrlDecode(player_response);
+
+                return YoutubeModel.FromJson(player_response);
             }
-            else
+
+            var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
+            var dataMatch = dataRegex.Match(pageSource);
+            if (dataMatch.Success)
             {
-                var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
-
-                string extractedJson = dataRegex.Match(pageSource).Result("$1");
+                string extractedJson = dataMatch.Result("$1");
                 player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
+                return YoutubeModel.FromJson(player_response);
             }
 
-            return YoutubeModel.FromJson(player_response);
+            dataRegex = new Regex(@"ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+meta|</script|\n)", RegexOptions.Multiline);
+            dataMatch = dataRegex.Match(pageSource);
+            if (dataMatch.Success)
+            {
+                string extractedJson = dataMatch.Result("$1");
+                player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
+
+                return YoutubeModel.FromJson(player_response);
+            }
+
+            dataRegex = new Regex(@"ytInitialPlayerResponse\s*=\s*({.+?})\s*;", RegexOptions.Multiline);
+            dataMatch = dataRegex.Match(pageSource);
+            if (dataMatch.Success)
+            {
+                string extractedJson = dataMatch.Result("$1");
+                player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
+
+                return YoutubeModel.FromJson(player_response);
+            }
+
+            ThrowYoutubeParseException(new VideoNotAvailableException("Unable to extract video data"), videoUrl);
+            return null;
         }
+
 
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)
         {
