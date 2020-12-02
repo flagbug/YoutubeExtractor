@@ -312,8 +312,11 @@ namespace YoutubeExtractor
             if (dataMatch.Success)
             {
                 string extractedJson = dataMatch.Result("$1");
-                player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
-                return YoutubeModel.FromJson(player_response);
+                if (!extractedJson.Contains("raw_player_response:ytInitialPlayerResponse")) //https://www.youtube.com/watch?v=9Y7TRMISkGE
+                {
+                    player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
+                    return YoutubeModel.FromJson(player_response);
+                }
             }
 
             dataRegex = new Regex(@"ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+meta|</script|\n)", RegexOptions.Multiline);
