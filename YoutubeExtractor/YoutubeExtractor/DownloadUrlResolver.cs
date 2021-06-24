@@ -176,7 +176,7 @@ namespace YoutubeExtractor
                 return null;
 
             string str = HttpHelper.DownloadString(url);
-            Regex regex = new Regex(@"""jsUrl""\s*:\s*""([^""]+)""");
+            Regex regex = new Regex("\"(?:PLAYER_JS_URL|jsUrl)\"\\s*:\\s*\"([^\"]+)\"");
             return regex.Match(str).Result("$1").Replace("\\/", "/");
         }
 
@@ -307,24 +307,12 @@ namespace YoutubeExtractor
                 return YoutubeModel.FromJson(player_response);
             }
 
-            var dataRegex = new Regex(@"ytplayer\.config\s*=\s*(\{.+?\});", RegexOptions.Multiline);
+            var dataRegex = new Regex(@"ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+meta|</script|\n)", RegexOptions.Multiline);
             var dataMatch = dataRegex.Match(pageSource);
             if (dataMatch.Success)
             {
-                string extractedJson = dataMatch.Result("$1");
-                if (!extractedJson.Contains("raw_player_response:ytInitialPlayerResponse")) //https://www.youtube.com/watch?v=9Y7TRMISkGE
-                {
-                    player_response = JObject.Parse(extractedJson)["args"]["player_response"].ToString();
-                    return YoutubeModel.FromJson(player_response);
-                }
-            }
-
-            dataRegex = new Regex(@"ytInitialPlayerResponse\s*=\s*({.+?})\s*;\s*(?:var\s+meta|</script|\n)", RegexOptions.Multiline);
-            dataMatch = dataRegex.Match(pageSource);
-            if (dataMatch.Success)
-            {
                 player_response = dataMatch.Result("$1");
-                
+
                 return YoutubeModel.FromJson(player_response);
             }
 
@@ -333,7 +321,7 @@ namespace YoutubeExtractor
             if (dataMatch.Success)
             {
                 player_response = dataMatch.Result("$1");
-                
+
                 return YoutubeModel.FromJson(player_response);
             }
 
