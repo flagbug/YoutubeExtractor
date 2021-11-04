@@ -43,6 +43,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\YoutubeExtractor\YoutubeExtractor.csproj">
+      <Project>{ECDC127F-8DEF-4F99-8300-72C13597339D}</Project>
+      <Name>YoutubeExtractor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YoutubeExtractor\YoutubeExtractor_Portable.csproj">
       <Project>{1bb4cf4d-3617-4a23-b51a-da7711e6f8eb}</Project>
       <Name>YoutubeExtractor_Portable</Name>

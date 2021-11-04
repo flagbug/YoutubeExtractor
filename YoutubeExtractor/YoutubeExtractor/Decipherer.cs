@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,11 +8,8 @@ namespace YoutubeExtractor
 {
     internal static class Decipherer
     {
-        public static string DecipherWithVersion(string cipher, string cipherVersion)
+        public static string DecipherWithVersion(string js, string cipher)
         {
-            string jsUrl = string.Format("https://www.youtube.com{0}", cipherVersion);
-            string js = HttpHelper.DownloadString(jsUrl);
-
             //Find "yv" in this: c&&a.set(b,encodeURIComponent(yv(
             string functNamePattern = @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}"; //Regex Formed To Find Word or DollarSign
 
@@ -83,6 +81,59 @@ namespace YoutubeExtractor
             operations = operations.Trim();
 
             return DecipherWithOperations(cipher, operations);
+        }
+
+        /// <summary>
+        /// From yt_dlp
+        /// Compute the response to YT's "n" parameter challenge
+        /// </summary>
+        /// <param name="js">text of the JS player code that includes the challenge response algorithm</param>
+        /// <param name="n_param">challenge string that is the value of the URL's "n" query parameter</param>
+        /// <returns></returns>
+        public static string NDescramble(string js, string n_param)
+        {
+            if (string.IsNullOrEmpty(js))
+                return n_param;
+
+            // yt_dlp/extractor/youtube.py#L1872 def _extract_n_function
+            var n_functionName = new Regex(@"\.get\(""n""\)\)&&\(b=([a-zA-Z0-9$]{3})\([a-zA-Z0-9]\)");
+
+            var funcname = n_functionName.Match(js).Groups[1].Value;
+
+            var func_m = Regex.Match(js, @"(?:function\s+qha|[{;,]\s*qha\s*=\s*function|var\s+qha\s*=\s*function)\s*\(([^)]*)\)\s*(\{(?:(?!};)[^""]|""([^""]|\\"")*"")+\})");
+
+            var str = func_m.Groups[0].Value;
+
+            var context = new NiL.JS.Core.Context();
+
+            context.Eval(str);
+            var result = context.Eval($"{funcname}('{n_param}')");
+            n_param = result.ToString();
+
+            return n_param;
+        }
+
+        private static void Compound(List<string> n, List<string> ntab, string strg, string alphabet, int charcode)
+        {
+            if (ntab != n)
+                return;
+
+            var inp = strg.ToList();
+            var llen = alphabet.Length;
+            var ntab_copy = ntab.ToList();
+            for (int i = 0; i < ntab_copy.Count; i++)
+            {
+                var c = ntab_copy[i];
+                var pos1 = alphabet.First(x => x.ToString() == c);
+                var pos2 = alphabet.First(x => x == inp[i]);
+                if (pos1 < 0 | pos2 < 0)
+                    return;
+
+                var pos = (pos1 - pos2 + charcode - 32) % llen;
+                var newc = pos < 0 ? "0".ToCharArray()[0] : alphabet[pos];
+                ntab[i] = newc.ToString();
+                inp.Add(newc);
+            }
         }
 
         private static string ApplyOperation(string cipher, string op)

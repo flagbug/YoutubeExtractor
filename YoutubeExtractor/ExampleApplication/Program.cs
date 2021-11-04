@@ -93,10 +93,10 @@ namespace ExampleApplication
             //const string link = "https://www.youtube.com/watch?v=D92-DmVmB8Y";
 
             // needs no deciphering
-            const string link = "https://www.youtube.com/watch?v=2a4Uxdy9TQY";
+            //const string link = "https://www.youtube.com/watch?v=2a4Uxdy9TQY";
 
             //can't embed
-            //const string link = "https://www.youtube.com/watch?v=nhZvvdRSQaE";
+            const string link = "https://www.youtube.com/watch?v=nhZvvdRSQaE";
 
             /*
              * Get the available video formats.
