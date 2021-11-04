@@ -113,29 +113,6 @@ namespace YoutubeExtractor
             return n_param;
         }
 
-        private static void Compound(List<string> n, List<string> ntab, string strg, string alphabet, int charcode)
-        {
-            if (ntab != n)
-                return;
-
-            var inp = strg.ToList();
-            var llen = alphabet.Length;
-            var ntab_copy = ntab.ToList();
-            for (int i = 0; i < ntab_copy.Count; i++)
-            {
-                var c = ntab_copy[i];
-                var pos1 = alphabet.First(x => x.ToString() == c);
-                var pos2 = alphabet.First(x => x == inp[i]);
-                if (pos1 < 0 | pos2 < 0)
-                    return;
-
-                var pos = (pos1 - pos2 + charcode - 32) % llen;
-                var newc = pos < 0 ? "0".ToCharArray()[0] : alphabet[pos];
-                ntab[i] = newc.ToString();
-                inp.Add(newc);
-            }
-        }
-
         private static string ApplyOperation(string cipher, string op)
         {
             switch (op[0])
