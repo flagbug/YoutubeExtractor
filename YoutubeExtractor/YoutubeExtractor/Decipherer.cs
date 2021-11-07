@@ -100,7 +100,7 @@ namespace YoutubeExtractor
 
             var funcname = n_functionName.Match(js).Groups[1].Value;
 
-            var func_m = Regex.Match(js, @"(?:function\s+qha|[{;,]\s*qha\s*=\s*function|var\s+qha\s*=\s*function)\s*\(([^)]*)\)\s*(\{(?:(?!};)[^""]|""([^""]|\\"")*"")+\})");
+            var func_m = Regex.Match(js, @"(?:function\s+" + funcname + @"|[{;,]\s*" + funcname + @"\s*=\s*function|var\s+" + funcname + @"\s*=\s*function)\s*\(([^)]*)\)\s*(\{(?:(?!};)[^""]|""([^""]|\\"")*"")+\})");
 
             var str = func_m.Groups[0].Value;
 
